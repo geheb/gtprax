@@ -396,3 +396,7 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# app specific
+src/GtPrax.UI/wwwroot/html
+src/GtPrax.UI/wwwroot/lib

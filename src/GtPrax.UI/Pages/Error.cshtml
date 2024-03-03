@@ -1,0 +1,27 @@
+﻿@page "{statusCode:int=0}"
+@model ErrorModel
+@{
+    ViewData["Title"] = "Fehler";
+    ViewData["HasFooter"] = true;
+}
+
+@await Html.PartialAsync("_Header")
+
+<section class="section">
+    <div class="container">
+
+        <h3 class="title is-3">@ViewData["Title"]</h3>
+        <h4 class="subtitle is-4">Bei der Anfrage ist ein Fehler aufgetreten.</h4>
+
+        @if (Model.ErrorCode != 0)
+        {
+            <p><strong>Fehler-Code: @Model.ErrorCode</strong></p>
+        }
+        @if (Model.ErrorDescription != null)
+        {
+            <p><strong>Fehler-Beschreibung: @Model.ErrorDescription</strong></p>
+        }
+    </div>
+</section>
+
+@await Html.PartialAsync("_Footer")
