@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Antiforgery;
+using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
@@ -29,7 +29,7 @@ public static class HtmlExtensions
             return helper.Raw("Missing file: " + path);
         }
         var env = helper.ViewContext.HttpContext.RequestServices.GetRequiredService<IWebHostEnvironment>();
-        var fullPath = path.StartsWith("~/") ? Path.Combine(env.WebRootPath, path.Substring(2)) : path;
+        var fullPath = path.StartsWith("~/", StringComparison.OrdinalIgnoreCase) ? Path.Combine(env.WebRootPath, path.Substring(2)) : path;
         if (!File.Exists(fullPath))
         {
             return helper.Raw("Missing file: " + path);

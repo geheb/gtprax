@@ -1,11 +1,13 @@
-﻿using Microsoft.AspNetCore.Html;
-using Microsoft.AspNetCore.Mvc.Rendering;
-
 namespace GtPrax.UI.Extensions;
+
+using System.Globalization;
+using System.Text;
+using Microsoft.AspNetCore.Html;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 public static class ModalExtensions
 {
-    const string MODAL_START = @"
+    private static readonly CompositeFormat ModalStart = CompositeFormat.Parse(@"
 <div id=""{0}"" class=""modal"" aria-hidden=""true"">
     <div class=""modal-background""></div>
     <div class=""modal-card"">
@@ -14,9 +16,9 @@ public static class ModalExtensions
             <button class=""delete close-modal"" aria-label=""close""></button>
         </header>
         <section class=""modal-card-body"">
-";
+");
 
-    const string MODAL_OK_END = @"
+    private static readonly CompositeFormat ModalOkEnd = CompositeFormat.Parse(@"
             <div class=""fa-3x loading-value has-text-centered is-hidden"">
                 <i class=""fas fa-spinner fa-spin""></i>
             </div>
@@ -26,9 +28,9 @@ public static class ModalExtensions
         </footer>
     </div>
 </div>
-";
+");
 
-    const string MODAL_OK_CANCEL_END = @"
+    private static readonly CompositeFormat ModalOkCancelEnd = CompositeFormat.Parse(@"
             <div class=""fa-3x loading-value has-text-centered is-hidden"">
                 <i class=""fas fa-spinner fa-spin""></i>
             </div>
@@ -39,20 +41,14 @@ public static class ModalExtensions
         </footer>
     </div>
 </div>
-";
+");
 
     public static IHtmlContent CreateModalTemplateStart(this IHtmlHelper htmlHelper, string id, string title)
-    {
-        return htmlHelper.Raw(string.Format(MODAL_START, id, title));
-    }
+        => htmlHelper.Raw(string.Format(CultureInfo.InvariantCulture, ModalStart, id, title));
 
     public static IHtmlContent CreateModalTemplateEnd(this IHtmlHelper htmlHelper, bool showOkAndCancel)
-    {
-        return htmlHelper.Raw(showOkAndCancel ? MODAL_OK_CANCEL_END : MODAL_OK_END);
-    }
+        => htmlHelper.Raw(showOkAndCancel ? ModalOkCancelEnd : ModalOkEnd);
 
     public static IHtmlContent CreateModalTemplateWithOkCancel(this IHtmlHelper htmlHelper, string id, string title, string body)
-    {
-        return htmlHelper.Raw(string.Format(MODAL_START, id, title) + body + MODAL_OK_CANCEL_END);
-    }
+        => htmlHelper.Raw(string.Format(CultureInfo.InvariantCulture, ModalStart, id, title) + body + ModalOkCancelEnd);
 }

@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace GtPrax.Infrastructure.Repositories;
 
 public sealed class MongoConnectionOptions
 {
-	public required string Host { get; set; }
-	public required int Port { get; set; }
-	public required string DatabaseName { get; set; }
-	public required string UsersCollectionName { get; set; }
+    public required string Host { get; set; }
+    public required int Port { get; set; }
+    public required string DatabaseName { get; set; }
+    public required string UsersCollectionName { get; set; }
 }

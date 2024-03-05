@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace GtPrax.Domain.Entities;
 
 public sealed class User
 {
-	public required string Id { get; set; }
-	public string? Name { get; set; }
-	public string? Email { get; set; }
-	public UserRole[]? Roles { get; set; }
+    public required string Id { get; set; }
+    public string? Name { get; set; }
+    public string? Email { get; set; }
+    public UserRole[]? Roles { get; set; }
 }
