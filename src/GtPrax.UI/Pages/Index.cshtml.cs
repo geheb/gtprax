@@ -1,6 +1,5 @@
 using GtPrax.UI.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace GtPrax.UI.Pages;
@@ -9,11 +8,7 @@ namespace GtPrax.UI.Pages;
 [AllowAnonymous]
 public class IndexModel : PageModel
 {
-    public IndexModel()
-    {
-    }
-
     public void OnGet()
     {
-    }
+	}
 }

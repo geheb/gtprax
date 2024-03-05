@@ -1,3 +1,5 @@
+using GtPrax.Application;
+using GtPrax.Infrastructure;
 using GtPrax.UI.Extensions;
 using GtPrax.UI.Models;
 using GtPrax.UI.Services;
@@ -11,6 +13,9 @@ services.AddRazorPages();
 services.Configure<AppSettings>(config.GetSection("App"));
 services.Configure<PageContentSettings>(config.GetSection("PageContent"));
 services.AddSingleton<NodeGenerator>();
+
+services.AddInfrastructure(config);
+services.AddApplication();
 
 var app = builder.Build();
 

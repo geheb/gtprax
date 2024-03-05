@@ -7,11 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="8.0.2" />
+    <PackageReference Include="MongoDB.Driver" Version="2.24.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\GtPrax.Application\GtPrax.Application.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Repositories\" />
   </ItemGroup>
 
 </Project>
