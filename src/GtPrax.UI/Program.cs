@@ -1,29 +1,57 @@
+using System.Globalization;
 using GtPrax.Application;
 using GtPrax.Infrastructure;
 using GtPrax.UI.Extensions;
 using GtPrax.UI.Models;
 using GtPrax.UI.Services;
+using Serilog;
 
-var builder = WebApplication.CreateBuilder(args);
+try
+{
+    Log.Logger = new LoggerConfiguration()
+        .Enrich.FromLogContext()
+        .WriteTo.Console(formatProvider: CultureInfo.InvariantCulture)
+        .CreateBootstrapLogger();
 
-var config = builder.Configuration;
-var services = builder.Services;
+    Log.Information("Application started");
 
-services.AddRazorPages();
-services.Configure<AppSettings>(config.GetSection("App"));
-services.Configure<PageContentSettings>(config.GetSection("PageContent"));
-services.AddSingleton<NodeGenerator>();
+    var builder = WebApplication.CreateBuilder(args);
 
-services.AddInfrastructure(config);
-services.AddApplication();
+    builder.Host.UseSerilog((context, services, configuration) => configuration
+        .ReadFrom.Configuration(context.Configuration)
+        .ReadFrom.Services(services)
+        .Enrich.FromLogContext()
+        .WriteTo.Console(formatProvider: CultureInfo.InvariantCulture));
 
-var app = builder.Build();
+    var config = builder.Configuration;
+    var services = builder.Services;
 
-app.UseNodeGenerator(typeof(GtPrax.UI.Pages.IndexModel).Assembly);
-app.UseStatusCodePagesWithReExecute("/Error/{0}");
-app.UseStaticFiles();
-app.UseRouting();
-app.UseAuthorization();
-app.MapRazorPages();
+    services.AddRazorPages();
+    services.Configure<AppSettings>(config.GetSection("App"));
+    services.Configure<PageContentSettings>(config.GetSection("PageContent"));
+    services.AddSingleton<NodeGenerator>();
 
-await app.RunAsync();
+    services.AddInfrastructure(config);
+    services.AddApplication();
+
+    var app = builder.Build();
+
+    app.UseNodeGenerator(typeof(GtPrax.UI.Pages.IndexModel).Assembly);
+    app.UseStatusCodePagesWithReExecute("/Error/{0}");
+    app.UseStaticFiles();
+    app.UseRouting();
+    app.UseAuthorization();
+    app.MapRazorPages();
+
+    await app.RunAsync();
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Application terminated unexpectedly");
+    throw;
+}
+finally
+{
+    Log.Information("Application exited");
+    Log.CloseAndFlush();
+}

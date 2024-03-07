@@ -401,3 +401,4 @@ FodyWeavers.xsd
 src/GtPrax.UI/wwwroot/html
 src/GtPrax.UI/wwwroot/lib
 appsettings.Development.json
+logs/
