@@ -29,7 +29,7 @@ internal sealed class SuperUserService
         var superUserEmail = _configuration[emailKey];
         if (string.IsNullOrEmpty(superUserEmail))
         {
-            _logger.LogError("Boostrap super user failed. No configuration for {Key} found!", emailKey);
+            _logger.LogError("Bootstrap super user failed. No configuration for {Key} found!", emailKey);
             return;
         }
 
@@ -37,7 +37,7 @@ internal sealed class SuperUserService
         var password = _configuration[passKey];
         if (string.IsNullOrEmpty(password))
         {
-            _logger.LogError("Boostrap super user failed. No configuration for {Key} found!", passKey);
+            _logger.LogError("Bootstrap super user failed. No configuration for {Key} found!", passKey);
             return;
         }
 
