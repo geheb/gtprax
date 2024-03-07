@@ -30,7 +30,7 @@ public sealed class NodeGenerator
 
     public void Add(Assembly assembly)
     {
-        foreach (var type in assembly.GetTypes().Where(t => IsRazorPage(t)))
+        foreach (var type in assembly.GetTypes().Where(IsRazorPage))
         {
             var node = CreateBreadcrumbNode(type);
             if (node != null)

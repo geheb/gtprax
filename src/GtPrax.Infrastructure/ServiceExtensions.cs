@@ -29,7 +29,7 @@ public static class ServiceExtensions
         services.Configure<IdentityOptions>(options =>
         {
             options.Password.RequireDigit = true;
-            options.Password.RequiredLength = 8;
+            options.Password.RequiredLength = 10;
             options.Password.RequireNonAlphanumeric = true;
             options.Password.RequireUppercase = true;
             options.Password.RequireLowercase = true;
