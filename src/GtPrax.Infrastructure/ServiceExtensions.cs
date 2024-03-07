@@ -3,6 +3,7 @@ namespace GtPrax.Infrastructure;
 using GtPrax.Application.Identity;
 using GtPrax.Infrastructure.Identity;
 using GtPrax.Infrastructure.Repositories;
+using GtPrax.Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -49,6 +50,10 @@ public static class ServiceExtensions
         services.AddScoped<MongoConnectionFactory>();
 
         services.Configure<MongoConnectionOptions>(config.GetSection("MongoConnection"));
+
+        services.AddHostedService<HostedWorker>();
+
+        services.AddScoped<SuperUserService>();
 
         return services;
     }

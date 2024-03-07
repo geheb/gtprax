@@ -7,7 +7,8 @@ internal sealed class IdentityService : IIdentityService
 {
     private readonly SignInManager<ApplicationUser> _signInManager;
 
-    public IdentityService(SignInManager<ApplicationUser> signInManager)
+    public IdentityService(
+        SignInManager<ApplicationUser> signInManager)
     {
         _signInManager = signInManager;
     }
