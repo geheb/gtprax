@@ -1,10 +1,12 @@
 namespace GtPrax.Infrastructure;
 
 using GtPrax.Application.Identity;
+using GtPrax.Infrastructure.EmailDispatcher;
 using GtPrax.Infrastructure.Identity;
-using GtPrax.Infrastructure.Repositories;
-using GtPrax.Infrastructure.Services;
+using GtPrax.Infrastructure.Mongo;
+using GtPrax.Infrastructure.Worker;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -47,13 +49,15 @@ public static class ServiceExtensions
         builder.AddSignInManager<SignInManager<ApplicationUser>>();
         builder.Services.TryAddScoped<ISecurityStampValidator, SecurityStampValidator<ApplicationUser>>();
 
-        services.AddScoped<MongoConnectionFactory>();
-
         services.Configure<MongoConnectionOptions>(config.GetSection("MongoConnection"));
+        services.Configure<SmtpConnectionOptions>(config.GetSection("SmtpConnection"));
 
         services.AddHostedService<HostedWorker>();
-
-        services.AddScoped<SuperUserService>();
+        services.AddTransient<MongoConnectionFactory>();
+        services.AddTransient<SuperUserService>();
+        services.AddTransient<EmailDispatchService>();
+        services.AddTransient<EmailQueueStore>();
+        services.AddTransient<IEmailSender, SmtpDispatcher>();
 
         return services;
     }

@@ -1,9 +1,10 @@
-namespace GtPrax.Infrastructure.Repositories;
+namespace GtPrax.Infrastructure.Mongo;
 
-public sealed class MongoConnectionOptions
+internal sealed class MongoConnectionOptions
 {
     public required string Host { get; set; }
     public required int Port { get; set; }
     public required string DatabaseName { get; set; }
     public required string UsersCollectionName { get; set; }
+    public required string EmailQueueCollectionName { get; set; }
 }
