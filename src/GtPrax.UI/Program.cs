@@ -2,6 +2,7 @@ using System.Globalization;
 using GtPrax.Application;
 using GtPrax.Infrastructure;
 using GtPrax.UI.Extensions;
+using GtPrax.UI.Middlewares;
 using GtPrax.UI.Models;
 using GtPrax.UI.Services;
 using Microsoft.AspNetCore.Antiforgery;
@@ -82,7 +83,7 @@ try
     });
 
     app.UseRequestLocalization("de-DE");
-    app.UseCsp();
+    app.UseMiddleware<CspMiddleware>();
 
     app.UseNodeGenerator(typeof(GtPrax.UI.Pages.IndexModel).Assembly);
     app.UseStatusCodePagesWithReExecute("/Error/{0}");
