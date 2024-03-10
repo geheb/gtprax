@@ -1,7 +1,8 @@
 namespace GtPrax.Infrastructure;
 
+using GtPrax.Application.Email;
 using GtPrax.Application.Identity;
-using GtPrax.Infrastructure.EmailDispatcher;
+using GtPrax.Infrastructure.Email;
 using GtPrax.Infrastructure.Identity;
 using GtPrax.Infrastructure.Mongo;
 using GtPrax.Infrastructure.Worker;
@@ -43,7 +44,8 @@ public static class ServiceExtensions
 
         var builder = services
             .AddIdentityCore<ApplicationUser>()
-            .AddDefaultTokenProviders();
+            .AddDefaultTokenProviders()
+            .AddTokenProvider<ConfirmEmailDataProtectorTokenProvider>(ConfirmEmailDataProtectionTokenProviderOptions.ProviderName);
 
         builder.AddUserStore<ApplicationUserStore>();
         builder.AddSignInManager<SignInManager<ApplicationUser>>();
@@ -58,6 +60,7 @@ public static class ServiceExtensions
         services.AddTransient<EmailDispatchService>();
         services.AddTransient<EmailQueueStore>();
         services.AddTransient<IEmailSender, SmtpDispatcher>();
+        services.AddTransient<IEmailQueueService, EmailQueueService>();
 
         return services;
     }

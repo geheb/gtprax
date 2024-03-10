@@ -1,11 +1,14 @@
 namespace GtPrax.Application;
 
+using GtPrax.Application.Models;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 public static class ServiceExtensions
 {
-    public static IServiceCollection AddApplication(this IServiceCollection services)
+    public static IServiceCollection AddApplication(this IServiceCollection services, IConfiguration config)
     {
+        services.Configure<AppOptions>(config.GetSection("App"));
         return services;
     }
 }

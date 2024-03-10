@@ -52,7 +52,7 @@ try
     services.AddAuthorization();
 
     services.AddInfrastructure(config);
-    services.AddApplication();
+    services.AddApplication(config);
 
     services.Configure<AntiforgeryOptions>(options =>
     {
@@ -66,8 +66,7 @@ try
     });
 
     services.AddRazorPages();
-    services.Configure<AppSettings>(config.GetSection("App"));
-    services.Configure<PageContentSettings>(config.GetSection("PageContent"));
+    services.Configure<PageContentOptions>(config.GetSection("PageContent"));
     services.AddSingleton<NodeGenerator>();
 
     var app = builder.Build();

@@ -7,9 +7,22 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Email\ChangeEmail.html" />
+    <None Remove="Email\ConfirmEmail.html" />
+    <None Remove="Email\PasswordForgotten.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Email\ChangeEmail.html" />
+    <EmbeddedResource Include="Email\ConfirmEmail.html" />
+    <EmbeddedResource Include="Email\PasswordForgotten.html" />
+  </ItemGroup>
+
+  <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="8.0.2" />
     <PackageReference Include="MongoDB.Driver" Version="2.24.0" />
+    <PackageReference Include="Scriban" Version="5.9.1" />
   </ItemGroup>
 
   <ItemGroup>

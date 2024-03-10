@@ -1,4 +1,4 @@
-namespace GtPrax.Infrastructure.EmailDispatcher;
+namespace GtPrax.Infrastructure.Email;
 
 internal sealed class SmtpConnectionOptions
 {

@@ -1,6 +1,6 @@
 namespace GtPrax.Infrastructure.Worker;
 
-using GtPrax.Infrastructure.EmailDispatcher;
+using GtPrax.Infrastructure.Email;
 using GtPrax.Infrastructure.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
