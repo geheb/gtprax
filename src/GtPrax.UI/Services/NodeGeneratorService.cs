@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Reflection;
 
-public sealed class NodeGenerator
+internal sealed class NodeGeneratorService
 {
     private const string RazorPagesRootDirectory = "Pages";
     private static bool IsRazorPage(Type type) => type != null && typeof(PageModel).IsAssignableFrom(type);

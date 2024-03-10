@@ -67,7 +67,7 @@ try
 
     services.AddRazorPages();
     services.Configure<PageContentOptions>(config.GetSection("PageContent"));
-    services.AddSingleton<NodeGenerator>();
+    services.AddSingleton<NodeGeneratorService>();
 
     var app = builder.Build();
 
@@ -82,6 +82,7 @@ try
     });
 
     app.UseRequestLocalization("de-DE");
+    app.UseCsp();
 
     app.UseNodeGenerator(typeof(GtPrax.UI.Pages.IndexModel).Assembly);
     app.UseStatusCodePagesWithReExecute("/Error/{0}");

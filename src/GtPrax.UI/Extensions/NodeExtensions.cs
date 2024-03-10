@@ -9,20 +9,20 @@ public static class NodeExtensions
 {
     public static void UseNodeGenerator(this IApplicationBuilder app, Assembly assembly)
     {
-        var nodeGenerator = app.ApplicationServices.GetRequiredService<NodeGenerator>();
+        var nodeGenerator = app.ApplicationServices.GetRequiredService<NodeGeneratorService>();
         nodeGenerator.Add(assembly);
     }
 
     public static Node GetNode(this PageModel model)
     {
-        var breadcrumbGenerator = model.HttpContext.RequestServices.GetRequiredService<NodeGenerator>();
+        var breadcrumbGenerator = model.HttpContext.RequestServices.GetRequiredService<NodeGeneratorService>();
 
         return breadcrumbGenerator.GetNode(model.GetType());
     }
 
     public static Node GetNode<T>(this PageModel model) where T : PageModel
     {
-        var breadcrumbGenerator = model.HttpContext.RequestServices.GetRequiredService<NodeGenerator>();
+        var breadcrumbGenerator = model.HttpContext.RequestServices.GetRequiredService<NodeGeneratorService>();
         return breadcrumbGenerator.GetNode(typeof(T));
     }
 
@@ -33,7 +33,7 @@ public static class NodeExtensions
             return false;
         }
 
-        var breadcrumbGenerator = model.HttpContext.RequestServices.GetRequiredService<NodeGenerator>();
+        var breadcrumbGenerator = model.HttpContext.RequestServices.GetRequiredService<NodeGeneratorService>();
 
         var nodes = pageModels.Select(t => breadcrumbGenerator.GetNode(t)).ToArray();
         foreach (var node in nodes)
@@ -60,7 +60,7 @@ public static class NodeExtensions
             return;
         }
 
-        var breadcrumbGenerator = model.HttpContext.RequestServices.GetRequiredService<NodeGenerator>();
+        var breadcrumbGenerator = model.HttpContext.RequestServices.GetRequiredService<NodeGeneratorService>();
         var linkGenerator = model.HttpContext.RequestServices.GetRequiredService<LinkGenerator>();
 
         var node = breadcrumbGenerator.GetNode(model.GetType());

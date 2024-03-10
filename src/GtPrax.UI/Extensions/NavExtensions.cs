@@ -13,7 +13,7 @@ public static class NavExtensions
         nav.AddCssClass("breadcrumb has-arrow-separator");
         nav.Attributes.Add("aria-label", "breadcrumbs");
 
-        var breadcrumbGenerator = helper.ViewContext.HttpContext.RequestServices.GetRequiredService<NodeGenerator>();
+        var breadcrumbGenerator = helper.ViewContext.HttpContext.RequestServices.GetRequiredService<NodeGeneratorService>();
         var linkGenerator = helper.ViewContext.HttpContext.RequestServices.GetRequiredService<LinkGenerator>();
 
         if (!helper.ViewContext.ActionDescriptor.RouteValues.TryGetValue("page", out var page)) throw new InvalidOperationException($"Current route isn't a Razor page");
