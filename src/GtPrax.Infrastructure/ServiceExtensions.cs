@@ -55,6 +55,7 @@ public static class ServiceExtensions
         services.Configure<SmtpConnectionOptions>(config.GetSection("SmtpConnection"));
 
         services.AddHostedService<HostedWorker>();
+        services.AddTransient<ApplicationUserStore>();
         services.AddTransient<MongoConnectionFactory>();
         services.AddTransient<SuperUserService>();
         services.AddTransient<EmailDispatchService>();

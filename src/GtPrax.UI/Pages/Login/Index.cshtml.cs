@@ -28,7 +28,7 @@ public class IndexModel : PageModel
         _identityService = identityService;
     }
 
-    public async Task<IActionResult> OnPostAsync(string? returnUrl = null)
+    public async Task<IActionResult> OnPostAsync(string? returnUrl, CancellationToken cancellationToken)
     {
         if (!string.IsNullOrEmpty(UserName))
         {
@@ -42,7 +42,7 @@ public class IndexModel : PageModel
             return Page();
         }
 
-        var result = await _identityService.SignIn(Email!, Password!);
+        var result = await _identityService.SignIn(Email!, Password!, cancellationToken);
         if (!result.Succeeded)
         {
             ModelState.AddModelError(string.Empty, "Die Anmeldung ist fehlgeschlagen.");

@@ -32,6 +32,37 @@ internal sealed class ApplicationUserStore :
     {
     }
 
+    public async Task<IReadOnlyCollection<ApplicationUser>> GetAllUsers(CancellationToken cancellationToken)
+    {
+        var filter = Builders<ApplicationUser>.Filter.Eq(f => f.DeactivationDate, null);
+        var result = await _collection.FindAsync(filter, cancellationToken: cancellationToken);
+        return await result.ToListAsync(cancellationToken);
+    }
+
+    public async Task<IdentityResult> SetName(string id, string name, CancellationToken cancellationToken)
+    {
+        var filter = Builders<ApplicationUser>.Filter.Eq(f => f.Id, ObjectId.Parse(id));
+        var update = Builders<ApplicationUser>.Update.Set(f => f.Name, name);
+        var result = await _collection.UpdateOneAsync(filter, update, cancellationToken: cancellationToken);
+        if (!result.IsAcknowledged || result.ModifiedCount < 1)
+        {
+            return IdentityResult.Failed(_identityErrorDescriber.DefaultError());
+        }
+        return IdentityResult.Success;
+    }
+
+    public async Task<IdentityResult> SetLastLogin(string id, DateTimeOffset lastLogin, CancellationToken cancellationToken)
+    {
+        var filter = Builders<ApplicationUser>.Filter.Eq(f => f.Id, ObjectId.Parse(id));
+        var update = Builders<ApplicationUser>.Update.Set(f => f.LastLoginDate, lastLogin);
+        var result = await _collection.UpdateOneAsync(filter, update, cancellationToken: cancellationToken);
+        if (!result.IsAcknowledged || result.ModifiedCount < 1)
+        {
+            return IdentityResult.Failed(_identityErrorDescriber.DefaultError());
+        }
+        return IdentityResult.Success;
+    }
+
     public Task AddClaimsAsync(ApplicationUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
     {
         foreach (var claim in claims.Select(c => new ApplicationUserClaim(c)))
@@ -218,7 +249,7 @@ internal sealed class ApplicationUserStore :
 
         var filter = Builders<ApplicationUser>.Filter.Eq(f => f.Id, user.Id);
         var result = await _collection.ReplaceOneAsync(filter, user, cancellationToken: cancellationToken);
-        if (!result.IsAcknowledged)
+        if (!result.IsAcknowledged || result.ModifiedCount < 1)
         {
             return IdentityResult.Failed(_identityErrorDescriber.DefaultError());
         }

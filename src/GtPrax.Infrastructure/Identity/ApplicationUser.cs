@@ -34,7 +34,10 @@ internal sealed class ApplicationUser
     public DateTimeOffset? LastPasswordChangedDate { get; set; }
 
     [BsonRepresentation(BsonType.String)]
-    public DateTimeOffset? LastLogin { get; set; }
+    public DateTimeOffset? LastLoginDate { get; set; }
+
+    [BsonRepresentation(BsonType.String)]
+    public DateTimeOffset? DeactivationDate { get; set; }
 
     public bool IsPasswordReset { get; set; }
 
