@@ -146,19 +146,7 @@ internal sealed class IdentityService : IIdentityService
         return IdentityResult.Success;
     }
 
-    public async Task<string?> GeneratePasswordResetToken(string id)
-    {
-        var userManager = _signInManager.UserManager;
-        var user = await userManager.FindByIdAsync(id);
-        if (user is null)
-        {
-            return null;
-        }
-        var token = await userManager.GeneratePasswordResetTokenAsync(user);
-        return Uri.EscapeDataString(token);
-    }
-
-    public async Task<string?> GenerateEmailConfirmationToken(string id)
+    public async Task<string?> GenerateConfirmEmailToken(string id)
     {
         var userManager = _signInManager.UserManager;
         var user = await userManager.FindByIdAsync(id);
@@ -170,7 +158,7 @@ internal sealed class IdentityService : IIdentityService
         return Uri.EscapeDataString(token);
     }
 
-    public async Task<IdentityResult> VerifyPasswordResetToken(string id, string token)
+    public async Task<IdentityResult> VerifyConfirmEmailToken(string id, string token)
     {
         var userManager = _signInManager.UserManager;
         var user = await userManager.FindByIdAsync(id);
@@ -181,12 +169,12 @@ internal sealed class IdentityService : IIdentityService
 
         token = Uri.UnescapeDataString(token);
 
-        var isTokenValid = await userManager.VerifyUserTokenAsync(user,
-            userManager.Options.Tokens.PasswordResetTokenProvider,
-            UserManager<ApplicationUser>.ResetPasswordTokenPurpose,
+        var isValid = await userManager.VerifyUserTokenAsync(user,
+            userManager.Options.Tokens.EmailConfirmationTokenProvider,
+            UserManager<ApplicationUser>.ConfirmEmailTokenPurpose,
             token);
 
-        if (!isTokenValid)
+        if (!isValid)
         {
             return IdentityResult.Failed(_errorDescriber.InvalidToken());
         }
@@ -194,7 +182,62 @@ internal sealed class IdentityService : IIdentityService
         return IdentityResult.Success;
     }
 
-    public async Task<IdentityResult> VerifyEmailConfirmationToken(string id, string token)
+    public async Task<IdentityResult> ConfirmEmail(string id, string token, string newPassword)
+    {
+        var userManager = _signInManager.UserManager;
+        var user = await userManager.FindByIdAsync(id);
+        if (user is null)
+        {
+            return IdentityResult.Failed(NotFound);
+        }
+
+        if (!user.EmailConfirmed)
+        {
+            token = Uri.UnescapeDataString(token);
+
+            var isValid = await userManager.VerifyUserTokenAsync(user,
+                userManager.Options.Tokens.EmailConfirmationTokenProvider,
+                UserManager<ApplicationUser>.ConfirmEmailTokenPurpose,
+                token);
+
+            if (!isValid)
+            {
+                return IdentityResult.Failed(_errorDescriber.InvalidToken());
+            }
+
+            var result = await userManager.ConfirmEmailAsync(user, token);
+            if (!result.Succeeded)
+            {
+                return result;
+            }
+        }
+
+        foreach (var validator in userManager.PasswordValidators)
+        {
+            var result = await validator.ValidateAsync(userManager, user, newPassword);
+            if (!result.Succeeded)
+            {
+                return result;
+            }
+        }
+
+        token = await userManager.GeneratePasswordResetTokenAsync(user);
+        return await userManager.ResetPasswordAsync(user, token, newPassword);
+    }
+
+    public async Task<string?> GenerateChangeEmailToken(string id, string newEmail)
+    {
+        var userManager = _signInManager.UserManager;
+        var user = await userManager.FindByIdAsync(id);
+        if (user is null)
+        {
+            return null;
+        }
+        var token = await userManager.GenerateChangeEmailTokenAsync(user, newEmail);
+        return Uri.EscapeDataString(token);
+    }
+
+    public async Task<IdentityResult> VerifyChangeEmailToken(string id, string token, string newEmail)
     {
         var userManager = _signInManager.UserManager;
         var user = await userManager.FindByIdAsync(id);
@@ -205,14 +248,72 @@ internal sealed class IdentityService : IIdentityService
 
         token = Uri.UnescapeDataString(token);
 
-        var isTokenValid = await userManager.VerifyUserTokenAsync(user,
-            userManager.Options.Tokens.EmailConfirmationTokenProvider,
-            UserManager<ApplicationUser>.ConfirmEmailTokenPurpose,
+        var isValid = await userManager.VerifyUserTokenAsync(user,
+            userManager.Options.Tokens.ChangeEmailTokenProvider,
+            UserManager<ApplicationUser>.GetChangeEmailTokenPurpose(newEmail),
             token);
 
-        if (!isTokenValid)
+        if (!isValid)
         {
             return IdentityResult.Failed(_errorDescriber.InvalidToken());
+        }
+
+        return IdentityResult.Success;
+    }
+
+    public async Task<IdentityResult> ChangeEmail(string id, string token, string newEmail)
+    {
+        var userManager = _signInManager.UserManager;
+        var user = await userManager.FindByIdAsync(id);
+        if (user is null)
+        {
+            return IdentityResult.Failed(NotFound);
+        }
+
+        token = Uri.UnescapeDataString(token);
+
+        var isValid = await userManager.VerifyUserTokenAsync(user,
+            userManager.Options.Tokens.ChangeEmailTokenProvider,
+            UserManager<ApplicationUser>.GetChangeEmailTokenPurpose(newEmail),
+            token);
+
+        if (!isValid)
+        {
+            return IdentityResult.Failed(_errorDescriber.InvalidToken());
+        }
+
+        var result = await userManager.ChangeEmailAsync(user, newEmail, token);
+        if (!result.Succeeded)
+        {
+            return result;
+        }
+
+        return IdentityResult.Success;
+    }
+
+    public async Task<IdentityResult> ChangePassword(string id, string currentPassword, string newPassword)
+    {
+        var userManager = _signInManager.UserManager;
+        var user = await userManager.FindByIdAsync(id);
+        if (user is null)
+        {
+            return IdentityResult.Failed(NotFound);
+        }
+
+        IdentityResult result;
+        foreach (var validator in userManager.PasswordValidators)
+        {
+            result = await validator.ValidateAsync(userManager, user, newPassword);
+            if (!result.Succeeded)
+            {
+                return result;
+            }
+        }
+
+        result = await userManager.ChangePasswordAsync(user, currentPassword, newPassword);
+        if (!result.Succeeded)
+        {
+            return result;
         }
 
         return IdentityResult.Success;

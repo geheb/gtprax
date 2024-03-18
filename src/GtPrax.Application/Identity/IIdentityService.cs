@@ -13,8 +13,14 @@ public interface IIdentityService
     Task<IdentityResult> SetName(string id, string name, CancellationToken cancellationToken);
     Task<IdentityResult> ResetPassword(string id, string password);
     Task<IdentityResult> SetRoles(string id, UserRole[] roles);
-    Task<string?> GeneratePasswordResetToken(string id);
-    Task<string?> GenerateEmailConfirmationToken(string id);
-    Task<IdentityResult> VerifyPasswordResetToken(string id, string token);
-    Task<IdentityResult> VerifyEmailConfirmationToken(string id, string token);
+
+    Task<string?> GenerateConfirmEmailToken(string id);
+    Task<IdentityResult> VerifyConfirmEmailToken(string id, string token);
+    Task<IdentityResult> ConfirmEmail(string id, string token, string newPassword);
+
+    Task<string?> GenerateChangeEmailToken(string id, string newEmail);
+    Task<IdentityResult> VerifyChangeEmailToken(string id, string token, string newEmail);
+    Task<IdentityResult> ChangeEmail(string id, string token, string newEmail);
+
+    Task<IdentityResult> ChangePassword(string id, string currentPassword, string newPassword);
 }
