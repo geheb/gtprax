@@ -44,11 +44,11 @@ internal sealed class ApplicationUserStore :
         var filter = Builders<ApplicationUser>.Filter.Eq(f => f.Id, ObjectId.Parse(id));
         var update = Builders<ApplicationUser>.Update.Set(f => f.Name, name);
         var result = await _collection.UpdateOneAsync(filter, update, cancellationToken: cancellationToken);
-        if (!result.IsAcknowledged || result.ModifiedCount < 1)
+        if (result.IsAcknowledged && (result.ModifiedCount > 0 || result.MatchedCount > 0))
         {
-            return IdentityResult.Failed(_identityErrorDescriber.DefaultError());
+            return IdentityResult.Success;
         }
-        return IdentityResult.Success;
+        return IdentityResult.Failed(_identityErrorDescriber.DefaultError());
     }
 
     public async Task<IdentityResult> SetLastLogin(string id, DateTimeOffset lastLogin, CancellationToken cancellationToken)
@@ -56,11 +56,11 @@ internal sealed class ApplicationUserStore :
         var filter = Builders<ApplicationUser>.Filter.Eq(f => f.Id, ObjectId.Parse(id));
         var update = Builders<ApplicationUser>.Update.Set(f => f.LastLoginDate, lastLogin);
         var result = await _collection.UpdateOneAsync(filter, update, cancellationToken: cancellationToken);
-        if (!result.IsAcknowledged || result.ModifiedCount < 1)
+        if (result.IsAcknowledged && result.ModifiedCount > 0)
         {
-            return IdentityResult.Failed(_identityErrorDescriber.DefaultError());
+            return IdentityResult.Success;
         }
-        return IdentityResult.Success;
+        return IdentityResult.Failed(_identityErrorDescriber.DefaultError());
     }
 
     public Task AddClaimsAsync(ApplicationUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
@@ -87,11 +87,11 @@ internal sealed class ApplicationUserStore :
     {
         var filter = Builders<ApplicationUser>.Filter.Eq(f => f.Id, user.Id);
         var result = await _collection.DeleteOneAsync(filter, cancellationToken);
-        if (!result.IsAcknowledged)
+        if (result.IsAcknowledged)
         {
-            return IdentityResult.Failed(_identityErrorDescriber.DefaultError());
+            return IdentityResult.Success;
         }
-        return IdentityResult.Success;
+        return IdentityResult.Failed(_identityErrorDescriber.DefaultError());
     }
 
     public async Task<ApplicationUser?> FindByEmailAsync(string normalizedEmail, CancellationToken cancellationToken)
@@ -125,7 +125,7 @@ internal sealed class ApplicationUserStore :
     }
 
     public Task<string?> GetEmailAsync(ApplicationUser user, CancellationToken cancellationToken)
-        => Task.FromResult(user.Email);
+        => Task.FromResult(user.Email ?? null);
 
     public Task<bool> GetEmailConfirmedAsync(ApplicationUser user, CancellationToken cancellationToken)
         => Task.FromResult(user.EmailConfirmed);
@@ -137,10 +137,10 @@ internal sealed class ApplicationUserStore :
         => Task.FromResult(user.LockoutEndDate);
 
     public Task<string?> GetNormalizedEmailAsync(ApplicationUser user, CancellationToken cancellationToken)
-        => Task.FromResult(user.Email);
+        => Task.FromResult(user.Email ?? null);
 
     public Task<string?> GetNormalizedUserNameAsync(ApplicationUser user, CancellationToken cancellationToken)
-        => Task.FromResult(user.UserName);
+        => Task.FromResult(user.UserName ?? null);
 
     public Task<string?> GetPasswordHashAsync(ApplicationUser user, CancellationToken cancellationToken)
         => Task.FromResult(user.PasswordHash);
@@ -152,7 +152,7 @@ internal sealed class ApplicationUserStore :
         => Task.FromResult(user.Id.ToString());
 
     public Task<string?> GetUserNameAsync(ApplicationUser user, CancellationToken cancellationToken)
-        => Task.FromResult(user.UserName);
+        => Task.FromResult(user.UserName ?? null);
 
     public async Task<IList<ApplicationUser>> GetUsersForClaimAsync(Claim claim, CancellationToken cancellationToken)
     {
@@ -196,7 +196,7 @@ internal sealed class ApplicationUserStore :
 
     public Task SetEmailAsync(ApplicationUser user, string? email, CancellationToken cancellationToken)
     {
-        user.Email = email;
+        user.Email = email!;
         return Task.CompletedTask;
     }
 
@@ -239,7 +239,7 @@ internal sealed class ApplicationUserStore :
 
     public Task SetUserNameAsync(ApplicationUser user, string? userName, CancellationToken cancellationToken)
     {
-        user.UserName = userName;
+        user.UserName = userName!;
         return Task.CompletedTask;
     }
 
@@ -249,11 +249,11 @@ internal sealed class ApplicationUserStore :
 
         var filter = Builders<ApplicationUser>.Filter.Eq(f => f.Id, user.Id);
         var result = await _collection.ReplaceOneAsync(filter, user, cancellationToken: cancellationToken);
-        if (!result.IsAcknowledged || result.ModifiedCount < 1)
+        if (result.IsAcknowledged && (result.ModifiedCount > 0 || result.MatchedCount > 0))
         {
-            return IdentityResult.Failed(_identityErrorDescriber.DefaultError());
+            return IdentityResult.Success;
         }
-        return IdentityResult.Success;
+        return IdentityResult.Failed(_identityErrorDescriber.DefaultError());
     }
 
     public Task AddToRoleAsync(ApplicationUser user, string roleName, CancellationToken cancellationToken)

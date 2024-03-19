@@ -1,12 +1,12 @@
-namespace GtPrax.UI.Pages.Waitlist;
+namespace GtPrax.UI.Pages.MyAccount;
 
 using GtPrax.UI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-[Node("Wartelisten", FromPage = typeof(Pages.IndexModel))]
+[Node("E-Mail ändern", FromPage = typeof(IndexModel))]
 [Authorize]
-public class IndexModel : PageModel
+public class ChangeEmailModel : PageModel
 {
     public void OnGet()
     {

@@ -5,11 +5,11 @@ using MongoDB.Bson.Serialization.Attributes;
 
 internal sealed class ApplicationUser
 {
-    public ObjectId Id { get; set; }
+    public required ObjectId Id { get; set; }
 
-    public string? UserName { get; set; }
+    public required string UserName { get; set; }
 
-    public string? Email { get; set; }
+    public required string Email { get; set; }
 
     public bool EmailConfirmed { get; set; }
 
@@ -41,7 +41,7 @@ internal sealed class ApplicationUser
 
     public bool IsPasswordReset { get; set; }
 
-    public string? Name { get; set; }
+    public required string Name { get; set; }
 
     public ICollection<ApplicationUserClaim> Claims { get; set; } = new List<ApplicationUserClaim>();
 

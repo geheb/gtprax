@@ -1,10 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.Extensions.Identity.Stores" />
+    <PackageReference Include="MongoDB.Driver" />
+    <PackageReference Include="Scriban" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GtPrax.Application\GtPrax.Application.csproj" />
+    <ProjectReference Include="..\GtPrax.Domain\GtPrax.Domain.csproj" />
+  </ItemGroup>
 
   <ItemGroup>
     <None Remove="Email\ChangeEmail.html" />
@@ -17,17 +23,5 @@
     <EmbeddedResource Include="Email\ConfirmEmail.html" />
     <EmbeddedResource Include="Email\PasswordForgotten.html" />
   </ItemGroup>
-
-  <ItemGroup>
-    <FrameworkReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="8.0.2" />
-    <PackageReference Include="MongoDB.Driver" Version="2.24.0" />
-    <PackageReference Include="Scriban" Version="5.9.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\GtPrax.Application\GtPrax.Application.csproj" />
-    <ProjectReference Include="..\GtPrax.Domain\GtPrax.Domain.csproj" />
-  </ItemGroup>
-
+  
 </Project>
