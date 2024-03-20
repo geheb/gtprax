@@ -1,10 +1,8 @@
 namespace GtPrax.UI.Pages.MyAccount;
 
 using System.ComponentModel.DataAnnotations;
-using System.Xml.Linq;
 using GtPrax.Application.Identity;
 using GtPrax.Application.UseCases.MyAccount;
-using GtPrax.Domain.Entities;
 using GtPrax.UI.Attributes;
 using GtPrax.UI.Models;
 using Mediator;

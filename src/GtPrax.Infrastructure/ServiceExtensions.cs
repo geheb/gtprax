@@ -22,6 +22,8 @@ public static class ServiceExtensions
             classMap.AutoMap();
         });
 
+        services.AddMemoryCache();
+
         services.AddTransient<IIdentityService, IdentityService>();
 
         services.AddSingleton(TimeProvider.System);
@@ -62,6 +64,7 @@ public static class ServiceExtensions
         services.AddTransient<EmailQueueStore>();
         services.AddTransient<IEmailSender, SmtpDispatcher>();
         services.AddTransient<IEmailQueueService, EmailQueueService>();
+        services.AddSingleton<IEmailValidatorService, EmailValidatorService>();
 
         return services;
     }

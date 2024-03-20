@@ -64,7 +64,7 @@ public class IndexModel : PageModel
         {
             0 => "Änderungen wurden gespeichert.",
             1 => "Das Passwort wurde geändert.",
-            2 => "Eine E-Mail wird an die neue E-Mail-Adresse versendet und muss bestätigt werden - erst dann ist die Änderung vollständig.",
+            2 => "Eine E-Mail wird an die neue E-Mail-Adresse versendet. Diese muss bestätigt werden - erst dann ist die Änderung vollständig.",
             _ => default
         };
 
@@ -73,7 +73,7 @@ public class IndexModel : PageModel
         var user = await _mediator.Send(new GetMyUserQuery(User.GetId()!), cancellationToken);
         if (user is null)
         {
-            ModelState.AddModelError(string.Empty, "Benutzer nicht gefunden.");
+            ModelState.AddModelError(string.Empty, "Der Benutzer wurde nicht gefunden.");
             IsDisabled = true;
             return null;
         }

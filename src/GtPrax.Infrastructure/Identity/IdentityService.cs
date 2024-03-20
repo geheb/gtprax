@@ -158,30 +158,6 @@ internal sealed class IdentityService : IIdentityService
         return Uri.EscapeDataString(token);
     }
 
-    public async Task<IdentityResult> VerifyConfirmEmailToken(string id, string token)
-    {
-        var userManager = _signInManager.UserManager;
-        var user = await userManager.FindByIdAsync(id);
-        if (user is null)
-        {
-            return IdentityResult.Failed(NotFound);
-        }
-
-        token = Uri.UnescapeDataString(token);
-
-        var isValid = await userManager.VerifyUserTokenAsync(user,
-            userManager.Options.Tokens.EmailConfirmationTokenProvider,
-            UserManager<ApplicationUser>.ConfirmEmailTokenPurpose,
-            token);
-
-        if (!isValid)
-        {
-            return IdentityResult.Failed(_errorDescriber.InvalidToken());
-        }
-
-        return IdentityResult.Success;
-    }
-
     public async Task<IdentityResult> ConfirmEmail(string id, string token, string newPassword)
     {
         var userManager = _signInManager.UserManager;
@@ -237,30 +213,6 @@ internal sealed class IdentityService : IIdentityService
         return Uri.EscapeDataString(token);
     }
 
-    public async Task<IdentityResult> VerifyChangeEmailToken(string id, string token, string newEmail)
-    {
-        var userManager = _signInManager.UserManager;
-        var user = await userManager.FindByIdAsync(id);
-        if (user is null)
-        {
-            return IdentityResult.Failed(NotFound);
-        }
-
-        token = Uri.UnescapeDataString(token);
-
-        var isValid = await userManager.VerifyUserTokenAsync(user,
-            userManager.Options.Tokens.ChangeEmailTokenProvider,
-            UserManager<ApplicationUser>.GetChangeEmailTokenPurpose(newEmail),
-            token);
-
-        if (!isValid)
-        {
-            return IdentityResult.Failed(_errorDescriber.InvalidToken());
-        }
-
-        return IdentityResult.Success;
-    }
-
     public async Task<IdentityResult> ChangeEmail(string id, string token, string newEmail)
     {
         var userManager = _signInManager.UserManager;
@@ -314,6 +266,23 @@ internal sealed class IdentityService : IIdentityService
         if (!result.Succeeded)
         {
             return result;
+        }
+
+        return IdentityResult.Success;
+    }
+
+    public async Task<IdentityResult> CheckPassword(string id, string currentPassword)
+    {
+        var userManager = _signInManager.UserManager;
+        var user = await userManager.FindByIdAsync(id);
+        if (user is null)
+        {
+            return IdentityResult.Failed(NotFound);
+        }
+
+        if (!await userManager.CheckPasswordAsync(user, currentPassword))
+        {
+            return IdentityResult.Failed(_errorDescriber.PasswordMismatch());
         }
 
         return IdentityResult.Success;
