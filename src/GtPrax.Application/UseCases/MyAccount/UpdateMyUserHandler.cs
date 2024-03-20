@@ -6,17 +6,17 @@ using FluentResults;
 using GtPrax.Application.Identity;
 using Mediator;
 
-internal sealed class UpdateNameHandler : IRequestHandler<UpdateNameCommand, Result>
+internal sealed class UpdateMyUserHandler : IRequestHandler<UpdateMyUserCommand, Result>
 {
     private readonly IIdentityService _identityService;
 
-    public UpdateNameHandler(
+    public UpdateMyUserHandler(
         IIdentityService identityService)
     {
         _identityService = identityService;
     }
 
-    public async ValueTask<Result> Handle(UpdateNameCommand request, CancellationToken cancellationToken)
+    public async ValueTask<Result> Handle(UpdateMyUserCommand request, CancellationToken cancellationToken)
     {
         var result = await _identityService.SetName(request.Id, request.Name, cancellationToken);
         if (!result.Succeeded)

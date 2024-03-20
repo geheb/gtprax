@@ -46,7 +46,7 @@ public class IndexModel : PageModel
             return;
         }
 
-        var result = await _mediator.Send(new UpdateNameCommand(User.GetId()!, Name!), cancellationToken);
+        var result = await _mediator.Send(new UpdateMyUserCommand(User.GetId()!, Name!), cancellationToken);
         if (result.IsFailed)
         {
             result.Errors.ForEach(e => ModelState.AddModelError(string.Empty, e.Message));
