@@ -6,24 +6,22 @@ using FluentResults;
 using GtPrax.Application.Identity;
 using Mediator;
 
-internal sealed class UpdateMyUserHandler : IRequestHandler<UpdateMyUserCommand, Result>
+internal sealed class ChangeMyPasswordHandler : IRequestHandler<ChangeMyPasswordCommand, Result>
 {
     private readonly IIdentityService _identityService;
 
-    public UpdateMyUserHandler(
-        IIdentityService identityService)
+    public ChangeMyPasswordHandler(IIdentityService identityService)
     {
         _identityService = identityService;
     }
 
-    public async ValueTask<Result> Handle(UpdateMyUserCommand request, CancellationToken cancellationToken)
+    public async ValueTask<Result> Handle(ChangeMyPasswordCommand request, CancellationToken cancellationToken)
     {
-        var result = await _identityService.SetName(request.UserId, request.Name, cancellationToken);
+        var result = await _identityService.ChangePassword(request.UserId, request.CurrentPassword, request.NewPassword);
         if (!result.Succeeded)
         {
             return Result.Fail(result.Errors.Select(e => e.Description));
         }
-
         return Result.Ok();
     }
 }

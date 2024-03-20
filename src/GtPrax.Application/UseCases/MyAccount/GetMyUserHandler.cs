@@ -17,7 +17,7 @@ internal sealed class GetMyUserHandler : IQueryHandler<GetMyUserQuery, MyUserDto
 
     public async ValueTask<MyUserDto?> Handle(GetMyUserQuery request, CancellationToken cancellationToken)
     {
-        var user = await _identityService.FindUser(request.Id);
+        var user = await _identityService.FindUser(request.UserId);
         if (user is null)
         {
             return null;

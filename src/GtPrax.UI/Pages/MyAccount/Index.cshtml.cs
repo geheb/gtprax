@@ -33,8 +33,10 @@ public class IndexModel : PageModel
         _mediator = mediator;
     }
 
-    public async Task OnGetAsync(CancellationToken cancellationToken)
+    public async Task OnGetAsync(int? message, CancellationToken cancellationToken)
     {
+        SetMessage(message);
+
         var user = await UpdateView(cancellationToken);
         Name = user?.Name;
     }
@@ -53,9 +55,18 @@ public class IndexModel : PageModel
         }
         else
         {
-            Message = "Änderungen wurden gespeichert.";
+            SetMessage(0);
         }
     }
+
+    private void SetMessage(int? message) =>
+        Message = message switch
+        {
+            0 => "Änderungen wurden gespeichert.",
+            1 => "Das Passwort wurde geändert.",
+            2 => "Eine E-Mail wird an die neue E-Mail-Adresse versendet und muss bestätigt werden - erst dann ist die Änderung vollständig.",
+            _ => default
+        };
 
     private async Task<MyUserDto?> UpdateView(CancellationToken cancellationToken)
     {
