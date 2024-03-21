@@ -8,11 +8,18 @@ public interface IIdentityService
 {
     Task<IdentityResult> SignIn(string email, string password, CancellationToken cancellationToken);
     Task SignOutCurrentUser();
+
     Task<User?> FindUser(string id);
+    Task<User?> FindUserByEmail(string email);
     Task<User[]> GetAllUsers(CancellationToken cancellationToken);
+
     Task<IdentityResult> SetName(string id, string name, CancellationToken cancellationToken);
-    Task<IdentityResult> ResetPassword(string id, string password);
+    Task<IdentityResult> SetPassword(string id, string newPassword);
     Task<IdentityResult> SetRoles(string id, UserRole[] roles);
+
+    Task<string?> GenerateResetPasswordToken(string id);
+    Task<IdentityResult> VerifyResetPasswordToken(string id, string token);
+    Task<IdentityResult> ResetPassword(string id, string token, string newPassword);
 
     Task<string?> GenerateConfirmEmailToken(string id);
     Task<IdentityResult> ConfirmEmail(string id, string token, string newPassword);

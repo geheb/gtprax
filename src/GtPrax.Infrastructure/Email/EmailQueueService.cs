@@ -58,7 +58,7 @@ internal sealed class EmailQueueService : IEmailQueueService
         await _store.Add(entity, cancellationToken);
     }
 
-    public async Task EnqueuePasswordForgotten(string email, string name, string link, CancellationToken cancellationToken)
+    public async Task EnqueueResetPassword(string email, string name, string link, CancellationToken cancellationToken)
     {
         var model = new
         {
@@ -69,7 +69,7 @@ internal sealed class EmailQueueService : IEmailQueueService
             signature = _signature
         };
 
-        var message = await _templateRenderer.Render("PasswordForgotten.html", model);
+        var message = await _templateRenderer.Render("ResetPassword.html", model);
         var entity = new EmailQueue
         {
             Id = ObjectId.GenerateNewId(),

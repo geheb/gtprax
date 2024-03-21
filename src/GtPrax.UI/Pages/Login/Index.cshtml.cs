@@ -22,15 +22,30 @@ public class IndexModel : PageModel
     public string? Password { get; set; }
 
     public bool IsDisabled { get; set; }
+    public string? Message { get; set; }
 
     public IndexModel(IIdentityService identityService)
     {
         _identityService = identityService;
     }
 
+    public void OnGet(int? message)
+    {
+        if (message == 1)
+        {
+            Message = "Du bekommst demnächst eine E-Mail von uns! In der E-Mail ist ein Link zum Zurücksetzen des Passworts zu finden.";
+        }
+        else if (message == 2)
+        {
+            Message = "Das Passwort wurde geändert. Melde dich jetzt mit dem neuen Passwort an.";
+        }
+    }
+
     public async Task<IActionResult> OnPostAsync(string? returnUrl, CancellationToken cancellationToken)
     {
-        if (!string.IsNullOrEmpty(UserName))
+        Message = null;
+
+        if (!string.IsNullOrWhiteSpace(UserName))
         {
             IsDisabled = true;
             ModelState.AddModelError(string.Empty, "Die Anfrage ist ungültig.");

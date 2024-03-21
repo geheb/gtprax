@@ -16,13 +16,13 @@
   <ItemGroup>
     <None Remove="Email\ChangeEmail.html" />
     <None Remove="Email\ConfirmEmail.html" />
-    <None Remove="Email\PasswordForgotten.html" />
+    <None Remove="Email\ResetPassword.html" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Email\ChangeEmail.html" />
     <EmbeddedResource Include="Email\ConfirmEmail.html" />
-    <EmbeddedResource Include="Email\PasswordForgotten.html" />
+    <EmbeddedResource Include="Email\ResetPassword.html" />
   </ItemGroup>
   
 </Project>

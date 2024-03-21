@@ -58,7 +58,6 @@ internal sealed class ChangeMyEmailHandler : IRequestHandler<ChangeMyEmailComman
             Query = $"id={user.Id}&token={token}&email={request.NewEmail}"
         }.ToString();
 
-
         await _emailQueueService.EnqueueChangeEmail(request.NewEmail, user.Name, callbackUrl, cancellationToken);
 
         return Result.Ok();

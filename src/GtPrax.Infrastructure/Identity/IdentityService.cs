@@ -31,6 +31,9 @@ internal sealed class IdentityService : IIdentityService
     public async Task<User?> FindUser(string id) =>
         (await _signInManager.UserManager.FindByIdAsync(id))?.MapToUser();
 
+    public async Task<User?> FindUserByEmail(string email) =>
+        (await _signInManager.UserManager.FindByEmailAsync(email))?.MapToUser();
+
     public async Task<User[]> GetAllUsers(CancellationToken cancellationToken) =>
         (await _store.GetAllUsers(cancellationToken)).MapToUsers();
 
@@ -67,7 +70,7 @@ internal sealed class IdentityService : IIdentityService
     public Task<IdentityResult> SetName(string id, string name, CancellationToken cancellationToken) =>
         _store.SetName(id, name, cancellationToken);
 
-    public async Task<IdentityResult> ResetPassword(string id, string password)
+    public async Task<IdentityResult> SetPassword(string id, string newPassword)
     {
         var userManager = _signInManager.UserManager;
         var user = await userManager.FindByIdAsync(id);
@@ -79,7 +82,7 @@ internal sealed class IdentityService : IIdentityService
         IdentityResult result;
         foreach (var validator in userManager.PasswordValidators)
         {
-            result = await validator.ValidateAsync(userManager, user, password);
+            result = await validator.ValidateAsync(userManager, user, newPassword);
             if (!result.Succeeded)
             {
                 return result;
@@ -87,7 +90,7 @@ internal sealed class IdentityService : IIdentityService
         }
 
         var token = await userManager.GeneratePasswordResetTokenAsync(user);
-        result = await userManager.ResetPasswordAsync(user, token, password);
+        result = await userManager.ResetPasswordAsync(user, token, newPassword);
         if (!result.Succeeded)
         {
             return result;
@@ -141,6 +144,72 @@ internal sealed class IdentityService : IIdentityService
             {
                 return result;
             }
+        }
+
+        return IdentityResult.Success;
+    }
+
+    public async Task<string?> GenerateResetPasswordToken(string id)
+    {
+        var userManager = _signInManager.UserManager;
+        var user = await userManager.FindByIdAsync(id);
+        if (user is null)
+        {
+            return null;
+        }
+        var token = await userManager.GeneratePasswordResetTokenAsync(user);
+        return Uri.EscapeDataString(token);
+    }
+
+    public async Task<IdentityResult> VerifyResetPasswordToken(string id, string token)
+    {
+        var userManager = _signInManager.UserManager;
+        var user = await userManager.FindByIdAsync(id);
+        if (user is null)
+        {
+            return IdentityResult.Failed(NotFound);
+        }
+
+        token = Uri.UnescapeDataString(token);
+
+        var isValid = await userManager.VerifyUserTokenAsync(user,
+            userManager.Options.Tokens.PasswordResetTokenProvider,
+            UserManager<ApplicationUser>.ResetPasswordTokenPurpose,
+            token);
+
+        if (!isValid)
+        {
+            return IdentityResult.Failed(_errorDescriber.InvalidToken());
+        }
+
+        return IdentityResult.Success;
+    }
+
+    public async Task<IdentityResult> ResetPassword(string id, string token, string newPassword)
+    {
+        var userManager = _signInManager.UserManager;
+        var user = await userManager.FindByIdAsync(id);
+        if (user is null)
+        {
+            return IdentityResult.Failed(NotFound);
+        }
+
+        token = Uri.UnescapeDataString(token);
+
+        var isValid = await userManager.VerifyUserTokenAsync(user,
+            userManager.Options.Tokens.PasswordResetTokenProvider,
+            UserManager<ApplicationUser>.ResetPasswordTokenPurpose,
+            token);
+
+        if (!isValid)
+        {
+            return IdentityResult.Failed(_errorDescriber.InvalidToken());
+        }
+
+        var result = await userManager.ResetPasswordAsync(user, token, newPassword);
+        if (!result.Succeeded)
+        {
+            return result;
         }
 
         return IdentityResult.Success;
