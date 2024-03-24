@@ -1,7 +1,7 @@
 namespace GtPrax.Infrastructure.Identity;
 
-using System;
 using System.Linq;
+using System.Security.Claims;
 using GtPrax.Domain.Entities;
 
 internal static class ApplicationUserMapper
@@ -14,7 +14,8 @@ internal static class ApplicationUserMapper
             Email = user.Email,
             LastLoginDate = user.LastLoginDate,
             LockoutEndDate = user.IsLockoutEnabled ? user.LockoutEndDate : null,
-            Roles = user.Roles.Select(r => Enum.Parse<UserRole>(r.Name)).ToArray(),
+            IsEmailConfirmed = user.IsEmailConfirmed,
+            Roles = user.Claims.Where(c => c.Type == ClaimsIdentity.DefaultRoleClaimType).Select(r => r.Value).ToArray(),
         };
 
     public static User[] MapToUsers(this IEnumerable<ApplicationUser> users) =>

@@ -128,7 +128,7 @@ internal sealed class ApplicationUserStore :
         => Task.FromResult(user.Email ?? null);
 
     public Task<bool> GetEmailConfirmedAsync(ApplicationUser user, CancellationToken cancellationToken)
-        => Task.FromResult(user.EmailConfirmed);
+        => Task.FromResult(user.IsEmailConfirmed);
 
     public Task<bool> GetLockoutEnabledAsync(ApplicationUser user, CancellationToken cancellationToken)
         => Task.FromResult(user.IsLockoutEnabled);
@@ -202,7 +202,7 @@ internal sealed class ApplicationUserStore :
 
     public Task SetEmailConfirmedAsync(ApplicationUser user, bool confirmed, CancellationToken cancellationToken)
     {
-        user.EmailConfirmed = confirmed;
+        user.IsEmailConfirmed = confirmed;
         return Task.CompletedTask;
     }
 
@@ -258,36 +258,36 @@ internal sealed class ApplicationUserStore :
 
     public Task AddToRoleAsync(ApplicationUser user, string roleName, CancellationToken cancellationToken)
     {
-        var role = new ApplicationUserRole(roleName);
-        if (!user.Roles.Contains(role))
+        var claim = new ApplicationUserClaim(ClaimsIdentity.DefaultRoleClaimType, roleName);
+        if (!user.Claims.Contains(claim))
         {
-            user.Roles.Add(role);
+            user.Claims.Add(claim);
         }
         return Task.CompletedTask;
     }
 
     public Task RemoveFromRoleAsync(ApplicationUser user, string roleName, CancellationToken cancellationToken)
     {
-        user.Roles.Remove(new ApplicationUserRole(roleName));
+        user.Claims.Remove(new ApplicationUserClaim(ClaimsIdentity.DefaultRoleClaimType, roleName));
         return Task.CompletedTask;
     }
 
     public Task<IList<string>> GetRolesAsync(ApplicationUser user, CancellationToken cancellationToken)
     {
-        var roles = user.Roles.Select(r => r.Name).ToList();
+        var roles = user.Claims.Where(c => c.Type == ClaimsIdentity.DefaultRoleClaimType).Select(r => r.Value).ToList();
         return Task.FromResult<IList<string>>(roles);
     }
 
     public Task<bool> IsInRoleAsync(ApplicationUser user, string roleName, CancellationToken cancellationToken)
     {
-        var hasRole = user.Roles.Contains(new ApplicationUserRole(roleName));
+        var hasRole = user.Claims.Contains(new ApplicationUserClaim(ClaimsIdentity.DefaultRoleClaimType, roleName));
         return Task.FromResult(hasRole);
     }
 
     public async Task<IList<ApplicationUser>> GetUsersInRoleAsync(string roleName, CancellationToken cancellationToken)
     {
-        var filter = Builders<ApplicationUser>.Filter.ElemMatch(f => f.Roles,
-                Builders<ApplicationUserRole>.Filter.Eq(f => f.Name, roleName));
+        var filter = Builders<ApplicationUser>.Filter.ElemMatch(f => f.Claims,
+                Builders<ApplicationUserClaim>.Filter.Eq(f => f.Type, ClaimsIdentity.DefaultRoleClaimType));
 
         using var documents = await _collection.FindAsync(filter, cancellationToken: cancellationToken);
         return await documents.ToListAsync(cancellationToken);

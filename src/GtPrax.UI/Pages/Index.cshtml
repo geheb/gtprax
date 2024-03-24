@@ -44,14 +44,14 @@
             </nav>
         }
 
-        @if (Model.HasNodeAccess(typeof(Users.IndexModel)))
+        @if (Model.HasNodeAccess(typeof(UsersManagement.IndexModel)))
         {
             <p class="title">Administration</p>
             <nav class="bd-links">
 
-                @if (Model.HasNodeAccess(typeof(Users.IndexModel)))
+                @if (Model.HasNodeAccess(typeof(UsersManagement.IndexModel)))
                 {
-                    <a href="/Users" class="bd-link has-text-grey">
+                    <a href="/UsersManagement" class="bd-link has-text-grey">
                         <span class="icon bd-link-icon has-text-info">
                             <i class="fas fa-users"></i>
                         </span>

@@ -96,7 +96,7 @@ internal sealed class IdentityService : IIdentityService
             return result;
         }
 
-        if (!user.EmailConfirmed)
+        if (!user.IsEmailConfirmed)
         {
             token = await userManager.GenerateEmailConfirmationTokenAsync(user);
             result = await userManager.ConfirmEmailAsync(user, token);
@@ -236,7 +236,7 @@ internal sealed class IdentityService : IIdentityService
             return IdentityResult.Failed(NotFound);
         }
 
-        if (!user.EmailConfirmed)
+        if (!user.IsEmailConfirmed)
         {
             token = Uri.UnescapeDataString(token);
 

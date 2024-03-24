@@ -1,4 +1,4 @@
-namespace GtPrax.Domain.Entities;
+namespace GtPrax.Application.Identity;
 
 public enum UserRole
 {

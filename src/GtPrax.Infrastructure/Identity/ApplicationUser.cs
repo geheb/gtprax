@@ -11,7 +11,7 @@ internal sealed class ApplicationUser
 
     public required string Email { get; set; }
 
-    public bool EmailConfirmed { get; set; }
+    public bool IsEmailConfirmed { get; set; }
 
     public bool IsLockoutEnabled { get; set; }
 
@@ -39,11 +39,7 @@ internal sealed class ApplicationUser
     [BsonRepresentation(BsonType.String)]
     public DateTimeOffset? DeactivationDate { get; set; }
 
-    public bool IsPasswordReset { get; set; }
-
     public required string Name { get; set; }
 
     public ICollection<ApplicationUserClaim> Claims { get; set; } = new List<ApplicationUserClaim>();
-
-    public ICollection<ApplicationUserRole> Roles { get; set; } = new List<ApplicationUserRole>();
 }

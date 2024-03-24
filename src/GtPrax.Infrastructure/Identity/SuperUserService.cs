@@ -1,7 +1,8 @@
 namespace GtPrax.Infrastructure.Identity;
 
+using System.Security.Claims;
 using System.Threading.Tasks;
-using GtPrax.Domain.Entities;
+using GtPrax.Application.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -53,9 +54,9 @@ internal sealed class SuperUserService
             Name = "Super User",
             UserName = "SuperUser",
             Email = superUserEmail,
-            EmailConfirmed = true,
+            IsEmailConfirmed = true,
         };
-        superUser.Roles.Add(new ApplicationUserRole(UserRole.Admin.ToString()));
+        superUser.Claims.Add(new ApplicationUserClaim(ClaimsIdentity.DefaultRoleClaimType, UserRole.Admin.ToString()));
 
         var result = await _userManager.CreateAsync(superUser, password);
         if (!result.Succeeded)

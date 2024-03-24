@@ -1,7 +1,6 @@
 using System.Globalization;
 using GtPrax.Application;
 using GtPrax.Infrastructure;
-using GtPrax.UI.Attributes;
 using GtPrax.UI.Extensions;
 using GtPrax.UI.Middlewares;
 using GtPrax.UI.Models;
@@ -67,11 +66,7 @@ try
         options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
     });
 
-    services.AddRazorPages()
-        .AddMvcOptions(options =>
-        {
-            options.Filters.Add<CancelledFilterAttribute>();
-        });
+    services.AddRazorPages();
 
     services.Configure<PageContentOptions>(config.GetSection("PageContent"));
     services.AddSingleton<NodeGeneratorService>();

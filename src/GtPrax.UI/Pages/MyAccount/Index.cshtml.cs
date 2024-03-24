@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Threading;
 using GtPrax.Application.Identity;
 using GtPrax.Application.UseCases.MyAccount;
+using GtPrax.Application.UseCases.UsersManagement;
 using GtPrax.UI.Attributes;
 using GtPrax.UI.Extensions;
 using GtPrax.UI.Models;
@@ -69,7 +70,7 @@ public class IndexModel : PageModel
             _ => default
         };
 
-    private async Task<MyUserDto?> UpdateView(CancellationToken cancellationToken)
+    private async Task<UserDto?> UpdateView(CancellationToken cancellationToken)
     {
         var user = await _mediator.Send(new GetMyUserQuery(User.GetId()!), cancellationToken);
         if (user is null)

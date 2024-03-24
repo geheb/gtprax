@@ -35,13 +35,13 @@ public static class NodeExtensions
 
         var breadcrumbGenerator = model.HttpContext.RequestServices.GetRequiredService<NodeGeneratorService>();
 
-        var nodes = pageModels.Select(t => breadcrumbGenerator.GetNode(t)).ToArray();
+        var nodes = pageModels.Select(breadcrumbGenerator.GetNode).ToArray();
         foreach (var node in nodes)
         {
             var hasRole =
                 node.AllowedRoles == null ||
                 node.AllowedRoles.Length == 0 ||
-                node.AllowedRoles.Any(r => model.User.IsInRole(r));
+                node.AllowedRoles.Any(model.User.IsInRole);
 
             if (hasRole)
             {
