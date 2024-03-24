@@ -29,7 +29,7 @@ internal sealed class ResetPasswordHandler : IRequestHandler<ResetPasswordComman
         var user = await _identityService.FindUserByEmail(request.Email);
         if (user is null)
         {
-            return Result.Fail("Der Benutzer wurde nicht gefunden.");
+            return Result.Fail(Messages.UserNotFound);
         }
 
         var token = await _identityService.GenerateResetPasswordToken(user.Id);

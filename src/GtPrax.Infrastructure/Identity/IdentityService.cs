@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Identity;
 
 internal sealed class IdentityService : IIdentityService
 {
-    private static readonly IdentityError NotFound = new() { Code = "NotFound", Description = "Der Benutzer wurde nicht gefunden." };
+    private static readonly IdentityError NotFound = new() { Code = nameof(Messages.UserNotFound), Description = Messages.UserNotFound };
 
     private readonly TimeProvider _timeProvider;
     private readonly ApplicationUserStore _store;
@@ -42,7 +42,7 @@ internal sealed class IdentityService : IIdentityService
         var user = await _signInManager.UserManager.FindByEmailAsync(email);
         if (user == null)
         {
-            return IdentityResult.Failed(new IdentityError { Code = "LoginFailed", Description = "Die Anmeldung ist fehlgeschlagen." });
+            return IdentityResult.Failed(new IdentityError { Code = nameof(Messages.LoginFailed), Description = Messages.LoginFailed });
         }
 
         var result = await _signInManager.PasswordSignInAsync(user, password, isPersistent: false, lockoutOnFailure: true);
@@ -52,15 +52,15 @@ internal sealed class IdentityService : IIdentityService
         }
         else if (result.IsLockedOut)
         {
-            return IdentityResult.Failed(new IdentityError { Code = "LockedOut", Description = "Dein Login ist vorübergehend gesperrt." });
+            return IdentityResult.Failed(new IdentityError { Code = nameof(Messages.AccountTempLockedOut), Description = Messages.AccountTempLockedOut });
         }
         else if (result.IsNotAllowed)
         {
-            return IdentityResult.Failed(new IdentityError { Code = "NotActivated", Description = "Dein Login ist nicht freigeschaltet." });
+            return IdentityResult.Failed(new IdentityError { Code = nameof(Messages.AccountNotActivated), Description = Messages.AccountNotActivated });
         }
         else
         {
-            return IdentityResult.Failed(new IdentityError { Code = "LoginFailed", Description = "Die Anmeldung ist fehlgeschlagen." });
+            return IdentityResult.Failed(new IdentityError { Code = nameof(Messages.LoginFailed), Description = Messages.LoginFailed });
         }
     }
 

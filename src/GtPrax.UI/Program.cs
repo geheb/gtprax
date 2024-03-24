@@ -92,7 +92,7 @@ try
     app.UseMiddleware<CspMiddleware>();
 
     app.UseNodeGenerator(typeof(GtPrax.UI.Pages.IndexModel).Assembly);
-    app.UseExceptionHandler("/Error/500");
+    app.UseExceptionHandler("/Error/500"); // handle exceptions
     app.UseStatusCodePagesWithReExecute("/Error/{0}");
     app.UseStaticFiles();
     app.UseRouting();

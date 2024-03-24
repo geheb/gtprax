@@ -5,6 +5,7 @@ using System.Threading;
 using GtPrax.Application.Identity;
 using GtPrax.Application.UseCases.MyAccount;
 using GtPrax.UI.Attributes;
+using GtPrax.UI.Extensions;
 using GtPrax.UI.Models;
 using Mediator;
 using Microsoft.AspNetCore.Authorization;
@@ -62,9 +63,9 @@ public class IndexModel : PageModel
     private void SetMessage(int? message) =>
         Message = message switch
         {
-            0 => "Änderungen wurden gespeichert.",
-            1 => "Das Passwort wurde geändert.",
-            2 => "Eine E-Mail wird an die neue E-Mail-Adresse versendet. Diese muss bestätigt werden - erst dann ist die Änderung vollständig.",
+            0 => Messages.ChangesSaved,
+            1 => Messages.PasswordSaved,
+            2 => Messages.ChangeEmailSent,
             _ => default
         };
 
@@ -73,7 +74,7 @@ public class IndexModel : PageModel
         var user = await _mediator.Send(new GetMyUserQuery(User.GetId()!), cancellationToken);
         if (user is null)
         {
-            ModelState.AddModelError(string.Empty, "Der Benutzer wurde nicht gefunden.");
+            ModelState.AddModelError(string.Empty, Messages.UserNotFound);
             IsDisabled = true;
             return null;
         }

@@ -22,7 +22,7 @@ public class ConfirmChangeEmailModel : PageModel
     {
         if (string.IsNullOrWhiteSpace(id) || string.IsNullOrWhiteSpace(token) || string.IsNullOrWhiteSpace(email))
         {
-            ModelState.AddModelError(string.Empty, "Die Anfrage ist ungültig.");
+            ModelState.AddModelError(string.Empty, Messages.InvalidRequest);
             return;
         }
 

@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using GtPrax.Application.Identity;
 using GtPrax.Application.UseCases.MyAccount;
 using GtPrax.UI.Attributes;
+using GtPrax.UI.Extensions;
 using GtPrax.UI.Models;
 using Mediator;
 using Microsoft.AspNetCore.Authorization;
@@ -55,7 +56,7 @@ public class ChangePasswordModel : PageModel
         }
         else
         {
-            return RedirectToPage("Index", new { message = 1 });
+            return RedirectToPage(StringExtensions.PageLinkName<IndexModel>(), new { message = 1 });
         }
     }
 }

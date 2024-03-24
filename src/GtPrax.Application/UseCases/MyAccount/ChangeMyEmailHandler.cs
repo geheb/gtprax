@@ -32,7 +32,7 @@ internal sealed class ChangeMyEmailHandler : IRequestHandler<ChangeMyEmailComman
         var user = await _identityService.FindUser(request.UserId);
         if (user is null)
         {
-            return Result.Fail("Der Benutzer wurde nicht gefunden.");
+            return Result.Fail(Messages.UserNotFound);
         }
 
         var result = await _identityService.CheckPassword(request.UserId, request.CurrentPassword);

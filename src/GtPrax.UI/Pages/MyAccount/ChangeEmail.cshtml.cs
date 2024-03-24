@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using GtPrax.Application.Identity;
 using GtPrax.Application.UseCases.MyAccount;
+using GtPrax.UI.Extensions;
 
 [Node("E-Mail-Adresse ändern", FromPage = typeof(IndexModel))]
 [Authorize]
@@ -44,7 +45,7 @@ public class ChangeEmailModel : PageModel
             return Page();
         }
 
-        var callbackUrl = Url.PageLink("ConfirmChangeEmail");
+        var callbackUrl = Url.PageLink(StringExtensions.PageLinkName<ConfirmChangeEmailModel>());
 
         var result = await _mediator.Send(new ChangeMyEmailCommand(User.GetId()!, CurrentPassword!, NewEmail!, callbackUrl!), cancellationToken);
         if (result.IsFailed)
@@ -53,7 +54,7 @@ public class ChangeEmailModel : PageModel
             return Page();
         }
 
-        return RedirectToPage("Index", new { message = 2 });
+        return RedirectToPage(StringExtensions.PageLinkName<IndexModel>(), new { message = 2 });
     }
 
     private async Task<bool> UpdateView(CancellationToken cancellationToken)
@@ -61,7 +62,7 @@ public class ChangeEmailModel : PageModel
         var user = await _mediator.Send(new GetMyUserQuery(User.GetId()!), cancellationToken);
         if (user is null)
         {
-            ModelState.AddModelError(string.Empty, "Der Benutzer wurde nicht gefunden.");
+            ModelState.AddModelError(string.Empty, Messages.UserNotFound);
             IsDisabled = true;
             return false;
         }

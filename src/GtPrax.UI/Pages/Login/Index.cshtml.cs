@@ -3,6 +3,7 @@ namespace GtPrax.UI.Pages.Login;
 using System.ComponentModel.DataAnnotations;
 using GtPrax.Application.Identity;
 using GtPrax.UI.Attributes;
+using GtPrax.UI.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -33,11 +34,11 @@ public class IndexModel : PageModel
     {
         if (message == 1)
         {
-            Message = "Du bekommst demnächst eine E-Mail von uns! In der E-Mail ist ein Link zum Zurücksetzen des Passworts zu finden.";
+            Message = Messages.ResetPasswordSent;
         }
         else if (message == 2)
         {
-            Message = "Das Passwort wurde geändert. Melde dich jetzt mit dem neuen Passwort an.";
+            Message = Messages.PasswordChanged;
         }
     }
 
@@ -48,7 +49,7 @@ public class IndexModel : PageModel
         if (!string.IsNullOrWhiteSpace(UserName))
         {
             IsDisabled = true;
-            ModelState.AddModelError(string.Empty, "Die Anfrage ist ungültig.");
+            ModelState.AddModelError(string.Empty, Messages.InvalidRequest);
             return Page();
         }
 
@@ -60,7 +61,7 @@ public class IndexModel : PageModel
         var result = await _identityService.SignIn(Email!, Password!, cancellationToken);
         if (!result.Succeeded)
         {
-            ModelState.AddModelError(string.Empty, "Die Anmeldung ist fehlgeschlagen.");
+            ModelState.AddModelError(string.Empty, Messages.LoginFailed);
             return Page();
         }
 

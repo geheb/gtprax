@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Threading;
 using GtPrax.Application.UseCases.Login;
 using GtPrax.UI.Attributes;
+using GtPrax.UI.Extensions;
 using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -38,7 +39,7 @@ public class ConfirmResetPasswordModel : PageModel
         if (!string.IsNullOrWhiteSpace(UserName) || string.IsNullOrWhiteSpace(id) || string.IsNullOrWhiteSpace(token))
         {
             IsDisabled = true;
-            ModelState.AddModelError(string.Empty, "Die Anfrage ist ungültig.");
+            ModelState.AddModelError(string.Empty, Messages.InvalidRequest);
             return;
         }
 
@@ -56,7 +57,7 @@ public class ConfirmResetPasswordModel : PageModel
         if (!string.IsNullOrWhiteSpace(UserName) || string.IsNullOrWhiteSpace(id) || string.IsNullOrWhiteSpace(token))
         {
             IsDisabled = true;
-            ModelState.AddModelError(string.Empty, "Die Anfrage ist ungültig.");
+            ModelState.AddModelError(string.Empty, Messages.InvalidRequest);
             return Page();
         }
 
@@ -68,7 +69,7 @@ public class ConfirmResetPasswordModel : PageModel
         }
         else
         {
-            return RedirectToPage("Index", new { message = 2 });
+            return RedirectToPage(StringExtensions.PageLinkName<IndexModel>(), new { message = 2 });
         }
     }
 

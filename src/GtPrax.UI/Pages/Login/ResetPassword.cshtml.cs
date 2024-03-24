@@ -3,6 +3,7 @@ namespace GtPrax.UI.Pages.Login;
 using System.ComponentModel.DataAnnotations;
 using GtPrax.Application.UseCases.Login;
 using GtPrax.UI.Attributes;
+using GtPrax.UI.Extensions;
 using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -40,7 +41,7 @@ public class ResetPasswordModel : PageModel
         if (!string.IsNullOrWhiteSpace(UserName))
         {
             IsDisabled = true;
-            ModelState.AddModelError(string.Empty, "Die Anfrage ist ungültig.");
+            ModelState.AddModelError(string.Empty, Messages.InvalidRequest);
             return Page();
         }
 
@@ -49,13 +50,14 @@ public class ResetPasswordModel : PageModel
             return Page();
         }
 
-        var callbackUrl = Url.PageLink("ConfirmResetPassword");
+        var callbackUrl = Url.PageLink(StringExtensions.PageLinkName<ConfirmResetPasswordModel>());
         var result = await _mediator.Send(new ResetPasswordCommand(Email!, callbackUrl!), cancellationToken);
         if (result.IsFailed)
         {
-            _logger.LogWarning("Request reset password for user {Email} failed: {Error}", Email, string.Join(", ", result.Errors.Select(e => e.Message)));
+            _logger.ResetPasswordFailed(Email!, result.Errors);
+            return Page();
         }
 
-        return RedirectToPage("Index", new { message = 1 });
+        return RedirectToPage(StringExtensions.PageLinkName<IndexModel>(), new { message = 1 });
     }
 }

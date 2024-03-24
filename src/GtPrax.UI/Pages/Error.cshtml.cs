@@ -1,5 +1,6 @@
 namespace GtPrax.UI.Pages;
 
+using GtPrax.UI.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
@@ -28,19 +29,13 @@ public class ErrorModel : PageModel
 
     private void HandleError(int code, string? returnUrl = null)
     {
-        var handler = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
-        if (handler?.Error is not null)
-        {
-            _logger.LogError(handler.Error, "Unhandled Exception occurred.");
-        }
-
         Code = code < 1 ? 500 : code;
         Description = code switch
         {
-            400 => "Die Anfrage kann nicht bearbeitet werden, da ein Fehler beim Client vorliegt.",
-            403 => $"Der Zugriff auf die angeforderte Seite '{returnUrl}' wurde verweigert.",
-            404 => "Die angeforderte Seite wurde nicht gefunden.",
-            _ => "Es ist ein interner Server-Fehler aufgetreten."
+            400 => Messages.ProcessRequestFailed,
+            403 => Messages.PageAccessDenied(returnUrl),
+            404 => Messages.PageNotFound,
+            _ => Messages.InternalServerError
         };
     }
 }
