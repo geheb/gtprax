@@ -3,7 +3,7 @@ namespace GtPrax.UI.Extensions;
 public static class Messages
 {
     public const string InvalidRequest = "Die Anfrage ist ungültig.";
-    public const string LoginFailed = "Die Anmeldung ist fehlgeschlagen.";
+    public const string SignInFailed = "Die Anmeldung ist fehlgeschlagen.";
     public const string ResetPasswordSent = "Du bekommst demnächst eine E-Mail von uns! In der E-Mail ist ein Link zum Zurücksetzen des Passworts zu finden.";
     public const string ChangeEmailSent = "Du bekommst demnächst eine E-Mail von uns! In der E-Mail ist ein Link zum Bestätigen der E-Mail-Adresse.";
     public const string PasswordChanged = "Das Passwort wurde geändert. Melde dich jetzt mit dem neuen Passwort an.";

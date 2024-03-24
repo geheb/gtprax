@@ -1,9 +1,10 @@
 namespace GtPrax.UI.Pages.Login;
 
 using System.ComponentModel.DataAnnotations;
-using GtPrax.Application.Identity;
+using GtPrax.Application.UseCases.Login;
 using GtPrax.UI.Attributes;
 using GtPrax.UI.Extensions;
+using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -11,7 +12,8 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 [AllowAnonymous]
 public class IndexModel : PageModel
 {
-    private readonly IIdentityService _identityService;
+    private readonly ILogger _logger;
+    private readonly IMediator _mediator;
 
     [BindProperty]
     public string? UserName { get; set; }
@@ -25,9 +27,12 @@ public class IndexModel : PageModel
     public bool IsDisabled { get; set; }
     public string? Message { get; set; }
 
-    public IndexModel(IIdentityService identityService)
+    public IndexModel(
+        ILogger<IndexModel> logger,
+        IMediator mediator)
     {
-        _identityService = identityService;
+        _logger = logger;
+        _mediator = mediator;
     }
 
     public void OnGet(int? message)
@@ -58,10 +63,11 @@ public class IndexModel : PageModel
             return Page();
         }
 
-        var result = await _identityService.SignIn(Email!, Password!, cancellationToken);
-        if (!result.Succeeded)
+        var result = await _mediator.Send(new SignInCommand(Email!, Password!), cancellationToken);
+        if (result.IsFailed)
         {
-            ModelState.AddModelError(string.Empty, Messages.LoginFailed);
+            _logger.SignInFailed(Email!.AnonymizeEmail(), result.Errors);
+            ModelState.AddModelError(string.Empty, Messages.SignInFailed);
             return Page();
         }
 

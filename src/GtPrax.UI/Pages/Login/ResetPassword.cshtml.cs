@@ -54,7 +54,7 @@ public class ResetPasswordModel : PageModel
         var result = await _mediator.Send(new ResetPasswordCommand(Email!, callbackUrl!), cancellationToken);
         if (result.IsFailed)
         {
-            _logger.ResetPasswordFailed(Email!, result.Errors);
+            _logger.ResetPasswordFailed(Email!.AnonymizeEmail(), result.Errors);
             return Page();
         }
 

@@ -1,6 +1,7 @@
 namespace GtPrax.UI.Pages.Login;
 
-using GtPrax.Application.Identity;
+using GtPrax.Application.UseCases.Login;
+using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -8,16 +9,16 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 [Authorize]
 public class ExitModel : PageModel
 {
-    private readonly IIdentityService _identityService;
+    private readonly IMediator _mediator;
 
-    public ExitModel(IIdentityService identityService)
+    public ExitModel(IMediator mediator)
     {
-        _identityService = identityService;
+        _mediator = mediator;
     }
 
-    public async Task<IActionResult> OnGetAsync()
+    public async Task<IActionResult> OnGetAsync(CancellationToken cancellationToken)
     {
-        await _identityService.SignOutCurrentUser();
+        await _mediator.Send(new SignOutCommand(), cancellationToken);
 
         foreach (var cookie in Request.Cookies.Keys)
         {
