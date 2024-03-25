@@ -1,5 +1,5 @@
-﻿function createToast(text, colorClass = 'is-primary') {
-    const id = '_' + Math.random().toString(36).substr(2, 9);
+function createToast(text, colorClass = 'is-primary') {
+    const id = '_' + Math.random().toString(36).substring(2, 9);
     const html = `<div class="notification ${colorClass} has-fadein" id="${id}"><button class="delete"></button>${text}</div>`;
     $(".toast-container").append(html);
     const element = $(`#${id}`);
@@ -81,7 +81,7 @@ function handleModal(args) {
         if (params.confirm.dataurl) {
             const dataurl = e.relatedTarget.dataset[params.confirm.dataurl];
             
-            confirm.click(function (evClick) {
+            confirm.on('click', function (evClick) {
                 evClick.preventDefault();
                 confirm.addClass("is-loading");
                 const url = params.confirm.pre ? params.confirm.pre(e.target, dataurl) : dataurl;
@@ -117,7 +117,7 @@ function sleep(time) {
 
 
 $(function () {
-    $(".navbar-burger").click(function () {
+    $(".navbar-burger").on('click', function () {
         $(".navbar-burger").toggleClass("is-active");
         $(".navbar-menu").toggleClass("is-active");
     });
@@ -128,34 +128,22 @@ $(function () {
         return false;
     });
 
-    $(".copy-link").click(function (e) {
-        e.stopPropagation();
-        e.preventDefault();
-        const url = $(this).data('url');
-        const tempInput = $("<input>");
-        $("body").append(tempInput);
-        tempInput.val(url).select();
-        document.execCommand("copy");
-        tempInput.remove();
-        createToast("Link wurde in die Zwischenablage kopiert.");
-    });
-
-    $('.open-modal').click(openModal);
-    $('.close-modal').click(closeModal);
+    $('.open-modal').on('click', openModal);
+    $('.close-modal').on('click', closeModal);
 
     $('input[type=password]').on('input', function () {
         const eye = $(this).parent().find('.toggle-eye');
         eye?.css('visibility', $(this).val() ? 'visible' : 'hidden');
     });
 
-    $('.toggle-eye > i').click(function () {
+    $('.toggle-eye > i').on('click', function () {
         const input = $(this).parent().parent().find('input');
         const isPassword = input.attr('type') === 'password';
         input.attr('type', isPassword ? 'text' : 'password');
         $(this).toggleClass("fa-eye fa-eye-slash");
     });
 
-    $(".list-item-clickable").click(function (e) {
+    $(".list-item-clickable").on('click', function (e) {
         e.stopPropagation();
         window.location = $(this).data("url");
     });

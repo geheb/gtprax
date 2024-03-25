@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using GtPrax.Application.Identity;
 using GtPrax.Application.UseCases.MyAccount;
 using GtPrax.UI.Extensions;
+using GtPrax.Application.UseCases.UsersManagement;
 
 [Node("E-Mail-Adresse ändern", FromPage = typeof(IndexModel))]
 [Authorize]
@@ -59,7 +60,7 @@ public class ChangeEmailModel : PageModel
 
     private async Task<bool> UpdateView(CancellationToken cancellationToken)
     {
-        var user = await _mediator.Send(new GetMyUserQuery(User.GetId()!), cancellationToken);
+        var user = await _mediator.Send(new GetUserQuery(User.GetId()!), cancellationToken);
         if (user is null)
         {
             ModelState.AddModelError(string.Empty, Messages.UserNotFound);

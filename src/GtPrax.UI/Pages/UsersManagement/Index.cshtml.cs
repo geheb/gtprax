@@ -31,6 +31,6 @@ public class IndexModel : PageModel
         Items = await _mediator.Send(new GetAllUsersQuery(), cancellationToken);
         UsersConfirmed = Items.Count(u => u.IsEmailConfirmed);
         UsersNotConfirmed = Items.Count(u => !u.IsEmailConfirmed);
-        UsersLocked = Items.Count(u => u.LockoutEnd > _timeProvider.GetUtcNow());
+        UsersLocked = Items.Count(u => u.IsLockout);
     }
 }

@@ -18,7 +18,7 @@ public static class ModalExtensions
         <section class=""modal-card-body"">
 ");
 
-    private static readonly CompositeFormat ModalOkEnd = CompositeFormat.Parse(@"
+    private static readonly string ModalOkEnd = @"
             <div class=""fa-3x loading-value has-text-centered is-hidden"">
                 <i class=""fas fa-spinner fa-spin""></i>
             </div>
@@ -28,9 +28,9 @@ public static class ModalExtensions
         </footer>
     </div>
 </div>
-");
+";
 
-    private static readonly CompositeFormat ModalOkCancelEnd = CompositeFormat.Parse(@"
+    private static readonly string ModalOkCancelEnd = @"
             <div class=""fa-3x loading-value has-text-centered is-hidden"">
                 <i class=""fas fa-spinner fa-spin""></i>
             </div>
@@ -41,7 +41,7 @@ public static class ModalExtensions
         </footer>
     </div>
 </div>
-");
+";
 
     public static IHtmlContent CreateModalTemplateStart(this IHtmlHelper htmlHelper, string id, string title)
         => htmlHelper.Raw(string.Format(CultureInfo.InvariantCulture, ModalStart, id, title));

@@ -93,7 +93,8 @@ internal sealed class EmailValidatorService : IEmailValidatorService
         if (response.HasError)
         {
             _logger.LogWarning("Query email domain {Domain} failed: {Error}", domain, response.ErrorMessage);
-            return true;
+            _memoryCache.Set(domain, false, _timeProvider.GetUtcNow().AddHours(1));
+            return false;
         }
 
         if (response.Answers.Count < 1)

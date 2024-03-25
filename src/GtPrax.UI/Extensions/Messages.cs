@@ -14,4 +14,5 @@ public static class Messages
     public static string PageAccessDenied(string? page) => $"Der Zugriff auf die angeforderte Seite '{page}' wurde verweigert.";
     public const string PageNotFound = "Die angeforderte Seite wurde nicht gefunden.";
     public const string InternalServerError = "Es ist ein interner Server-Fehler aufgetreten.";
+    public const string RoleRequired = "Mindestens eine Rolle wird benötigt.";
 }

@@ -14,6 +14,7 @@ public interface IIdentityService
     Task<User[]> GetAllUsers(CancellationToken cancellationToken);
 
     Task<IdentityResult> SetName(string id, string name, CancellationToken cancellationToken);
+    Task<IdentityResult> SetEmail(string id, string newEmail);
     Task<IdentityResult> SetPassword(string id, string newPassword);
     Task<IdentityResult> SetRoles(string id, UserRole[] roles);
 

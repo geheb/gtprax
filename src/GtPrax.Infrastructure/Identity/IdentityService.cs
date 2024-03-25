@@ -70,6 +70,25 @@ internal sealed class IdentityService : IIdentityService
     public Task<IdentityResult> SetName(string id, string name, CancellationToken cancellationToken) =>
         _store.SetName(id, name, cancellationToken);
 
+    public async Task<IdentityResult> SetEmail(string id, string newEmail)
+    {
+        var userManager = _signInManager.UserManager;
+        var user = await userManager.FindByIdAsync(id);
+        if (user is null)
+        {
+            return IdentityResult.Failed(NotFound);
+        }
+
+        var token = await userManager.GenerateChangeEmailTokenAsync(user, newEmail);
+        var result = await userManager.ChangeEmailAsync(user, newEmail, token);
+        if (!result.Succeeded)
+        {
+            return result;
+        }
+
+        return IdentityResult.Success;
+    }
+
     public async Task<IdentityResult> SetPassword(string id, string newPassword)
     {
         var userManager = _signInManager.UserManager;
