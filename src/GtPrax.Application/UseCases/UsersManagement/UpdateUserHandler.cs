@@ -34,7 +34,7 @@ internal sealed class UpdateUserHandler : IRequestHandler<UpdateUserCommand, Res
 
         IdentityResult result;
 
-        if (!string.IsNullOrWhiteSpace(request.Name))
+        if (!string.IsNullOrWhiteSpace(request.Name) && request.Name != user.Name)
         {
             result = await _identityService.SetName(request.Id, request.Name, cancellationToken);
             if (!result.Succeeded)
@@ -43,7 +43,7 @@ internal sealed class UpdateUserHandler : IRequestHandler<UpdateUserCommand, Res
             }
         }
 
-        if (!string.IsNullOrWhiteSpace(request.Email))
+        if (!string.IsNullOrWhiteSpace(request.Email) && request.Email != user.Email)
         {
             if (!await _emailValidatorService.Validate(request.Email, cancellationToken))
             {
