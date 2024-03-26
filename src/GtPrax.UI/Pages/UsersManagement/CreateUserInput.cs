@@ -2,7 +2,6 @@ namespace GtPrax.UI.Pages.UsersManagement;
 
 using System.ComponentModel.DataAnnotations;
 using GtPrax.Application.Identity;
-using GtPrax.Application.UseCases.UsersManagement;
 using GtPrax.UI.Attributes;
 
 public sealed class CreateUserInput
@@ -19,12 +18,23 @@ public sealed class CreateUserInput
     [RequiredField]
     public bool[] Roles { get; set; } = new bool[3];
 
-    public void Set(UserDto user)
+    public UserRole[] GetRoles()
     {
-        Name = user.Name;
-        Email = user.Email;
-        Roles[0] = user.Roles.Contains(UserRole.Staff);
-        Roles[1] = user.Roles.Contains(UserRole.Manager);
-        Roles[2] = user.Roles.Contains(UserRole.Admin);
+        var count = Roles.Count(r => r);
+        var index = 0;
+        var result = new UserRole[count];
+        if (Roles[0])
+        {
+            result[index++] = UserRole.Staff;
+        }
+        if (Roles[1])
+        {
+            result[index++] = UserRole.Manager;
+        }
+        if (Roles[2])
+        {
+            result[index++] = UserRole.Admin;
+        }
+        return result;
     }
 }

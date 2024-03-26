@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Identity;
 
 public interface IIdentityService
 {
+    Task<IdentityResult> Create(string email, string name, UserRole[] roles);
+    Task<IdentityResult> CreateSuperUser(string email, string password);
+
     Task<IdentityResult> SignIn(string email, string password, CancellationToken cancellationToken);
     Task SignOutCurrentUser();
 
@@ -23,6 +26,7 @@ public interface IIdentityService
     Task<IdentityResult> ResetPassword(string id, string token, string newPassword);
 
     Task<string?> GenerateConfirmEmailToken(string id);
+    Task<IdentityResult> VerifyConfirmEmailToken(string id, string token);
     Task<IdentityResult> ConfirmEmail(string id, string token, string newPassword);
 
     Task<string?> GenerateChangeEmailToken(string id, string newEmail);
@@ -30,4 +34,6 @@ public interface IIdentityService
 
     Task<IdentityResult> ChangePassword(string id, string currentPassword, string newPassword);
     Task<IdentityResult> CheckPassword(string id, string currentPassword);
+
+    Task<IdentityResult> Deactivate(string id);
 }

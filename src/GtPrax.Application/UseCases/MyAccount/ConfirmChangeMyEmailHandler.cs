@@ -17,7 +17,7 @@ internal sealed class ConfirmChangeMyEmailHandler : IRequestHandler<ConfirmChang
 
     public async ValueTask<Result> Handle(ConfirmChangeMyEmailCommand request, CancellationToken cancellationToken)
     {
-        var result = await _identityService.ChangeEmail(request.UserId, request.Token, request.NewEmail);
+        var result = await _identityService.ChangeEmail(request.Id, request.Token, request.NewEmail);
         if (!result.Succeeded)
         {
             return Result.Fail(result.Errors.Select(e => e.Description));

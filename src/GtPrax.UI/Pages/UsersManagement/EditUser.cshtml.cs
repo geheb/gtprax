@@ -1,8 +1,10 @@
 namespace GtPrax.UI.Pages.UsersManagement;
 
 using GtPrax.Application.UseCases.UsersManagement;
+using GtPrax.Domain.Entities;
 using GtPrax.UI.Extensions;
 using GtPrax.UI.Models;
+using GtPrax.UI.Pages.Login;
 using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -56,7 +58,20 @@ public class EditUserModel : PageModel
             return Page();
         }
 
-        return RedirectToPage(StringExtensions.PageLinkName<IndexModel>());
+        return RedirectToPage(this.PageLinkName<IndexModel>());
+    }
+
+    public async Task<IActionResult> OnPostConfirmEmailAsync(string id, CancellationToken cancellationToken)
+    {
+        var callbackUrl = Url.PageLink(this.PageLinkName<ConfirmEmailModel>());
+        var result = await _mediator.Send(new SendConfirmEmailCommand(id, callbackUrl!), cancellationToken);
+        return new JsonResult(new { success = result.IsSuccess, error = string.Join(", ", result.Errors.Select(e => e.Message)) });
+    }
+
+    public async Task<IActionResult> OnPostDeactivateUserAsync(string id, CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(new DeactivateUserCommand(id), cancellationToken);
+        return new JsonResult(new { success = result.IsSuccess, error = string.Join(", ", result.Errors.Select(e => e.Message)) });
     }
 
     private async Task<bool> UpdateView(string id, CancellationToken cancellationToken)

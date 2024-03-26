@@ -1,4 +1,4 @@
-namespace GtPrax.UI.Pages.MyAccount;
+namespace GtPrax.UI.Pages.Login;
 
 using GtPrax.Application.UseCases.MyAccount;
 using GtPrax.UI.Extensions;
@@ -29,9 +29,9 @@ public class ConfirmChangeEmailModel : PageModel
         NewEmail = email.AnonymizeEmail();
 
         var result = await _mediator.Send(new ConfirmChangeMyEmailCommand(id, token, email), cancellationToken);
-        if (!result.IsSuccess)
+        if (result.IsFailed)
         {
-            result.Errors.ForEach(e => ModelState.AddModelError(string.Empty, e.Message));
+            ModelState.AddModelError(string.Empty, Messages.InvalidChangeEmailToken);
             return;
         }
     }

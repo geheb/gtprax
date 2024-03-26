@@ -16,7 +16,7 @@ public class ResetPasswordModel : PageModel
     private readonly IMediator _mediator;
 
     [BindProperty]
-    public string? UserName { get; set; }
+    public string? UserNameBot { get; set; }
 
     [BindProperty, Display(Name = "Deine E-Mail-Adresse")]
     [RequiredField, EmailField]
@@ -38,26 +38,20 @@ public class ResetPasswordModel : PageModel
 
     public async Task<IActionResult> OnPostAsync(CancellationToken cancellationToken)
     {
-        if (!string.IsNullOrWhiteSpace(UserName))
+        if (!string.IsNullOrWhiteSpace(UserNameBot))
         {
             IsDisabled = true;
             ModelState.AddModelError(string.Empty, Messages.InvalidRequest);
             return Page();
         }
 
-        if (!ModelState.IsValid)
-        {
-            return Page();
-        }
-
-        var callbackUrl = Url.PageLink(StringExtensions.PageLinkName<ConfirmResetPasswordModel>());
+        var callbackUrl = Url.PageLink(this.PageLinkName<ConfirmResetPasswordModel>());
         var result = await _mediator.Send(new ResetPasswordCommand(Email!, callbackUrl!), cancellationToken);
         if (result.IsFailed)
         {
             _logger.ResetPasswordFailed(Email!.AnonymizeEmail(), result.Errors);
-            return Page();
         }
 
-        return RedirectToPage(StringExtensions.PageLinkName<IndexModel>(), new { message = 1 });
+        return RedirectToPage(this.PageLinkName<IndexModel>(), new { message = 1 });
     }
 }

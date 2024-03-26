@@ -1,9 +1,8 @@
 @page
-@model GtPrax.UI.Pages.Login.ConfirmResetPasswordModel
+@model GtPrax.UI.Pages.Login.ConfirmEmailModel
 @{
-    ViewData["Title"] = "Neues Passwort setzen";
+    ViewData["Title"] = "E-Mail-Adresse bestätigen";
 }
-
 
 <div class="login-wrapper columns is-gapless">
 
@@ -21,9 +20,9 @@
                 </h3>
 
                 <h4 class="subtitle has-text-centered">
-                    Hiermit kannst du ein neues Passwort für dein Konto setzen.
-                    Dieses muss aus mindestens 10 Zeichen bestehen.
-                    Beachte dabei Klein-/Großbuchstaben, Zahlen, Sonderzeichen und mindestens 5 eindeutige Zeichen.
+                    Um die Kontoeinrichtung abzuschliessen, muss ein Passwort gesetzt werden.
+                    Dieses muss aus mindestens 10 Zeichen bestehen. Beachte dabei Klein-/Großbuchstaben, Zahlen, Sonderzeichen
+                    und mindestens 5 eindeutige Zeichen.
                 </h4>
 
                 @if (!ModelState.IsValid)
@@ -35,7 +34,6 @@
                 }
 
             </div>
-
             <div class="hero-body">
 
                 <div class="column is-three-fifths-fullhd is-offset-one-fifth-fullhd">
@@ -79,7 +77,6 @@
                     </div>
 
                     <p class="has-text-grey has-text-centered">
-                        <a href="/Login/ResetPassword">Passwort zurücksetzen</a> &nbsp;·&nbsp;
                         <a href="/Privacy">Datenschutz</a> &nbsp;·&nbsp;
                         <a href="/">Startseite</a>
                     </p>

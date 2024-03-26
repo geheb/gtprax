@@ -6,8 +6,8 @@
     Model.BuildHeaderMenu();
     var roleConverter = new RoleConverter();
     var dateConverter = new GermanDateTimeConverter();
-    var editUserPage = StringExtensions.PageLinkName<EditUserModel>();
-    var createUserPage = StringExtensions.PageLinkName<CreateUserModel>();
+    var editUserPage = Model.PageLinkName<EditUserModel>();
+    var createUserPage = Model.PageLinkName<CreateUserModel>();
 }
 
 @await Html.PartialAsync("_Header")

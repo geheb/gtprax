@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 [AllowAnonymous]
-public class ConfirmResetPasswordModel : PageModel
+public class ConfirmEmailModel : PageModel
 {
     private readonly IMediator _mediator;
 
@@ -29,7 +29,7 @@ public class ConfirmResetPasswordModel : PageModel
 
     public bool IsDisabled { get; set; }
 
-    public ConfirmResetPasswordModel(IMediator mediator)
+    public ConfirmEmailModel(IMediator mediator)
     {
         _mediator = mediator;
     }
@@ -43,11 +43,11 @@ public class ConfirmResetPasswordModel : PageModel
             return;
         }
 
-        var result = await _mediator.Send(new VerifyResetPasswordTokenQuery(id, token), cancellationToken);
+        var result = await _mediator.Send(new VerifyConfirmEmailTokenQuery(id, token), cancellationToken);
         if (result.IsFailed)
         {
             IsDisabled = true;
-            ModelState.AddModelError(string.Empty, Messages.InvalidResetPasswordToken);
+            ModelState.AddModelError(string.Empty, Messages.InvalidConfirmEmailToken);
             return;
         }
     }
@@ -61,16 +61,13 @@ public class ConfirmResetPasswordModel : PageModel
             return Page();
         }
 
-        var result = await _mediator.Send(new ConfirmResetPasswordCommand(id, token, Password!), cancellationToken);
+        var result = await _mediator.Send(new ConfirmEmailCommand(id, token, Password!), cancellationToken);
         if (result.IsFailed)
         {
             result.Errors.ForEach(e => ModelState.AddModelError(string.Empty, e.Message));
             return Page();
         }
-        else
-        {
-            return RedirectToPage(this.PageLinkName<IndexModel>(), new { message = 2 });
-        }
-    }
 
+        return RedirectToPage(this.PageLinkName<IndexModel>(), new { message = 3 });
+    }
 }

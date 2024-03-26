@@ -39,15 +39,12 @@ function handleModal(args) {
         },
         load: {
             dataurl: '',
-            dataformat: function (data) { return data; },
-            selector: '',
-            toast: { failed: 'Fehler' }
+            action: function (target, data) { return data; },
         },
         confirm: {
             dataurl: '',
-            pre: function (target, url) { return url; },
-            post: function (data) { return true; },
-            toast: { success: 'OK', failed: 'Fehler' }
+            geturl: function (target, url) { return url; },
+            action: function () { }
         },
     };
     const params = { ...defaults, ...args };
@@ -64,14 +61,13 @@ function handleModal(args) {
         if (params.load.dataurl) {
             loading.removeClass('is-hidden');
             const url = e.relatedTarget.dataset[params.load.dataurl];
-            $.post(url, params.token).done(function (data) {
-                if (data) {
+            $.post(url, params.token).done(function (response) {
+                if (response.success) {
                     loading.addClass('is-hidden');
-                    const format = params.load.dataformat(data);
-                    $(e.target).find(params.load.selector).text(format);
+                    params.load.action(e.target, response.data);
                     confirm.attr("disabled", false);
                 } else {
-                    createToast(params.load.toast.failed);
+                    createToast(response.error, 'is-danger');
                 }
             });
         } else {
@@ -84,16 +80,13 @@ function handleModal(args) {
             confirm.on('click', function (evClick) {
                 evClick.preventDefault();
                 confirm.addClass("is-loading");
-                const url = params.confirm.pre ? params.confirm.pre(e.target, dataurl) : dataurl;
+                const url = params.confirm.geturl ? params.confirm.geturl(e.target, dataurl) : dataurl;
 
-                $.post(url, params.token).done(function (data) {
-                    if (data) {
-                        const showToast = params.confirm.post(data);
-                        if (showToast) {
-                            createToast(params.confirm.toast.success);
-                        }
+                $.post(url, params.token).done(function (response) {
+                    if (response.success) {
+                        params.confirm.action();
                     } else {
-                        createToast(params.confirm.toast.failed, 'is-danger');
+                        createToast(response.error, 'is-danger');
                     }
                 });
             });

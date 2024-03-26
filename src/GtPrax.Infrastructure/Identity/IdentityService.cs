@@ -1,11 +1,13 @@
 namespace GtPrax.Infrastructure.Identity;
 
 using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using GtPrax.Application.Identity;
 using GtPrax.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
+using MongoDB.Bson;
 
 internal sealed class IdentityService : IIdentityService
 {
@@ -26,6 +28,49 @@ internal sealed class IdentityService : IIdentityService
         _store = store;
         _errorDescriber = errorDescriber;
         _signInManager = signInManager;
+    }
+
+    public async Task<IdentityResult> Create(string email, string name, UserRole[] roles)
+    {
+        var userManager = _signInManager.UserManager;
+        var user = await userManager.FindByEmailAsync(email);
+        if (user is not null)
+        {
+            return IdentityResult.Failed(_errorDescriber.DuplicateEmail(email));
+        }
+
+        user = new()
+        {
+            Id = ObjectId.GenerateNewId(),
+            UserName = Guid.NewGuid().ToString().Replace("-", string.Empty),
+            Email = email,
+            Name = name
+        };
+        foreach (var r in roles)
+        {
+            user.Claims.Add(new ApplicationUserClaim(ClaimTypes.Role, r.ToString()));
+        }
+        return await userManager.CreateAsync(user);
+    }
+
+    public async Task<IdentityResult> CreateSuperUser(string email, string password)
+    {
+        var userManager = _signInManager.UserManager;
+        var user = await userManager.FindByEmailAsync(email);
+        if (user is not null)
+        {
+            return IdentityResult.Success;
+        }
+        user = new()
+        {
+            Id = ObjectId.GenerateNewId(),
+            UserName = Guid.NewGuid().ToString().Replace("-", string.Empty),
+            Email = email,
+            Name = "Super User",
+            IsEmailConfirmed = true
+        };
+        user.Claims.Add(new ApplicationUserClaim(ClaimTypes.Role, UserRole.Admin.ToString()));
+        return await userManager.CreateAsync(user, password);
     }
 
     public async Task<User?> FindUser(string id) =>
@@ -246,6 +291,30 @@ internal sealed class IdentityService : IIdentityService
         return Uri.EscapeDataString(token);
     }
 
+    public async Task<IdentityResult> VerifyConfirmEmailToken(string id, string token)
+    {
+        var userManager = _signInManager.UserManager;
+        var user = await userManager.FindByIdAsync(id);
+        if (user is null)
+        {
+            return IdentityResult.Failed(NotFound);
+        }
+
+        token = Uri.UnescapeDataString(token);
+
+        var isValid = await userManager.VerifyUserTokenAsync(user,
+            userManager.Options.Tokens.EmailConfirmationTokenProvider,
+            UserManager<ApplicationUser>.ConfirmEmailTokenPurpose,
+            token);
+
+        if (!isValid)
+        {
+            return IdentityResult.Failed(_errorDescriber.InvalidToken());
+        }
+
+        return IdentityResult.Success;
+    }
+
     public async Task<IdentityResult> ConfirmEmail(string id, string token, string newPassword)
     {
         var userManager = _signInManager.UserManager;
@@ -374,5 +443,25 @@ internal sealed class IdentityService : IIdentityService
         }
 
         return IdentityResult.Success;
+    }
+
+    public async Task<IdentityResult> Deactivate(string id)
+    {
+        var userManager = _signInManager.UserManager;
+        var user = await userManager.FindByIdAsync(id);
+        if (user is null)
+        {
+            return IdentityResult.Failed(NotFound);
+        }
+
+        user.Email = $"{user.UserName}@deactivated";
+        user.PasswordHash = null;
+        user.Name = new string(user.Name.Split(' ').Select(u => u[0]).ToArray()) + "*";
+        user.IsEmailConfirmed = false;
+        user.DeactivationDate = _timeProvider.GetUtcNow();
+        user.LastLoginDate = null;
+        user.Claims.Clear();
+
+        return await userManager.UpdateAsync(user);
     }
 }

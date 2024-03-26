@@ -1,26 +1,23 @@
 namespace GtPrax.Infrastructure.Identity;
 
-using System.Security.Claims;
 using System.Threading.Tasks;
 using GtPrax.Application.Identity;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using MongoDB.Bson;
 
 internal sealed class SuperUserService
 {
     private readonly IConfiguration _configuration;
-    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly IIdentityService _identityService;
     private readonly ILogger _logger;
 
     public SuperUserService(
         IConfiguration configuration,
-        UserManager<ApplicationUser> userManager,
+        IIdentityService identityService,
         ILogger<SuperUserService> logger)
     {
         _configuration = configuration;
-        _userManager = userManager;
+        _identityService = identityService;
         _logger = logger;
     }
 
@@ -42,26 +39,10 @@ internal sealed class SuperUserService
             return;
         }
 
-        var superUser = await _userManager.FindByEmailAsync(superUserEmail);
-        if (superUser != null)
-        {
-            return;
-        }
-
-        superUser = new ApplicationUser
-        {
-            Id = ObjectId.GenerateNewId(),
-            Name = "Super User",
-            UserName = "SuperUser",
-            Email = superUserEmail,
-            IsEmailConfirmed = true,
-        };
-        superUser.Claims.Add(new ApplicationUserClaim(ClaimsIdentity.DefaultRoleClaimType, UserRole.Admin.ToString()));
-
-        var result = await _userManager.CreateAsync(superUser, password);
+        var result = await _identityService.CreateSuperUser(superUserEmail, password);
         if (!result.Succeeded)
         {
-            _logger.LogError("Create super user failed: {Errors}", string.Join(",", result.Errors.Select(e => $"{e.Code}: {e.Description}")));
+            _logger.LogError("Create super user failed: {@Errors}", result.Errors);
             return;
         }
     }

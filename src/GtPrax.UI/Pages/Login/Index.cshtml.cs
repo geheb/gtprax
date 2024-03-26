@@ -16,7 +16,7 @@ public class IndexModel : PageModel
     private readonly IMediator _mediator;
 
     [BindProperty]
-    public string? UserName { get; set; }
+    public string? UserNameBot { get; set; }
 
     [BindProperty, Display(Name = "E-Mail-Adresse"), RequiredField, EmailField]
     public string? Email { get; set; }
@@ -45,13 +45,17 @@ public class IndexModel : PageModel
         {
             Message = Messages.PasswordChanged;
         }
+        else if (message == 3)
+        {
+            Message = Messages.EmailConfirmed;
+        }
     }
 
     public async Task<IActionResult> OnPostAsync(string? returnUrl, CancellationToken cancellationToken)
     {
         Message = null;
 
-        if (!string.IsNullOrWhiteSpace(UserName))
+        if (!string.IsNullOrWhiteSpace(UserNameBot))
         {
             IsDisabled = true;
             ModelState.AddModelError(string.Empty, Messages.InvalidRequest);

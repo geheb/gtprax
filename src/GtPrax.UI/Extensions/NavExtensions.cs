@@ -1,9 +1,9 @@
-﻿using GtPrax.UI.Services;
+namespace GtPrax.UI.Extensions;
+
+using GtPrax.UI.Services;
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Text;
-
-namespace GtPrax.UI.Extensions;
 
 public static class NavExtensions
 {
@@ -16,7 +16,10 @@ public static class NavExtensions
         var breadcrumbGenerator = helper.ViewContext.HttpContext.RequestServices.GetRequiredService<NodeGeneratorService>();
         var linkGenerator = helper.ViewContext.HttpContext.RequestServices.GetRequiredService<LinkGenerator>();
 
-        if (!helper.ViewContext.ActionDescriptor.RouteValues.TryGetValue("page", out var page)) throw new InvalidOperationException($"Current route isn't a Razor page");
+        if (!helper.ViewContext.ActionDescriptor.RouteValues.TryGetValue("page", out var page))
+        {
+            throw new InvalidOperationException($"Current route isn't a Razor page");
+        }
 
         var node = breadcrumbGenerator.GetNode(page);
         var routeEnum = routeValues.GetEnumerator();

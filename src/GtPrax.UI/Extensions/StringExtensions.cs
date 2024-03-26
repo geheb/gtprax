@@ -1,7 +1,6 @@
 namespace GtPrax.UI.Extensions;
 
 using System.Globalization;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 
 public static class StringExtensions
 {
@@ -18,6 +17,4 @@ public static class StringExtensions
         var emailDomain = idn.GetUnicode(emailSplit[1]);
         return emailUser[0] + "***@" + emailDomain;
     }
-
-    public static string PageLinkName<T>() where T : PageModel => typeof(T).Name[..^5]; // remove suffix "Model"
 }

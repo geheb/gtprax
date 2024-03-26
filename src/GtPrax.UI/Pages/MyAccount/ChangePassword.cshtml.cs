@@ -56,7 +56,7 @@ public class ChangePasswordModel : PageModel
         }
         else
         {
-            return RedirectToPage(StringExtensions.PageLinkName<IndexModel>(), new { message = 1 });
+            return RedirectToPage(this.PageLinkName<IndexModel>(), new { message = 1 });
         }
     }
 }

@@ -1,6 +1,6 @@
-﻿using System.Diagnostics;
-
 namespace GtPrax.UI.Models;
+
+using System.Diagnostics;
 
 [DebuggerDisplay("{Page} - {Title}")]
 public sealed class Node

@@ -150,7 +150,7 @@ internal sealed class EmailValidatorService : IEmailValidatorService
                 if (entry.AddressList.Any(e => e.ToString().StartsWith("127.0.0", StringComparison.OrdinalIgnoreCase)))
                 {
                     _logger.LogError("Email domain {Domain} is listed at zen.spamhaus", domain);
-                    _memoryCache.Set(domain, false, _timeProvider.GetUtcNow().AddHours(1));
+                    _memoryCache.Set(domain, false, _timeProvider.GetUtcNow().AddHours(3));
                     return false;
                 }
             }
@@ -164,7 +164,7 @@ internal sealed class EmailValidatorService : IEmailValidatorService
         }
         else
         {
-            _memoryCache.Set(domain, true, _timeProvider.GetUtcNow().AddHours(1));
+            _memoryCache.Set(domain, true, _timeProvider.GetUtcNow().AddHours(6));
         }
 
         return true;

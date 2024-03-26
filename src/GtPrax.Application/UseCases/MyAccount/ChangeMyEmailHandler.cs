@@ -29,13 +29,13 @@ internal sealed class ChangeMyEmailHandler : IRequestHandler<ChangeMyEmailComman
 
     public async ValueTask<Result> Handle(ChangeMyEmailCommand request, CancellationToken cancellationToken)
     {
-        var user = await _identityService.FindUser(request.UserId);
+        var user = await _identityService.FindUser(request.Id);
         if (user is null)
         {
             return Result.Fail(Messages.UserNotFound);
         }
 
-        var result = await _identityService.CheckPassword(request.UserId, request.CurrentPassword);
+        var result = await _identityService.CheckPassword(request.Id, request.CurrentPassword);
         if (!result.Succeeded)
         {
             return Result.Fail(result.Errors.Select(e => e.Description));
@@ -47,7 +47,7 @@ internal sealed class ChangeMyEmailHandler : IRequestHandler<ChangeMyEmailComman
             return Result.Fail(_errorDescriber.InvalidEmail(request.NewEmail).Description);
         }
 
-        var token = await _identityService.GenerateChangeEmailToken(request.UserId, request.NewEmail);
+        var token = await _identityService.GenerateChangeEmailToken(request.Id, request.NewEmail);
         if (token is null)
         {
             return Result.Fail(_errorDescriber.DefaultError().Description);

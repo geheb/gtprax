@@ -6,7 +6,7 @@
     Model.BuildHeaderMenu(new { id = Model.Info?.Id });
     var dateConverter = new GermanDateTimeConverter();
     var roleConverter = new RoleConverter();
-    var indexUrl = Url.PageLink(StringExtensions.PageLinkName<IndexModel>());
+    var indexUrl = Url.PageLink(Model.PageLinkName<IndexModel>());
 }
 
 @await Html.PartialAsync("_Header")
@@ -30,7 +30,7 @@
                             <div class="dropdown-item">
                                 <div>Konto bestätigt: @(Model.Info?.IsEmailConfirmed == true ? "Ja" : "Nein")</div>
                                 <div>Letztes Login: @dateConverter.ToDateTime(Model.Info?.LastLogin ?? DateTimeOffset.MinValue)</div>
-                                <div>Gesperrt bis: @(Model.Info?.IsLockout == true ? dateConverter.ToDateTime(Model.Info?.LockoutEnd ?? DateTimeOffset.MinValue) : "-")</div>
+                                <div>Gesperrt bis: @(Model.Info?.IsLockout == true ? dateConverter.ToDateTime(Model.Info?.LockoutEnd ?? DateTimeOffset.MinValue) : "Unbekannt")</div>
                             </div>
                             <hr class="dropdown-divider" />
                             @if (!Model.IsDisabled)
@@ -40,7 +40,7 @@
                                    data-url="@(Url.PageLink(string.Empty, "confirmemail", new { id = Model.Info?.Id }))">
                                     Bestätigung anfordern
                                 </a>
-                                <a class="remove-user dropdown-item open-modal" href="#"
+                                <a class="dropdown-item open-modal" href="#"
                                    data-target="#deactivateUserModal"
                                    data-user="@Model.Info?.Name"
                                    data-url="@(Url.PageLink(string.Empty, "deactivateuser", new { id = Model.Info?.Id }))">
@@ -129,8 +129,12 @@
             e.preventDefault();
             e.stopPropagation();
             const url = $(this).data('url');
-            $.post(url, {@Html.AjaxCsrfToken()}).done(function () {
-                createToast(`Eine Bestätigung für den aktuellen Benutzer wurde angefordert.`);
+            $.post(url, {@Html.AjaxCsrfToken()}).done(function (data) {
+                if (data.success) {
+                    createToast('Die Bestätigung der E-Mail-Adresse wurde angefordert.');
+                } else {
+                    createToast(data.error, 'is-danger');
+                }
             });
         });
 
@@ -139,13 +143,9 @@
             token: {@Html.AjaxCsrfToken()},
             confirm: {
                 dataurl: 'url',
-                post: function (data) {
+                action: function () {
+                    createToast(`Der Benutzer wurde deaktiviert.`);
                     sleep(1000).then(() => window.location.replace('@indexUrl'));
-                    return true;
-                },
-                toast: {
-                    success: 'Der Benutzer wurde deaktiviert.',
-                    failed: 'Der Benutzer konnte nicht deaktiviert werden.'
                 }
             }
         });

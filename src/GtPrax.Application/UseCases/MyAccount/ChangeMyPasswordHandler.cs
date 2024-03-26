@@ -17,7 +17,7 @@ internal sealed class ChangeMyPasswordHandler : IRequestHandler<ChangeMyPassword
 
     public async ValueTask<Result> Handle(ChangeMyPasswordCommand request, CancellationToken cancellationToken)
     {
-        var result = await _identityService.ChangePassword(request.UserId, request.CurrentPassword, request.NewPassword);
+        var result = await _identityService.ChangePassword(request.Id, request.CurrentPassword, request.NewPassword);
         if (!result.Succeeded)
         {
             return Result.Fail(result.Errors.Select(e => e.Description));

@@ -11,6 +11,7 @@ using GtPrax.Application.Identity;
 using GtPrax.Application.UseCases.MyAccount;
 using GtPrax.UI.Extensions;
 using GtPrax.Application.UseCases.UsersManagement;
+using GtPrax.UI.Pages.Login;
 
 [Node("E-Mail-Adresse ändern", FromPage = typeof(IndexModel))]
 [Authorize]
@@ -46,7 +47,7 @@ public class ChangeEmailModel : PageModel
             return Page();
         }
 
-        var callbackUrl = Url.PageLink(StringExtensions.PageLinkName<ConfirmChangeEmailModel>());
+        var callbackUrl = Url.PageLink(this.PageLinkName<ConfirmChangeEmailModel>());
 
         var result = await _mediator.Send(new ChangeMyEmailCommand(User.GetId()!, CurrentPassword!, NewEmail!, callbackUrl!), cancellationToken);
         if (result.IsFailed)
@@ -55,7 +56,7 @@ public class ChangeEmailModel : PageModel
             return Page();
         }
 
-        return RedirectToPage(StringExtensions.PageLinkName<IndexModel>(), new { message = 2 });
+        return RedirectToPage(this.PageLinkName<IndexModel>(), new { message = 2 });
     }
 
     private async Task<bool> UpdateView(CancellationToken cancellationToken)

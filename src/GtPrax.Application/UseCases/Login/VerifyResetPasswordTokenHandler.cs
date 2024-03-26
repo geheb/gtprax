@@ -18,7 +18,7 @@ internal sealed class VerifyResetPasswordTokenHandler : IQueryHandler<VerifyRese
 
     public async ValueTask<Result> Handle(VerifyResetPasswordTokenQuery query, CancellationToken cancellationToken)
     {
-        var result = await _identityService.VerifyResetPasswordToken(query.UserId, query.Token);
+        var result = await _identityService.VerifyResetPasswordToken(query.Id, query.Token);
         if (!result.Succeeded)
         {
             return Result.Fail(result.Errors.Select(e => e.Description));
