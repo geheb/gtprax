@@ -7,7 +7,7 @@ using MongoDB.Driver;
 
 internal sealed class EmailQueueStore
 {
-    private readonly IMongoCollection<EmailQueue> _collection;
+    private readonly IMongoCollection<EmailQueueModel> _collection;
     private readonly TimeProvider _timeProvider;
 
     public EmailQueueStore(
@@ -18,10 +18,10 @@ internal sealed class EmailQueueStore
         _timeProvider = timeProvider;
     }
 
-    public async Task<IReadOnlyList<EmailQueue>> GetNotSentLimited(CancellationToken cancellationToken)
+    public async Task<IReadOnlyList<EmailQueueModel>> GetNotSentLimited(CancellationToken cancellationToken)
     {
-        var filter = Builders<EmailQueue>.Filter.Eq(f => f.SentOn, null);
-        var options = new FindOptions<EmailQueue>
+        var filter = Builders<EmailQueueModel>.Filter.Eq(f => f.SentOn, null);
+        var options = new FindOptions<EmailQueueModel>
         {
             Limit = 100
         };
@@ -30,13 +30,13 @@ internal sealed class EmailQueueStore
         return await documents.ToListAsync(cancellationToken);
     }
 
-    public Task Add(EmailQueue entity, CancellationToken cancellationToken)
+    public Task Add(EmailQueueModel entity, CancellationToken cancellationToken)
         => _collection.InsertOneAsync(entity, cancellationToken: cancellationToken);
 
     public async Task<bool> UpdateSentOn(ObjectId id, CancellationToken cancellationToken)
     {
-        var filter = Builders<EmailQueue>.Filter.Eq(f => f.Id, id);
-        var update = Builders<EmailQueue>.Update.Set(f => f.SentOn, _timeProvider.GetUtcNow());
+        var filter = Builders<EmailQueueModel>.Filter.Eq(f => f.Id, id);
+        var update = Builders<EmailQueueModel>.Update.Set(f => f.SentOn, _timeProvider.GetUtcNow());
 
         var result = await _collection.UpdateOneAsync(filter, update, cancellationToken: cancellationToken);
         return result.IsAcknowledged;

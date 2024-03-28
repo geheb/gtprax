@@ -1,7 +1,6 @@
 namespace GtPrax.Application.Mappings;
 
 using GtPrax.Application.Converter;
-using GtPrax.Application.Identity;
 using GtPrax.Application.UseCases.UsersManagement;
 using GtPrax.Domain.Entities;
 
@@ -15,5 +14,5 @@ internal static class UserMappings
             LastLogin: user.LastLoginDate is not null ? dateTimeConverter.ToLocal(user.LastLoginDate.Value) : null,
             LockoutEnd: user.LockoutEndDate is not null ? dateTimeConverter.ToLocal(user.LockoutEndDate.Value) : null,
             IsLockout: user.LockoutEndDate > timeProvider.GetUtcNow(),
-            Roles: user.Roles.Select(Enum.Parse<UserRole>).ToArray());
+            Roles: user.Roles.Select(r => (UserRole)r.Key).ToArray());
 }

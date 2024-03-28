@@ -1,12 +1,5 @@
 namespace GtPrax.Domain.Entities;
 
-public sealed class User
-{
-    public required string Id { get; set; }
-    public required string Name { get; set; }
-    public required string Email { get; set; }
-    public bool IsEmailConfirmed { get; set; }
-    public required string[] Roles { get; set; }
-    public DateTimeOffset? LastLoginDate { get; set; }
-    public DateTimeOffset? LockoutEndDate { get; set; }
-}
+using GtPrax.Domain.ValueObjects;
+
+public sealed record User(string Id, string Name, string Email, UserRoleType[] Roles, bool IsEmailConfirmed, DateTimeOffset? LastLoginDate, DateTimeOffset? LockoutEndDate);

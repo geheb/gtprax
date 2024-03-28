@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-internal sealed class ConfirmEmailDataProtectorTokenProvider : DataProtectorTokenProvider<ApplicationUser>
+internal sealed class ConfirmEmailDataProtectorTokenProvider : DataProtectorTokenProvider<UserModel>
 {
     public ConfirmEmailDataProtectorTokenProvider(
         IDataProtectionProvider dataProtectionProvider,

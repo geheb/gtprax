@@ -1,4 +1,4 @@
-namespace GtPrax.Application.Models;
+namespace GtPrax.Application.Options;
 
 using System.Reflection;
 

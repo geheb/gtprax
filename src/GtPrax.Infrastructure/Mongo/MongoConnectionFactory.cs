@@ -23,17 +23,17 @@ internal sealed class MongoConnectionFactory
         };
     }
 
-    public IMongoCollection<ApplicationUser> GetUsersCollection()
+    public IMongoCollection<UserModel> GetUsersCollection()
     {
         var client = new MongoClient(_settings);
         var database = client.GetDatabase(_options.DatabaseName);
-        return database.GetCollection<ApplicationUser>(_options.UsersCollectionName);
+        return database.GetCollection<UserModel>(_options.UsersCollectionName);
     }
 
-    public IMongoCollection<EmailQueue> GetEmailQueueCollection()
+    public IMongoCollection<EmailQueueModel> GetEmailQueueCollection()
     {
         var client = new MongoClient(_settings);
         var database = client.GetDatabase(_options.DatabaseName);
-        return database.GetCollection<EmailQueue>(_options.EmailQueueCollectionName);
+        return database.GetCollection<EmailQueueModel>(_options.EmailQueueCollectionName);
     }
 }

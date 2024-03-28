@@ -1,6 +1,6 @@
 namespace GtPrax.Application;
 
-using GtPrax.Application.Models;
+using GtPrax.Application.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 

@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using GtPrax.Application.Identity;
 using GtPrax.Domain.Entities;
+using GtPrax.Domain.ValueObjects;
 using Microsoft.AspNetCore.Identity;
 using MongoDB.Bson;
 
@@ -14,15 +15,15 @@ internal sealed class IdentityService : IIdentityService
     private static readonly IdentityError NotFound = new() { Code = nameof(Messages.UserNotFound), Description = Messages.UserNotFound };
 
     private readonly TimeProvider _timeProvider;
-    private readonly ApplicationUserStore _store;
+    private readonly UserStore _store;
     private readonly IdentityErrorDescriber _errorDescriber;
-    private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly SignInManager<UserModel> _signInManager;
 
     public IdentityService(
         TimeProvider timeProvider,
-        ApplicationUserStore store,
+        UserStore store,
         IdentityErrorDescriber errorDescriber,
-        SignInManager<ApplicationUser> signInManager)
+        SignInManager<UserModel> signInManager)
     {
         _timeProvider = timeProvider;
         _store = store;
@@ -30,7 +31,7 @@ internal sealed class IdentityService : IIdentityService
         _signInManager = signInManager;
     }
 
-    public async Task<IdentityResult> Create(string email, string name, UserRole[] roles)
+    public async Task<IdentityResult> Create(string email, string name, UserRoleType[] roles)
     {
         var userManager = _signInManager.UserManager;
         var user = await userManager.FindByEmailAsync(email);
@@ -48,7 +49,7 @@ internal sealed class IdentityService : IIdentityService
         };
         foreach (var r in roles)
         {
-            user.Claims.Add(new ApplicationUserClaim(ClaimTypes.Role, r.ToString()));
+            user.Claims.Add(new UserClaimModel(ClaimTypes.Role, r.Value));
         }
         return await userManager.CreateAsync(user);
     }
@@ -69,18 +70,18 @@ internal sealed class IdentityService : IIdentityService
             Name = "Super User",
             IsEmailConfirmed = true
         };
-        user.Claims.Add(new ApplicationUserClaim(ClaimTypes.Role, UserRole.Admin.ToString()));
+        user.Claims.Add(new UserClaimModel(ClaimTypes.Role, UserRoleType.Admin.Value));
         return await userManager.CreateAsync(user, password);
     }
 
     public async Task<User?> FindUser(string id) =>
-        (await _signInManager.UserManager.FindByIdAsync(id))?.MapToUser();
+        (await _signInManager.UserManager.FindByIdAsync(id))?.MapToDomain();
 
     public async Task<User?> FindUserByEmail(string email) =>
-        (await _signInManager.UserManager.FindByEmailAsync(email))?.MapToUser();
+        (await _signInManager.UserManager.FindByEmailAsync(email))?.MapToDomain();
 
     public async Task<User[]> GetAllUsers(CancellationToken cancellationToken) =>
-        (await _store.GetAllUsers(cancellationToken)).MapToUsers();
+        (await _store.GetAllUsers(cancellationToken)).MapToDomain();
 
     public async Task<IdentityResult> SignIn(string email, string password, CancellationToken cancellationToken)
     {
@@ -173,7 +174,7 @@ internal sealed class IdentityService : IIdentityService
         return IdentityResult.Success;
     }
 
-    public async Task<IdentityResult> SetRoles(string id, UserRole[] roles)
+    public async Task<IdentityResult> SetRoles(string id, UserRoleType[] roles)
     {
         var userManager = _signInManager.UserManager;
         var user = await userManager.FindByIdAsync(id);
@@ -185,16 +186,16 @@ internal sealed class IdentityService : IIdentityService
         var currentStringRoles = await userManager.GetRolesAsync(user);
         if (currentStringRoles.Count < 1)
         {
-            return await userManager.AddToRolesAsync(user, roles.Select(r => r.ToString()));
+            return await userManager.AddToRolesAsync(user, roles.Select(r => r.Value));
         }
 
-        var currentRoles = currentStringRoles.Select(Enum.Parse<UserRole>).ToArray();
+        var currentRoles = UserRoleType.From(currentStringRoles);
         var removeRoles = currentRoles.Except(roles).ToArray();
         var addRoles = roles.Except(currentRoles).ToArray();
 
         if (removeRoles.Length > 0)
         {
-            var result = await userManager.RemoveFromRolesAsync(user, removeRoles.Select(r => r.ToString()));
+            var result = await userManager.RemoveFromRolesAsync(user, removeRoles.Select(r => r.Value));
             if (!result.Succeeded)
             {
                 return result;
@@ -203,7 +204,7 @@ internal sealed class IdentityService : IIdentityService
 
         if (addRoles.Length > 0)
         {
-            var result = await userManager.AddToRolesAsync(user, addRoles.Select(r => r.ToString()));
+            var result = await userManager.AddToRolesAsync(user, addRoles.Select(r => r.Value));
             if (!result.Succeeded)
             {
                 return result;
@@ -238,7 +239,7 @@ internal sealed class IdentityService : IIdentityService
 
         var isValid = await userManager.VerifyUserTokenAsync(user,
             userManager.Options.Tokens.PasswordResetTokenProvider,
-            UserManager<ApplicationUser>.ResetPasswordTokenPurpose,
+            UserManager<UserModel>.ResetPasswordTokenPurpose,
             token);
 
         if (!isValid)
@@ -262,7 +263,7 @@ internal sealed class IdentityService : IIdentityService
 
         var isValid = await userManager.VerifyUserTokenAsync(user,
             userManager.Options.Tokens.PasswordResetTokenProvider,
-            UserManager<ApplicationUser>.ResetPasswordTokenPurpose,
+            UserManager<UserModel>.ResetPasswordTokenPurpose,
             token);
 
         if (!isValid)
@@ -304,7 +305,7 @@ internal sealed class IdentityService : IIdentityService
 
         var isValid = await userManager.VerifyUserTokenAsync(user,
             userManager.Options.Tokens.EmailConfirmationTokenProvider,
-            UserManager<ApplicationUser>.ConfirmEmailTokenPurpose,
+            UserManager<UserModel>.ConfirmEmailTokenPurpose,
             token);
 
         if (!isValid)
@@ -330,7 +331,7 @@ internal sealed class IdentityService : IIdentityService
 
             var isValid = await userManager.VerifyUserTokenAsync(user,
                 userManager.Options.Tokens.EmailConfirmationTokenProvider,
-                UserManager<ApplicationUser>.ConfirmEmailTokenPurpose,
+                UserManager<UserModel>.ConfirmEmailTokenPurpose,
                 token);
 
             if (!isValid)
@@ -383,7 +384,7 @@ internal sealed class IdentityService : IIdentityService
 
         var isValid = await userManager.VerifyUserTokenAsync(user,
             userManager.Options.Tokens.ChangeEmailTokenProvider,
-            UserManager<ApplicationUser>.GetChangeEmailTokenPurpose(newEmail),
+            UserManager<UserModel>.GetChangeEmailTokenPurpose(newEmail),
             token);
 
         if (!isValid)

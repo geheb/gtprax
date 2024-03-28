@@ -17,7 +17,7 @@ public static class ServiceExtensions
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration config)
     {
-        BsonClassMap.RegisterClassMap<ApplicationUser>(classMap =>
+        BsonClassMap.RegisterClassMap<UserModel>(classMap =>
         {
             classMap.AutoMap();
         });
@@ -48,19 +48,19 @@ public static class ServiceExtensions
         });
 
         var builder = services
-            .AddIdentityCore<ApplicationUser>()
+            .AddIdentityCore<UserModel>()
             .AddDefaultTokenProviders()
             .AddTokenProvider<ConfirmEmailDataProtectorTokenProvider>(ConfirmEmailDataProtectionTokenProviderOptions.ProviderName);
 
-        builder.AddUserStore<ApplicationUserStore>();
-        builder.AddSignInManager<SignInManager<ApplicationUser>>();
-        builder.Services.TryAddScoped<ISecurityStampValidator, SecurityStampValidator<ApplicationUser>>();
+        builder.AddUserStore<UserStore>();
+        builder.AddSignInManager<SignInManager<UserModel>>();
+        builder.Services.TryAddScoped<ISecurityStampValidator, SecurityStampValidator<UserModel>>();
 
         services.Configure<MongoConnectionOptions>(config.GetSection("MongoConnection"));
         services.Configure<SmtpConnectionOptions>(config.GetSection("SmtpConnection"));
 
         services.AddHostedService<HostedWorker>();
-        services.AddTransient<ApplicationUserStore>();
+        services.AddTransient<UserStore>();
         services.AddTransient<MongoConnectionFactory>();
         services.AddTransient<SuperUserService>();
         services.AddTransient<EmailDispatchService>();

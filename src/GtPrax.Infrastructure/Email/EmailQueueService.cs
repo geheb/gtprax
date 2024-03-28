@@ -3,7 +3,7 @@ namespace GtPrax.Infrastructure.Email;
 using System.Reflection;
 using System.Threading.Tasks;
 using GtPrax.Application.Email;
-using GtPrax.Application.Models;
+using GtPrax.Application.Options;
 using GtPrax.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
@@ -46,7 +46,7 @@ internal sealed class EmailQueueService : IEmailQueueService
         };
 
         var message = await _templateRenderer.Render("ConfirmEmail.html", model);
-        var entity = new EmailQueue
+        var entity = new EmailQueueModel
         {
             Id = ObjectId.GenerateNewId(),
             CreatedOn = _timeProvider.GetUtcNow(),
@@ -70,7 +70,7 @@ internal sealed class EmailQueueService : IEmailQueueService
         };
 
         var message = await _templateRenderer.Render("ResetPassword.html", model);
-        var entity = new EmailQueue
+        var entity = new EmailQueueModel
         {
             Id = ObjectId.GenerateNewId(),
             CreatedOn = _timeProvider.GetUtcNow(),
@@ -94,7 +94,7 @@ internal sealed class EmailQueueService : IEmailQueueService
         };
 
         var message = await _templateRenderer.Render("ChangeEmail.html", model);
-        var entity = new EmailQueue
+        var entity = new EmailQueueModel
         {
             Id = ObjectId.GenerateNewId(),
             CreatedOn = _timeProvider.GetUtcNow(),

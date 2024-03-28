@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using FluentResults;
 using GtPrax.Application.Email;
 using GtPrax.Application.Identity;
+using GtPrax.Domain.ValueObjects;
 using Mediator;
 using Microsoft.AspNetCore.Identity;
 
@@ -66,7 +67,8 @@ internal sealed class UpdateUserHandler : IRequestHandler<UpdateUserCommand, Res
             }
         }
 
-        result = await _identityService.SetRoles(request.Id, request.Roles);
+        var roles = UserRoleType.From(request.Roles.Cast<int>());
+        result = await _identityService.SetRoles(request.Id, roles);
         if (!result.Succeeded)
         {
             return Result.Fail(result.Errors.Select(e => e.Description));

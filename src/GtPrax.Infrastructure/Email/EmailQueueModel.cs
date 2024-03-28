@@ -4,7 +4,7 @@ using System;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-internal sealed class EmailQueue
+internal sealed class EmailQueueModel
 {
     public ObjectId Id { get; set; }
 

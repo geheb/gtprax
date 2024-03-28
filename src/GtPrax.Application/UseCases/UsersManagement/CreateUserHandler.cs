@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using FluentResults;
 using GtPrax.Application.Email;
 using GtPrax.Application.Identity;
+using GtPrax.Domain.ValueObjects;
 using Mediator;
 using Microsoft.AspNetCore.Identity;
 
@@ -35,7 +36,8 @@ internal sealed class CreateUserHandler : IRequestHandler<CreateUserCommand, Res
             return Result.Fail(_identityErrorDescriber.InvalidEmail(request.Email).Description);
         }
 
-        var result = await _identityService.Create(request.Email, request.Name, request.Roles);
+        var roles = UserRoleType.From(request.Roles.Cast<int>());
+        var result = await _identityService.Create(request.Email, request.Name, roles);
         if (!result.Succeeded)
         {
             return Result.Fail(result.Errors.Select(e => e.Description));

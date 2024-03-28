@@ -2,11 +2,12 @@ namespace GtPrax.Application.Identity;
 
 using System.Threading.Tasks;
 using GtPrax.Domain.Entities;
+using GtPrax.Domain.ValueObjects;
 using Microsoft.AspNetCore.Identity;
 
 public interface IIdentityService
 {
-    Task<IdentityResult> Create(string email, string name, UserRole[] roles);
+    Task<IdentityResult> Create(string email, string name, UserRoleType[] roles);
     Task<IdentityResult> CreateSuperUser(string email, string password);
 
     Task<IdentityResult> SignIn(string email, string password, CancellationToken cancellationToken);
@@ -19,7 +20,7 @@ public interface IIdentityService
     Task<IdentityResult> SetName(string id, string name, CancellationToken cancellationToken);
     Task<IdentityResult> SetEmail(string id, string newEmail);
     Task<IdentityResult> SetPassword(string id, string newPassword);
-    Task<IdentityResult> SetRoles(string id, UserRole[] roles);
+    Task<IdentityResult> SetRoles(string id, UserRoleType[] roles);
 
     Task<string?> GenerateResetPasswordToken(string id);
     Task<IdentityResult> VerifyResetPasswordToken(string id, string token);

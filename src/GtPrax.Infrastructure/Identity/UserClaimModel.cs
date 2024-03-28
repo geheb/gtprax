@@ -2,16 +2,16 @@ namespace GtPrax.Infrastructure.Identity;
 
 using System.Security.Claims;
 
-internal sealed class ApplicationUserClaim : IEquatable<ApplicationUserClaim>, IEquatable<Claim>
+internal sealed class UserClaimModel : IEquatable<UserClaimModel>, IEquatable<Claim>
 {
-    public ApplicationUserClaim(Claim claim)
+    public UserClaimModel(Claim claim)
     {
         ArgumentNullException.ThrowIfNull(claim);
         Type = claim.Type;
         Value = claim.Value;
     }
 
-    public ApplicationUserClaim(string claimType, string claimValue)
+    public UserClaimModel(string claimType, string claimValue)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(claimType);
         ArgumentException.ThrowIfNullOrWhiteSpace(claimValue);
@@ -25,7 +25,7 @@ internal sealed class ApplicationUserClaim : IEquatable<ApplicationUserClaim>, I
 
     public Claim ToClaim() => new(Type, Value);
 
-    public bool Equals(ApplicationUserClaim? other) =>
+    public bool Equals(UserClaimModel? other) =>
         other is not null &&
         other.Type.Equals(Type, StringComparison.Ordinal) &&
         other.Value.Equals(Value, StringComparison.Ordinal);
@@ -37,7 +37,7 @@ internal sealed class ApplicationUserClaim : IEquatable<ApplicationUserClaim>, I
 
     public override bool Equals(object? obj)
     {
-        if (obj is ApplicationUserClaim uc)
+        if (obj is UserClaimModel uc)
         {
             return Equals(uc);
         }

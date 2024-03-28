@@ -3,7 +3,7 @@ namespace GtPrax.Infrastructure.Identity;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-internal sealed class ApplicationUser
+internal sealed class UserModel
 {
     public required ObjectId Id { get; set; }
 
@@ -41,5 +41,5 @@ internal sealed class ApplicationUser
 
     public required string Name { get; set; }
 
-    public ICollection<ApplicationUserClaim> Claims { get; set; } = new List<ApplicationUserClaim>();
+    public ICollection<UserClaimModel> Claims { get; set; } = new List<UserClaimModel>();
 }

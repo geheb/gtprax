@@ -1,7 +1,7 @@
 namespace GtPrax.UI.Pages.UsersManagement;
 
 using System.ComponentModel.DataAnnotations;
-using GtPrax.Application.Identity;
+using GtPrax.Application.UseCases.UsersManagement;
 using GtPrax.UI.Attributes;
 
 public sealed class CreateUserInput
