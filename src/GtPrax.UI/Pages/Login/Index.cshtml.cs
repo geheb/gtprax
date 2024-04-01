@@ -55,15 +55,15 @@ public class IndexModel : PageModel
     {
         Message = null;
 
+        if (!ModelState.IsValid)
+        {
+            return Page();
+        }
+
         if (!string.IsNullOrWhiteSpace(UserNameBot))
         {
             IsDisabled = true;
             ModelState.AddModelError(string.Empty, Messages.InvalidRequest);
-            return Page();
-        }
-
-        if (!ModelState.IsValid)
-        {
             return Page();
         }
 

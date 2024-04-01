@@ -7,4 +7,5 @@ internal sealed class MongoConnectionOptions
     public required string DatabaseName { get; set; }
     public required string UsersCollectionName { get; set; }
     public required string EmailQueueCollectionName { get; set; }
+    public required string WaitingListsCollectionName { get; set; }
 }

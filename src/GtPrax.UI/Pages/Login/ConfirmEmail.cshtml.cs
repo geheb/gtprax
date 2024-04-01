@@ -54,6 +54,11 @@ public class ConfirmEmailModel : PageModel
 
     public async Task<IActionResult> OnPostAsync(string id, string token, CancellationToken cancellationToken)
     {
+        if (!ModelState.IsValid)
+        {
+            return Page();
+        }
+
         if (!string.IsNullOrWhiteSpace(UserNameBot) || string.IsNullOrWhiteSpace(id) || string.IsNullOrWhiteSpace(token))
         {
             IsDisabled = true;

@@ -1,22 +1,25 @@
-namespace GtPrax.UI.Pages.UserAccounts;
+namespace GtPrax.UI.Pages.WaitingLists;
 
-using GtPrax.Application.UseCases.UserAccounts;
-using GtPrax.UI.Extensions;
+using GtPrax.UI.Attributes;
+using System.ComponentModel.DataAnnotations;
 using GtPrax.UI.Models;
-using GtPrax.UI.Pages.Login;
 using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using GtPrax.Application.UseCases.WaitingLists;
+using GtPrax.UI.Extensions;
 
-[Node("Benutzer anlegen", FromPage = typeof(IndexModel))]
-[Authorize(Roles = "Admin,Manager")]
+[Node("Warteliste anlegen", FromPage = typeof(Pages.IndexModel))]
+[Authorize]
 public class CreateModel : PageModel
 {
     private readonly IMediator _mediator;
 
     [BindProperty]
-    public CreateInput Input { get; set; } = new();
+    [Display(Name = "Name")]
+    [RequiredField, TextLengthField]
+    public string? Name { get; set; }
 
     public CreateModel(IMediator mediator)
     {
@@ -34,16 +37,7 @@ public class CreateModel : PageModel
             return Page();
         }
 
-        var roles = Input.GetRoles();
-        if (roles.Length < 1)
-        {
-            ModelState.AddModelError(string.Empty, Messages.RoleRequired);
-            return Page();
-        }
-
-        var callbackUrl = Url.PageLink(this.PageLinkName<ConfirmEmailModel>());
-
-        var result = await _mediator.Send(new CreateUserCommand(Input.Name!, Input.Email!, roles, callbackUrl!), cancellationToken);
+        var result = await _mediator.Send(new CreateWaitingListCommand(Name!), cancellationToken);
         if (result.IsFailed)
         {
             result.Errors.ForEach(e => ModelState.AddModelError(string.Empty, e.Message));

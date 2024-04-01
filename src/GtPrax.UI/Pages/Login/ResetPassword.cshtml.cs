@@ -38,6 +38,11 @@ public class ResetPasswordModel : PageModel
 
     public async Task<IActionResult> OnPostAsync(CancellationToken cancellationToken)
     {
+        if (!ModelState.IsValid)
+        {
+            return Page();
+        }
+
         if (!string.IsNullOrWhiteSpace(UserNameBot))
         {
             IsDisabled = true;

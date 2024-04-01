@@ -1,6 +1,7 @@
 namespace GtPrax.Infrastructure.Mongo;
 
 using GtPrax.Infrastructure.Email;
+using GtPrax.Infrastructure.Stores;
 using GtPrax.Infrastructure.User;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
@@ -35,5 +36,12 @@ internal sealed class MongoConnectionFactory
         var client = new MongoClient(_settings);
         var database = client.GetDatabase(_options.DatabaseName);
         return database.GetCollection<EmailQueueModel>(_options.EmailQueueCollectionName);
+    }
+
+    public IMongoCollection<WaitingListModel> GetWaitingListsCollection()
+    {
+        var client = new MongoClient(_settings);
+        var database = client.GetDatabase(_options.DatabaseName);
+        return database.GetCollection<WaitingListModel>(_options.WaitingListsCollectionName);
     }
 }

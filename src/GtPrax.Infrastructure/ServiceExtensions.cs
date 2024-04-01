@@ -11,6 +11,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using MongoDB.Bson.Serialization;
+using GtPrax.Application.UseCases.WaitingLists;
+using GtPrax.Infrastructure.Stores;
 
 public static class ServiceExtensions
 {
@@ -67,6 +69,7 @@ public static class ServiceExtensions
         services.AddTransient<IEmailSender, SmtpDispatcher>();
         services.AddTransient<IEmailQueueService, EmailQueueService>();
         services.AddSingleton<IEmailValidatorService, EmailValidatorService>();
+        services.AddTransient<IWaitingListStore, WaitingListStore>();
 
         return services;
     }
