@@ -2,9 +2,7 @@ namespace GtPrax.UI.Pages.MyAccount;
 
 using System.ComponentModel.DataAnnotations;
 using System.Threading;
-using GtPrax.Application.Identity;
-using GtPrax.Application.UseCases.MyAccount;
-using GtPrax.Application.UseCases.UsersManagement;
+using GtPrax.Application.UseCases.UserAccounts;
 using GtPrax.UI.Attributes;
 using GtPrax.UI.Extensions;
 using GtPrax.UI.Models;

@@ -1,9 +1,8 @@
 namespace GtPrax.Infrastructure;
 
-using GtPrax.Application.Email;
-using GtPrax.Application.Identity;
+using GtPrax.Application.Services;
 using GtPrax.Infrastructure.Email;
-using GtPrax.Infrastructure.Identity;
+using GtPrax.Infrastructure.User;
 using GtPrax.Infrastructure.Mongo;
 using GtPrax.Infrastructure.Worker;
 using Microsoft.AspNetCore.Identity;
@@ -24,7 +23,7 @@ public static class ServiceExtensions
 
         services.AddMemoryCache();
 
-        services.AddTransient<IIdentityService, IdentityService>();
+        services.AddTransient<IUserService, UserService>();
 
         services.AddSingleton(TimeProvider.System);
 
@@ -62,7 +61,7 @@ public static class ServiceExtensions
         services.AddHostedService<HostedWorker>();
         services.AddTransient<UserStore>();
         services.AddTransient<MongoConnectionFactory>();
-        services.AddTransient<SuperUserService>();
+        services.AddTransient<AdminService>();
         services.AddTransient<EmailDispatchService>();
         services.AddTransient<EmailQueueStore>();
         services.AddTransient<IEmailSender, SmtpDispatcher>();

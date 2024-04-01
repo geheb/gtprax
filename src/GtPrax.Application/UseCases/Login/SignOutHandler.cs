@@ -3,21 +3,21 @@ namespace GtPrax.Application.UseCases.Login;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentResults;
-using GtPrax.Application.Identity;
+using GtPrax.Application.Services;
 using Mediator;
 
-internal sealed class SignOutHandler : IRequestHandler<SignOutCommand, Result>
+internal sealed class SignOutHandler : ICommandHandler<SignOutCommand, Result>
 {
-    private readonly IIdentityService _identityService;
+    private readonly IUserService _userService;
 
-    public SignOutHandler(IIdentityService identityService)
+    public SignOutHandler(IUserService userService)
     {
-        _identityService = identityService;
+        _userService = userService;
     }
 
-    public async ValueTask<Result> Handle(SignOutCommand request, CancellationToken cancellationToken)
+    public async ValueTask<Result> Handle(SignOutCommand command, CancellationToken cancellationToken)
     {
-        await _identityService.SignOutCurrentUser();
+        await _userService.SignOutCurrent();
         return Result.Ok();
     }
 }

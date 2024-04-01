@@ -1,7 +1,7 @@
 namespace GtPrax.Infrastructure.Worker;
 
 using GtPrax.Infrastructure.Email;
-using GtPrax.Infrastructure.Identity;
+using GtPrax.Infrastructure.User;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -21,7 +21,7 @@ internal sealed class HostedWorker : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        await CreateSuperUser();
+        await CreateAdmin();
 
         while (true)
         {
@@ -31,17 +31,17 @@ internal sealed class HostedWorker : BackgroundService
         }
     }
 
-    private async Task CreateSuperUser()
+    private async Task CreateAdmin()
     {
         try
         {
             using var scope = _serviceScopeFactory.CreateScope();
-            var service = scope.ServiceProvider.GetRequiredService<SuperUserService>();
+            var service = scope.ServiceProvider.GetRequiredService<AdminService>();
             await service.Create();
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Create Super User failed");
+            _logger.LogError(ex, "Create Admin failed");
         }
     }
 

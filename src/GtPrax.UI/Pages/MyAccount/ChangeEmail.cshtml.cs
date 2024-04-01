@@ -1,17 +1,15 @@
 namespace GtPrax.UI.Pages.MyAccount;
 
-using GtPrax.UI.Attributes;
 using System.ComponentModel.DataAnnotations;
+using GtPrax.Application.UseCases.UserAccounts;
+using GtPrax.UI.Attributes;
+using GtPrax.UI.Extensions;
 using GtPrax.UI.Models;
+using GtPrax.UI.Pages.Login;
 using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using GtPrax.Application.Identity;
-using GtPrax.Application.UseCases.MyAccount;
-using GtPrax.UI.Extensions;
-using GtPrax.Application.UseCases.UsersManagement;
-using GtPrax.UI.Pages.Login;
 
 [Node("E-Mail-Adresse ändern", FromPage = typeof(IndexModel))]
 [Authorize]

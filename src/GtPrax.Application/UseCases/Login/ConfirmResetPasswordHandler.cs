@@ -3,26 +3,22 @@ namespace GtPrax.Application.UseCases.Login;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentResults;
-using GtPrax.Application.Identity;
+using GtPrax.Application.Services;
 using Mediator;
 
-internal sealed class ConfirmResetPasswordHandler : IRequestHandler<ConfirmResetPasswordCommand, Result>
+internal sealed class ConfirmResetPasswordHandler : ICommandHandler<ConfirmResetPasswordCommand, Result>
 {
-    private readonly IIdentityService _identityService;
+    private readonly IUserService _userService;
 
     public ConfirmResetPasswordHandler(
-        IIdentityService identityService)
+        IUserService userService)
     {
-        _identityService = identityService;
+        _userService = userService;
     }
 
-    public async ValueTask<Result> Handle(ConfirmResetPasswordCommand request, CancellationToken cancellationToken)
+    public async ValueTask<Result> Handle(ConfirmResetPasswordCommand command, CancellationToken cancellationToken)
     {
-        var result = await _identityService.ResetPassword(request.Id, request.Token, request.NewPassword);
-        if (!result.Succeeded)
-        {
-            return Result.Fail(result.Errors.Select(e => e.Description));
-        }
-        return Result.Ok();
+        var result = await _userService.ResetPassword(command.Id, command.Token, command.NewPassword);
+        return result;
     }
 }

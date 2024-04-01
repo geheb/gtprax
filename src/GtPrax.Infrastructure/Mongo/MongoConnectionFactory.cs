@@ -1,7 +1,7 @@
 namespace GtPrax.Infrastructure.Mongo;
 
 using GtPrax.Infrastructure.Email;
-using GtPrax.Infrastructure.Identity;
+using GtPrax.Infrastructure.User;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using MongoDB.Driver.Core.Configuration;

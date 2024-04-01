@@ -3,25 +3,21 @@ namespace GtPrax.Application.UseCases.Login;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentResults;
-using GtPrax.Application.Identity;
+using GtPrax.Application.Services;
 using Mediator;
 
 internal sealed class VerifyConfirmEmailTokenHandler : IQueryHandler<VerifyConfirmEmailTokenQuery, Result>
 {
-    private readonly IIdentityService _identityService;
+    private readonly IUserService _userService;
 
-    public VerifyConfirmEmailTokenHandler(IIdentityService identityService)
+    public VerifyConfirmEmailTokenHandler(IUserService userService)
     {
-        _identityService = identityService;
+        _userService = userService;
     }
 
     public async ValueTask<Result> Handle(VerifyConfirmEmailTokenQuery query, CancellationToken cancellationToken)
     {
-        var result = await _identityService.VerifyConfirmEmailToken(query.Id, query.Token);
-        if (!result.Succeeded)
-        {
-            return Result.Fail(result.Errors.Select(e => e.Description));
-        }
-        return Result.Ok();
+        var result = await _userService.VerifyConfirmEmailToken(query.Id, query.Token);
+        return result;
     }
 }

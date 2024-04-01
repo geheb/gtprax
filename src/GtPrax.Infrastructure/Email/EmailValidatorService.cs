@@ -7,7 +7,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using DnsClient;
-using GtPrax.Application.Email;
+using GtPrax.Application.Services;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 

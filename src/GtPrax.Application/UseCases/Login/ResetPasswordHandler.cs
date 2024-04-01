@@ -3,42 +3,41 @@ namespace GtPrax.Application.UseCases.Login;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentResults;
-using GtPrax.Application.Email;
-using GtPrax.Application.Identity;
+using GtPrax.Application.Services;
 using Mediator;
 using Microsoft.AspNetCore.Identity;
 
-internal sealed class ResetPasswordHandler : IRequestHandler<ResetPasswordCommand, Result>
+internal sealed class ResetPasswordHandler : ICommandHandler<ResetPasswordCommand, Result>
 {
     private readonly IdentityErrorDescriber _errorDescriber;
-    private readonly IIdentityService _identityService;
+    private readonly IUserService _userService;
     private readonly IEmailQueueService _emailQueueService;
 
     public ResetPasswordHandler(
         IdentityErrorDescriber errorDescriber,
-        IIdentityService identityService,
+        IUserService userService,
         IEmailQueueService emailQueueService)
     {
         _errorDescriber = errorDescriber;
-        _identityService = identityService;
+        _userService = userService;
         _emailQueueService = emailQueueService;
     }
 
-    public async ValueTask<Result> Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
+    public async ValueTask<Result> Handle(ResetPasswordCommand command, CancellationToken cancellationToken)
     {
-        var user = await _identityService.FindUserByEmail(request.Email);
+        var user = await _userService.FindByEmail(command.Email);
         if (user is null)
         {
-            return Result.Fail(Messages.UserNotFound);
+            return Result.Fail(Messages.AccountNotFound);
         }
 
-        var token = await _identityService.GenerateResetPasswordToken(user.Id);
+        var token = await _userService.GenerateResetPasswordToken(user.Id);
         if (token is null)
         {
             return Result.Fail(_errorDescriber.DefaultError().Description);
         }
 
-        var callbackUrl = new UriBuilder(request.CallbackUrl)
+        var callbackUrl = new UriBuilder(command.CallbackUrl)
         {
             Query = $"id={user.Id}&token={token}"
         }.ToString();

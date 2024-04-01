@@ -24,19 +24,19 @@
             </figure>
         }
 
-        @if (Model.HasNodeAccess(typeof(Waitlist.IndexModel)))
+        @if (Model.HasNodeAccess(typeof(WaitingLists.IndexModel)))
         {
             <p class="title">Patienten</p>
             <nav class="bd-links">
 
-                <a href="/Waitlist" class="bd-link has-text-grey">
+                <a href="/WaitingLists" class="bd-link has-text-grey">
                     <span class="icon bd-link-icon has-text-info">
                         <i class="fa-solid fa-clock"></i>
                     </span>
                     <div>
-                        <h2 class="bd-link-title">Warteliste</h2>
+                        <h2 class="bd-link-title">Wartelisten</h2>
                         <div class="bd-link-subtitle">
-                            Warteliste für Patienten verwalten.
+                            Wartelisten für Patienten verwalten.
                         </div>
                     </div>
                 </a>
@@ -44,21 +44,21 @@
             </nav>
         }
 
-        @if (Model.HasNodeAccess(typeof(UsersManagement.IndexModel)))
+        @if (Model.HasNodeAccess(typeof(UserAccounts.IndexModel)))
         {
             <p class="title">Administration</p>
             <nav class="bd-links">
 
-                @if (Model.HasNodeAccess(typeof(UsersManagement.IndexModel)))
+                @if (Model.HasNodeAccess(typeof(UserAccounts.IndexModel)))
                 {
-                    <a href="/UsersManagement" class="bd-link has-text-grey">
+                    <a href="/UserAccounts" class="bd-link has-text-grey">
                         <span class="icon bd-link-icon has-text-info">
                             <i class="fas fa-users"></i>
                         </span>
                         <div>
-                            <h2 class="bd-link-title">Benutzerverwaltung</h2>
+                            <h2 class="bd-link-title">Benutzerkonten</h2>
                             <div class="bd-link-subtitle">
-                                Benutzer für das Portal verwalten.
+                                Benutzerkonten für das Portal verwalten.
                             </div>
                         </div>
                     </a>

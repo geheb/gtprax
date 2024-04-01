@@ -1,26 +1,21 @@
 namespace GtPrax.Application.UseCases.Login;
 
 using FluentResults;
-using GtPrax.Application.Identity;
+using GtPrax.Application.Services;
 using Mediator;
 
-internal sealed class ConfirmEmailHandler : IRequestHandler<ConfirmEmailCommand, Result>
+internal sealed class ConfirmEmailHandler : ICommandHandler<ConfirmEmailCommand, Result>
 {
-    private readonly IIdentityService _identityService;
+    private readonly IUserService _userService;
 
-    public ConfirmEmailHandler(IIdentityService identityService)
+    public ConfirmEmailHandler(IUserService userService)
     {
-        _identityService = identityService;
+        _userService = userService;
     }
 
-    public async ValueTask<Result> Handle(ConfirmEmailCommand request, CancellationToken cancellationToken)
+    public async ValueTask<Result> Handle(ConfirmEmailCommand command, CancellationToken cancellationToken)
     {
-        var result = await _identityService.ConfirmEmail(request.Id, request.Token, request.Password);
-        if (!result.Succeeded)
-        {
-            return Result.Fail(result.Errors.Select(e => e.Description));
-        }
-
-        return Result.Ok();
+        var result = await _userService.ConfirmEmail(command.Id, command.Token, command.Password);
+        return result;
     }
 }

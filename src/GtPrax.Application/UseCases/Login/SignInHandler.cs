@@ -1,25 +1,21 @@
 namespace GtPrax.Application.UseCases.Login;
 
 using FluentResults;
-using GtPrax.Application.Identity;
+using GtPrax.Application.Services;
 using Mediator;
 
-internal sealed class SignInHandler : IRequestHandler<SignInCommand, Result>
+internal sealed class SignInHandler : ICommandHandler<SignInCommand, Result>
 {
-    private readonly IIdentityService _identityService;
+    private readonly IUserService _userService;
 
-    public SignInHandler(IIdentityService identityService)
+    public SignInHandler(IUserService userService)
     {
-        _identityService = identityService;
+        _userService = userService;
     }
 
-    public async ValueTask<Result> Handle(SignInCommand request, CancellationToken cancellationToken)
+    public async ValueTask<Result> Handle(SignInCommand command, CancellationToken cancellationToken)
     {
-        var result = await _identityService.SignIn(request.Email, request.Password, cancellationToken);
-        if (!result.Succeeded)
-        {
-            return Result.Fail(result.Errors.Select(e => e.Description));
-        }
-        return Result.Ok();
+        var result = await _userService.SignIn(command.Email, command.Password, cancellationToken);
+        return result;
     }
 }

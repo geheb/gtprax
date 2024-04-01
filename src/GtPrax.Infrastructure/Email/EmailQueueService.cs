@@ -2,9 +2,9 @@ namespace GtPrax.Infrastructure.Email;
 
 using System.Reflection;
 using System.Threading.Tasks;
-using GtPrax.Application.Email;
 using GtPrax.Application.Options;
-using GtPrax.Infrastructure.Identity;
+using GtPrax.Application.Services;
+using GtPrax.Infrastructure.User;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
