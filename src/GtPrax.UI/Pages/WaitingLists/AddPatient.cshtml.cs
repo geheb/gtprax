@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-[Node("Patient hinzufügen", FromPage = typeof(PatientsModel))]
+[Node("Patient(in) hinzufügen", FromPage = typeof(PatientsModel))]
 [Authorize]
 public class AddPatientModel : PageModel
 {

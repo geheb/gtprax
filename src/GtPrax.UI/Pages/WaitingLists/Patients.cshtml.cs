@@ -4,7 +4,7 @@ using GtPrax.UI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-[Node("Patienten", FromPage = typeof(IndexModel))]
+[Node("Patient(inn)en", FromPage = typeof(IndexModel))]
 [Authorize]
 public class PatientsModel : PageModel
 {

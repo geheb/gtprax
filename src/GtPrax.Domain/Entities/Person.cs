@@ -13,6 +13,7 @@ public sealed class Person
     public Person(PersonIdentity identity, string phoneNumber)
     {
         ArgumentNullException.ThrowIfNull(identity);
+        ArgumentException.ThrowIfNullOrWhiteSpace(phoneNumber);
         Identity = identity;
         PhoneNumber = phoneNumber;
     }
@@ -24,7 +25,7 @@ public sealed class Person
             return Result.Fail("Das Geburtsdatum ist ungültig.");
         }
 
-        if (!Regex.IsMatch(phoneNumber, "^(\\d{4,16})$"))
+        if (string.IsNullOrWhiteSpace(phoneNumber) || !Regex.IsMatch(phoneNumber, "^(\\d{4,16})$"))
         {
             return Result.Fail("Die Telefonnummer ist ungültig. Es werden 4-16 Zahlen benötigt.");
         }
