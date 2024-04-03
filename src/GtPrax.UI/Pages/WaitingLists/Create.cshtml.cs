@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using GtPrax.Application.UseCases.WaitingLists;
 using GtPrax.UI.Extensions;
 
-[Node("Warteliste anlegen", FromPage = typeof(Pages.IndexModel))]
+[Node("Warteliste anlegen", FromPage = typeof(IndexModel))]
 [Authorize]
 public class CreateModel : PageModel
 {
