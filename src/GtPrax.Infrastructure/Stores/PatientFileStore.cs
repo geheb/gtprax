@@ -2,33 +2,33 @@ namespace GtPrax.Infrastructure.Stores;
 
 using System.Threading;
 using System.Threading.Tasks;
-using GtPrax.Application.UseCases.WaitingLists;
+using GtPrax.Application.UseCases.PatientFiles;
 using GtPrax.Domain.Entities;
 using GtPrax.Infrastructure.Mongo;
 using MongoDB.Driver;
 
-internal sealed class WaitingListStore : IWaitingListStore
+internal sealed class PatientFileStore : IPatientFileStore
 {
-    private readonly IMongoCollection<WaitingListModel> _collection;
+    private readonly IMongoCollection<PatientFileModel> _collection;
 
-    public WaitingListStore(
+    public PatientFileStore(
         MongoConnectionFactory connectionFactory)
     {
-        _collection = connectionFactory.GetWaitingListsCollection();
+        _collection = connectionFactory.GetPatientFilesCollection();
     }
 
-    public async Task Create(WaitingList entity, CancellationToken cancellationToken)
+    public async Task Create(PatientFile entity, CancellationToken cancellationToken)
     {
         var model = entity.MapToModel();
         await _collection.InsertOneAsync(model, cancellationToken: cancellationToken);
     }
 
-    public async Task<WaitingListIdentity[]> GetIdentities(CancellationToken cancellationToken)
+    public async Task<PersonIdentity[]> GetIdentities(CancellationToken cancellationToken)
     {
-        var filter = Builders<WaitingListModel>.Filter.Empty;
-        var find = new FindOptions<WaitingListModel>
+        var filter = Builders<PatientFileModel>.Filter.Empty;
+        var find = new FindOptions<PatientFileModel>
         {
-            Projection = Builders<WaitingListModel>.Projection.Include(f => f.Id).Include(f => f.Name)
+            Projection = Builders<PatientFileModel>.Projection.Include(f => f.Name).Include(f => f.BirthDate)
         };
 
         var cursor = await _collection.FindAsync(filter, find, cancellationToken);
@@ -36,9 +36,9 @@ internal sealed class WaitingListStore : IWaitingListStore
         return models.MapToIdentityDomain();
     }
 
-    public async Task<WaitingList[]> GetAll(CancellationToken cancellationToken)
+    public async Task<PatientFile[]> GetAll(CancellationToken cancellationToken)
     {
-        var filter = Builders<WaitingListModel>.Filter.Empty;
+        var filter = Builders<PatientFileModel>.Filter.Empty;
 
         var cursor = await _collection.FindAsync(filter, cancellationToken: cancellationToken);
         var models = await cursor.ToListAsync(cancellationToken);

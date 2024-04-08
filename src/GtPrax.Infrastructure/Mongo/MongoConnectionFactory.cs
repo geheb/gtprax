@@ -44,4 +44,11 @@ internal sealed class MongoConnectionFactory
         var database = client.GetDatabase(_options.DatabaseName);
         return database.GetCollection<WaitingListModel>(_options.WaitingListsCollectionName);
     }
+
+    public IMongoCollection<PatientFileModel> GetPatientFilesCollection()
+    {
+        var client = new MongoClient(_settings);
+        var database = client.GetDatabase(_options.DatabaseName);
+        return database.GetCollection<PatientFileModel>(_options.PatientFilesCollectionName);
+    }
 }

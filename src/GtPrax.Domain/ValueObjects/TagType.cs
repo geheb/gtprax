@@ -2,7 +2,7 @@ namespace GtPrax.Domain.ValueObjects;
 
 using System.Collections.Generic;
 
-internal sealed class TagType : ValueObject
+public sealed class TagType : ValueObject
 {
     public static readonly TagType Priority = new(0, nameof(Priority));
     public static readonly TagType Jumper = new(1, nameof(Jumper));

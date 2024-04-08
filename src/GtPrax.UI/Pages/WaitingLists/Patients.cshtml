@@ -5,7 +5,7 @@
     ViewData["HasFooter"] = true;
     Model.BuildHeaderMenu(new { id = Model.Id });
     var dateTimeConverter = new GermanDateTimeConverter();
-    var addUrl = Url.PageLink(Model.PageLinkName<AddPatientModel>(), null, new { id = Model.Id });
+    var createUrl = Url.PageLink(Model.PageLinkName<CreatePatientModel>(), null, new { id = Model.Id });
 }
 
 @await Html.PartialAsync("_Header")
@@ -30,7 +30,7 @@
                                 <div>Gesamt: 0</div>
                             </div>
                             <hr class="dropdown-divider" />
-                            <a href="@addUrl" class="dropdown-item">
+                            <a href="@createUrl" class="dropdown-item">
                                 Patient(in) hinzufügen
                             </a>
                         </div>
@@ -53,7 +53,7 @@
     </div>
 </section>
 
-<a href="@addUrl" class="button is-floating is-success">
+<a href="@createUrl" class="button is-floating is-success">
     <i class="fa-solid fa-circle-plus"></i>
 </a>
 

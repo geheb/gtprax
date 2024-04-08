@@ -5,15 +5,17 @@ using MongoDB.Bson;
 
 internal static class WaitingListMapping
 {
-    public static WaitingListModel MapToModel(this WaitingList entity, ObjectId id) =>
+    public static WaitingListModel MapToModel(this WaitingList entity) =>
         new()
         {
-            Id = id,
-            Name = entity.Identity.Name
+            Id = string.IsNullOrEmpty(entity.Identity.Id) ? ObjectId.GenerateNewId() : ObjectId.Parse(entity.Identity.Id),
+            Name = entity.Identity.Name,
+            CreatedDate = entity.Audit.CreatedDate,
+            CreatedBy = entity.Audit.CreatedBy
         };
 
     public static WaitingList MapToDomain(this WaitingListModel model) =>
-        new(new WaitingListIdentity(model.Id.ToString(), model.Name));
+        new(model.MapToIdentityDomain(), new(model.CreatedDate, model.CreatedBy));
 
     public static WaitingList[] MapToDomain(this IEnumerable<WaitingListModel> models) =>
         models.Select(m => m.MapToDomain()).ToArray();

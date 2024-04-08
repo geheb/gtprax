@@ -13,16 +13,16 @@
 
         @Html.CreateBreadcrumb()
 
-        @if (!ModelState.IsValid)
-        {
-            <div class="notification is-danger">
-                <button class="delete"></button>
-                <div asp-validation-summary="All"></div>
-            </div>
-        }
-
         <div class="columns">
             <div class="column is-half">
+
+                @if (!ModelState.IsValid)
+                {
+                    <div class="notification is-danger">
+                        <button class="delete"></button>
+                        <div asp-validation-summary="All"></div>
+                    </div>
+                }
 
                 <form method="post">
                     <div class="field">

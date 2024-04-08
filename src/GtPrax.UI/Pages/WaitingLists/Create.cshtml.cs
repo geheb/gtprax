@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using GtPrax.Application.UseCases.WaitingLists;
 using GtPrax.UI.Extensions;
+using GtPrax.Application.UseCases.UserAccounts;
 
 [Node("Warteliste anlegen", FromPage = typeof(IndexModel))]
 [Authorize]
@@ -37,7 +38,7 @@ public class CreateModel : PageModel
             return Page();
         }
 
-        var result = await _mediator.Send(new CreateWaitingListCommand(Name!), cancellationToken);
+        var result = await _mediator.Send(new CreateWaitingListCommand(Name!, User.GetId()!), cancellationToken);
         if (result.IsFailed)
         {
             result.Errors.ForEach(e => ModelState.AddModelError(string.Empty, e.Message));

@@ -21,13 +21,22 @@ public sealed class AuditMetadata
         CreatedBy = createdBy;
     }
 
+    public AuditMetadata(DateTimeOffset createdDate, string createdBy, DateTimeOffset? modifiedDate, string? modifiedBy)
+        : this(createdDate, createdBy)
+    {
+        if (modifiedDate is not null)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(modifiedBy);
+            SetLastModified(modifiedDate.Value, modifiedBy);
+        }
+    }
+
     public void SetLastModified(DateTimeOffset modifiedDate, string modifiedBy)
     {
         if (modifiedDate == DateTimeOffset.MinValue || modifiedDate == DateTimeOffset.MaxValue || modifiedDate < CreatedDate)
         {
             throw new ArgumentException("Invalid date");
         }
-        ArgumentException.ThrowIfNullOrWhiteSpace(modifiedBy);
         LastModifiedDate = modifiedDate;
         LastModifiedBy = modifiedBy;
     }

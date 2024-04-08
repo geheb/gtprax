@@ -7,9 +7,16 @@ public sealed class WaitingListIdentity
 
     public WaitingListIdentity(string id, string name)
     {
-        ArgumentNullException.ThrowIfNull(id);
+        ArgumentException.ThrowIfNullOrWhiteSpace(id);
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
         Id = id;
+        Name = name;
+    }
+
+    public WaitingListIdentity(string name)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(name);
+        Id = string.Empty;
         Name = name;
     }
 }

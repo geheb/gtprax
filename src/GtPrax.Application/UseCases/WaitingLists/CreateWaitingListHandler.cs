@@ -8,10 +8,14 @@ using Mediator;
 
 internal sealed class CreateWaitingListHandler : ICommandHandler<CreateWaitingListCommand, Result>
 {
+    private readonly TimeProvider _timeProvider;
     private readonly IWaitingListStore _store;
 
-    public CreateWaitingListHandler(IWaitingListStore store)
+    public CreateWaitingListHandler(
+        TimeProvider timeProvider,
+        IWaitingListStore store)
     {
+        _timeProvider = timeProvider;
         _store = store;
     }
 
@@ -19,7 +23,7 @@ internal sealed class CreateWaitingListHandler : ICommandHandler<CreateWaitingLi
     {
         var waitingListIdentities = await _store.GetIdentities(cancellationToken);
 
-        var result = WaitingList.Create(command.Name, waitingListIdentities);
+        var result = WaitingList.Create(command.Name, command.CreatedBy, _timeProvider.GetUtcNow(), waitingListIdentities);
 
         if (result.IsFailed)
         {

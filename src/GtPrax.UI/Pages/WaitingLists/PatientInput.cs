@@ -1,7 +1,9 @@
 namespace GtPrax.UI.Pages.WaitingLists;
 
-using GtPrax.UI.Attributes;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
+using GtPrax.Application.UseCases.PatientFiles;
+using GtPrax.UI.Attributes;
 
 public class PatientInput
 {
@@ -39,4 +41,29 @@ public class PatientInput
 
     [Display(Name = "Neurofeedback")]
     public bool IsNeurofeedbackTag { get; set; }
+
+    public PatientFileDto ToDto(string userId)
+    {
+        var tags = Array.Empty<PatientFileTag>();
+        if (IsPriorityTag)
+        {
+            Array.Resize(ref tags, tags.Length + 1);
+            tags[^1] = PatientFileTag.Priority;
+        }
+        if (IsJumperTag)
+        {
+            Array.Resize(ref tags, tags.Length + 1);
+            tags[^1] = PatientFileTag.Jumper;
+        }
+        if (IsNeurofeedbackTag)
+        {
+            Array.Resize(ref tags, tags.Length + 1);
+            tags[^1] = PatientFileTag.Neurofeedback;
+        }
+
+        var days = TherapyTimes.ToDto();
+        var birthdate = DateOnly.ParseExact(Birthday!, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+
+        return new(userId, Name!, birthdate, PhoneNumber!, Reason, Doctor, days, tags, Remark);
+    }
 }

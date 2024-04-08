@@ -1,14 +1,14 @@
-namespace GtPrax.Application.UseCases.WaitingLists;
+namespace GtPrax.Application.UseCases.PatientFiles;
 
 
 public sealed record PatientFileDto(
-    string Issuer,
+    string CreatedBy,
     string Name,
     DateOnly BirthDate,
     string PhoneNumber,
     string? ReferralReason,
     string? ReferralDoctor,
     TherapyDayDto[] TherapyDays,
-    PatientTag[] Tags,
+    PatientFileTag[] Tags,
     string? Remark
 );

@@ -1,5 +1,5 @@
-@page "/WaitingLists/{id}/Patients/Add"
-@model GtPrax.UI.Pages.WaitingLists.AddPatientModel
+@page "/WaitingLists/{id}/Patients/Create"
+@model GtPrax.UI.Pages.WaitingLists.CreatePatientModel
 @{
     ViewData["Title"] = Model.GetNode().Title;
     ViewData["HasFooter"] = true;
@@ -13,25 +13,18 @@
 
         @Html.CreateBreadcrumb(new { id = Model.Id }, new { id = Model.Id })
 
-        @if (!ModelState.IsValid)
-        {
-            <div class="notification is-danger">
-                <button class="delete"></button>
-                <div class="validation-summary-errors" data-valmsg-summary="true">
-                    <ul>
-                        @foreach (var error in ModelState.SelectMany(x => x.Value!.Errors))
-                        {
-                            <li>@Html.Raw(error.ErrorMessage)</li>
-                        }
-                    </ul>
-                </div>
-            </div>
-        }
-
         <h2 class="subtitle">@Model.Details</h2>
 
         <div class="columns">
             <div class="column is-half">
+
+                @if (!ModelState.IsValid)
+                {
+                    <div class="notification is-danger">
+                        <button class="delete"></button>
+                        <div asp-validation-summary="All"></div>
+                    </div>
+                }
 
                 <form method="post">
                     <div class="field">
@@ -232,7 +225,7 @@
                         <span asp-validation-for="Input.Remark"></span>
                     </div>
 
-                    <button class="button is-primary" type="submit">Hinzufügen</button>
+                    <button class="button is-primary" type="submit">Anlegen</button>
                 </form>
 
 

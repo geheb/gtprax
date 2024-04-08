@@ -13,12 +13,23 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using MongoDB.Bson.Serialization;
 using GtPrax.Application.UseCases.WaitingLists;
 using GtPrax.Infrastructure.Stores;
+using GtPrax.Application.UseCases.PatientFiles;
 
 public static class ServiceExtensions
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration config)
     {
         BsonClassMap.RegisterClassMap<UserModel>(classMap =>
+        {
+            classMap.AutoMap();
+        });
+
+        BsonClassMap.RegisterClassMap<WaitingListModel>(classMap =>
+        {
+            classMap.AutoMap();
+        });
+
+        BsonClassMap.RegisterClassMap<PatientFileModel>(classMap =>
         {
             classMap.AutoMap();
         });
@@ -70,6 +81,7 @@ public static class ServiceExtensions
         services.AddTransient<IEmailQueueService, EmailQueueService>();
         services.AddSingleton<IEmailValidatorService, EmailValidatorService>();
         services.AddTransient<IWaitingListStore, WaitingListStore>();
+        services.AddTransient<IPatientFileStore, PatientFileStore>();
 
         return services;
     }

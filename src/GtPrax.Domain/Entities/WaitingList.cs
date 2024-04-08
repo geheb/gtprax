@@ -4,39 +4,29 @@ using FluentResults;
 
 public sealed class WaitingList
 {
-    private readonly List<PatientFile> _patientFiles = [];
-
     public WaitingListIdentity Identity { get; private set; }
-    public IReadOnlyCollection<PatientFile> PatientFiles => _patientFiles;
+    public AuditMetadata Audit { get; private set; }
 
-    public WaitingList(WaitingListIdentity identity)
+    public WaitingList(WaitingListIdentity identity, AuditMetadata audit)
     {
+        ArgumentNullException.ThrowIfNull(identity);
+        ArgumentNullException.ThrowIfNull(audit);
+
         Identity = identity;
+        Audit = audit;
     }
 
-    public static Result<WaitingList> Create(string name, WaitingListIdentity[] identities)
+    public static Result<WaitingList> Create(string name, string createdBy, DateTimeOffset createdDate, WaitingListIdentity[] currentIdentities)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
+        ArgumentException.ThrowIfNullOrWhiteSpace(createdBy);
 
-        var exists = identities.Any(w => w.Name == name);
+        var exists = currentIdentities.Any(w => w.Name == name);
         if (exists)
         {
             return Result.Fail("Die Warteliste existiert bereits.");
         }
 
-        return Result.Ok(new WaitingList(new WaitingListIdentity(string.Empty, name)));
-    }
-
-    public Result Add(PatientFile patientFile, PersonIdentity[] identities)
-    {
-        ArgumentNullException.ThrowIfNull(patientFile);
-        var exists = identities.Any(p => p.Name == patientFile.Person.Identity.Name && p.BirthDate == patientFile.Person.Identity.BirthDate);
-        if (exists)
-        {
-            return Result.Fail("Der Patient existiert bereits.");
-        }
-        _patientFiles.Add(patientFile);
-
-        return Result.Ok();
+        return Result.Ok(new WaitingList(new WaitingListIdentity(name), new AuditMetadata(createdDate, createdBy)));
     }
 }
