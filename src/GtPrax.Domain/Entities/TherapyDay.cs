@@ -9,7 +9,7 @@ public sealed class TherapyDay
     public bool IsHomeVisit { get; private set; }
     public TimeOnly? AvailableFrom { get; private set; }
 
-    public TherapyDay(bool isMorning, bool isAfternoon, bool isHomeVisit, TimeOnly? availableFrom)
+    internal TherapyDay(bool isMorning, bool isAfternoon, bool isHomeVisit, TimeOnly? availableFrom)
     {
         IsMorning = isMorning;
         IsAfternoon = isAfternoon;

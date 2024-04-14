@@ -23,14 +23,17 @@ internal sealed class CreateWaitingListHandler : ICommandHandler<CreateWaitingLi
     {
         var waitingListIdentities = await _store.GetIdentities(cancellationToken);
 
-        var result = WaitingList.Create(command.Name, command.CreatedBy, _timeProvider.GetUtcNow(), waitingListIdentities);
+        var waitingListResult = new WaitingListBuilder()
+            .SetName(command.Name)
+            .SetCreated(command.CreatedBy, _timeProvider.GetUtcNow())
+            .Build(waitingListIdentities);
 
-        if (result.IsFailed)
+        if (waitingListResult.IsFailed)
         {
-            return result.ToResult();
+            return waitingListResult.ToResult();
         }
 
-        await _store.Create(result.Value, cancellationToken);
+        await _store.Upsert(waitingListResult.Value, cancellationToken);
         return Result.Ok();
     }
 }

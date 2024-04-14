@@ -27,38 +27,37 @@ public sealed class CreatePatientFileHandler : ICommandHandler<CreatePatientFile
     public async ValueTask<Result> Handle(CreatePatientFileCommand command, CancellationToken cancellationToken)
     {
         var personIdentities = await _patientFileStore.GetIdentities(cancellationToken);
-        var dto = command.PatientFile;
 
-        var personResult = Person.Create(dto.Name, dto.BirthDate, dto.PhoneNumber, _timeProvider.GetUtcNow(), personIdentities);
+        var personResult = new PersonBuilder()
+            .SetName(command.PatientFile.Name)
+            .SetBirthDate(command.PatientFile.BirthDate)
+            .SetPhoneNumber(command.PatientFile.PhoneNumber)
+            .Build(personIdentities, _timeProvider.GetUtcNow());
+
         if (personResult.IsFailed)
         {
             return personResult.ToResult();
         }
 
+        var patientFileBuilder = new PatientFileBuilder()
+            .SetWaitingListId(command.WaitingListId)
+            .SetCreated(command.CreatedBy, _timeProvider.GetUtcNow())
+            .SetPerson(personResult.Value)
+            .SetReferral(command.PatientFile.ReferralReason, command.PatientFile.ReferralDoctor)
+            .SetRemark(command.PatientFile.Remark);
+
+        Array.ForEach(command.PatientFile.TherapyDays, t => patientFileBuilder.SetTherapyDay(t.Day, t.IsMorning, t.IsAfternoon, t.IsHomeVisit, t.AvailableFrom));
+        Array.ForEach(command.PatientFile.Tags, t => patientFileBuilder.SetTag(TagType.From((int)t)));
+
         var waitingListIdentities = await _waitingListStore.GetIdentities(cancellationToken);
-        var patientFileResult = PatientFile.Create(command.WaitingListId, _timeProvider.GetUtcNow(), dto.CreatedBy, personResult.Value, waitingListIdentities);
+
+        var patientFileResult = patientFileBuilder.Build(waitingListIdentities);
         if (patientFileResult.IsFailed)
         {
             return patientFileResult.ToResult();
         }
 
-        var patientFile = patientFileResult.Value;
-
-        patientFile.SetReferral(dto.ReferralReason, dto.ReferralDoctor);
-
-        foreach (var day in dto.TherapyDays)
-        {
-            patientFile.SetTherapyDay(day.Day, day.IsMorning, day.IsAfternoon, day.IsHomeVisit, day.AvailableFrom);
-        }
-
-        foreach (var tag in dto.Tags)
-        {
-            patientFile.SetTag(TagType.From((int)tag));
-        }
-
-        patientFile.SetRemark(dto.Remark);
-
-        await _patientFileStore.Create(patientFile, cancellationToken);
+        await _patientFileStore.Upsert(patientFileResult.Value, cancellationToken);
 
         return Result.Ok();
     }

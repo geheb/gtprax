@@ -42,7 +42,7 @@ public class PatientInput
     [Display(Name = "Neurofeedback")]
     public bool IsNeurofeedbackTag { get; set; }
 
-    public PatientFileDto ToDto(string userId)
+    public CreatePatientFileDto ToDto()
     {
         var tags = Array.Empty<PatientFileTag>();
         if (IsPriorityTag)
@@ -64,6 +64,6 @@ public class PatientInput
         var days = TherapyTimes.ToDto();
         var birthdate = DateOnly.ParseExact(Birthday!, "yyyy-MM-dd", CultureInfo.InvariantCulture);
 
-        return new(userId, Name!, birthdate, PhoneNumber!, Reason, Doctor, days, tags, Remark);
+        return new(Name!, birthdate, PhoneNumber!, Reason, Doctor, days, tags, Remark);
     }
 }

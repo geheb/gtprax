@@ -35,9 +35,7 @@ public class CreatePatientModel : PageModel
             return Page();
         }
 
-        var dto = Input.ToDto(User.GetId()!);
-
-        var result = await _mediator.Send(new CreatePatientFileCommand(id, dto), cancellationToken);
+        var result = await _mediator.Send(new CreatePatientFileCommand(id, User.GetId()!, Input.ToDto()), cancellationToken);
         if (result.IsFailed)
         {
             result.Errors.ForEach(e => ModelState.AddModelError(string.Empty, e.Message));

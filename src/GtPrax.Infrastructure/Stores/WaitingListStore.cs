@@ -17,10 +17,18 @@ internal sealed class WaitingListStore : IWaitingListStore
         _collection = connectionFactory.GetWaitingListsCollection();
     }
 
-    public async Task Create(WaitingList entity, CancellationToken cancellationToken)
+    public async Task Upsert(WaitingList entity, CancellationToken cancellationToken)
     {
         var model = entity.MapToModel();
-        await _collection.InsertOneAsync(model, cancellationToken: cancellationToken);
+        if (string.IsNullOrEmpty(entity.Identity.Id))
+        {
+            await _collection.InsertOneAsync(model, cancellationToken: cancellationToken);
+        }
+        else
+        {
+            var filter = Builders<WaitingListModel>.Filter.Eq(f => f.Id, model.Id);
+            await _collection.ReplaceOneAsync(filter, model, cancellationToken: cancellationToken);
+        }
     }
 
     public async Task<WaitingListIdentity[]> GetIdentities(CancellationToken cancellationToken)

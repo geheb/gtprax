@@ -2,7 +2,6 @@ namespace GtPrax.Infrastructure.Stores;
 
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
-using GtPrax.Application.UseCases.PatientFiles;
 
 internal sealed class PatientFileModel
 {
@@ -13,12 +12,12 @@ internal sealed class PatientFileModel
     [BsonRepresentation(BsonType.String)]
     public required DateTimeOffset CreatedDate { get; set; }
 
-    public required string CreatedBy { get; set; }
+    public required ObjectId CreatedById { get; set; }
 
     [BsonRepresentation(BsonType.String)]
     public DateTimeOffset? LastModifiedDate { get; set; }
 
-    public string? LastModifiedBy { get; set; }
+    public ObjectId? LastModifiedById { get; set; }
 
     public required string Name { get; set; }
 
@@ -33,7 +32,7 @@ internal sealed class PatientFileModel
 
     public TherapyDayModel[]? TherapyDays { get; set; }
 
-    public PatientFileTag[]? Tags { get; set; }
+    public int[]? Tags { get; set; }
 
     public string? Remark { get; set; }
 }

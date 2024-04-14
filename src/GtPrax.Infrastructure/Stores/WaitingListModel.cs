@@ -10,7 +10,7 @@ internal sealed class WaitingListModel
     [BsonRepresentation(BsonType.String)]
     public required DateTimeOffset CreatedDate { get; set; }
 
-    public required string CreatedBy { get; set; }
+    public required ObjectId CreatedById { get; set; }
 
     public required string Name { get; set; }
 }

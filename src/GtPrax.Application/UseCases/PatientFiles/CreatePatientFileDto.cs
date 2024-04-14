@@ -1,8 +1,7 @@
 namespace GtPrax.Application.UseCases.PatientFiles;
 
 
-public sealed record PatientFileDto(
-    string CreatedBy,
+public sealed record CreatePatientFileDto(
     string Name,
     DateOnly BirthDate,
     string PhoneNumber,

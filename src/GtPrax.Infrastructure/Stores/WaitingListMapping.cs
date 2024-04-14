@@ -11,11 +11,24 @@ internal static class WaitingListMapping
             Id = string.IsNullOrEmpty(entity.Identity.Id) ? ObjectId.GenerateNewId() : ObjectId.Parse(entity.Identity.Id),
             Name = entity.Identity.Name,
             CreatedDate = entity.Audit.CreatedDate,
-            CreatedBy = entity.Audit.CreatedBy
+            CreatedById = ObjectId.Parse(entity.Audit.CreatedBy)
         };
 
-    public static WaitingList MapToDomain(this WaitingListModel model) =>
-        new(model.MapToIdentityDomain(), new(model.CreatedDate, model.CreatedBy));
+    public static WaitingList MapToDomain(this WaitingListModel model)
+    {
+        var waitingListResult = new WaitingListBuilder()
+            .SetId(model.Id.ToString())
+            .SetName(model.Name)
+            .SetCreated(model.CreatedById.ToString(), model.CreatedDate)
+            .Build([]);
+
+        if (waitingListResult.IsFailed)
+        {
+            throw new InvalidOperationException($"Inconsistency of {nameof(WaitingList)} detected: {model.Id}");
+        }
+
+        return waitingListResult.Value;
+    }
 
     public static WaitingList[] MapToDomain(this IEnumerable<WaitingListModel> models) =>
         models.Select(m => m.MapToDomain()).ToArray();
