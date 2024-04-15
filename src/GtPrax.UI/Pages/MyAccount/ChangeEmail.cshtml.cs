@@ -59,7 +59,7 @@ public class ChangeEmailModel : PageModel
 
     private async Task<bool> UpdateView(CancellationToken cancellationToken)
     {
-        var user = await _mediator.Send(new GetUserQuery(User.GetId()!), cancellationToken);
+        var user = await _mediator.Send(new FindUserByIdQuery(User.GetId()!), cancellationToken);
         if (user is null)
         {
             ModelState.AddModelError(string.Empty, Messages.UserNotFound);

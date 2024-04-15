@@ -6,12 +6,12 @@ using GtPrax.Application.Converter;
 using GtPrax.Application.Services;
 using Mediator;
 
-internal sealed class GetUserHandler : IQueryHandler<GetUserQuery, UserDto?>
+internal sealed class FindUserByIdHandler : IQueryHandler<FindUserByIdQuery, UserDto?>
 {
     private readonly TimeProvider _timeProvider;
     private readonly IUserService _userService;
 
-    public GetUserHandler(
+    public FindUserByIdHandler(
         TimeProvider timeProvider,
         IUserService userService)
     {
@@ -19,7 +19,7 @@ internal sealed class GetUserHandler : IQueryHandler<GetUserQuery, UserDto?>
         _userService = userService;
     }
 
-    public async ValueTask<UserDto?> Handle(GetUserQuery query, CancellationToken cancellationToken)
+    public async ValueTask<UserDto?> Handle(FindUserByIdQuery query, CancellationToken cancellationToken)
     {
         var user = await _userService.Find(query.Id);
         if (user is null)

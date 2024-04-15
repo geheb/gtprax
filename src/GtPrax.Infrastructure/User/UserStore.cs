@@ -35,8 +35,8 @@ internal sealed class UserStore :
     public async Task<IReadOnlyCollection<UserModel>> GetAllUsers(CancellationToken cancellationToken)
     {
         var filter = Builders<UserModel>.Filter.Eq(f => f.DeactivationDate, null);
-        var result = await _collection.FindAsync(filter, cancellationToken: cancellationToken);
-        return await result.ToListAsync(cancellationToken);
+        using var cursor = await _collection.FindAsync(filter, cancellationToken: cancellationToken);
+        return await cursor.ToListAsync(cancellationToken);
     }
 
     public async Task<IdentityResult> SetName(string id, string name, CancellationToken cancellationToken)
@@ -97,22 +97,22 @@ internal sealed class UserStore :
     public async Task<UserModel?> FindByEmailAsync(string normalizedEmail, CancellationToken cancellationToken)
     {
         var filter = Builders<UserModel>.Filter.Regex(f => f.Email, new(normalizedEmail, "i"));
-        using var entity = await _collection.FindAsync(filter, cancellationToken: cancellationToken);
-        return await entity.FirstOrDefaultAsync(cancellationToken);
+        using var cursor = await _collection.FindAsync(filter, cancellationToken: cancellationToken);
+        return await cursor.FirstOrDefaultAsync(cancellationToken);
     }
 
     public async Task<UserModel?> FindByIdAsync(string userId, CancellationToken cancellationToken)
     {
         var filter = Builders<UserModel>.Filter.Eq(f => f.Id, ObjectId.Parse(userId));
-        using var entity = await _collection.FindAsync(filter, cancellationToken: cancellationToken);
-        return await entity.FirstOrDefaultAsync(cancellationToken);
+        using var cursor = await _collection.FindAsync(filter, cancellationToken: cancellationToken);
+        return await cursor.FirstOrDefaultAsync(cancellationToken);
     }
 
     public async Task<UserModel?> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
     {
         var filter = Builders<UserModel>.Filter.Regex(f => f.UserName, new(normalizedUserName, "i"));
-        using var entity = await _collection.FindAsync(filter, cancellationToken: cancellationToken);
-        return await entity.FirstOrDefaultAsync(cancellationToken);
+        using var cursor = await _collection.FindAsync(filter, cancellationToken: cancellationToken);
+        return await cursor.FirstOrDefaultAsync(cancellationToken);
     }
 
     public Task<int> GetAccessFailedCountAsync(UserModel user, CancellationToken cancellationToken)
@@ -161,8 +161,8 @@ internal sealed class UserStore :
                 Builders<UserClaimModel>.Filter.Eq(f => f.Type, claim.Type),
                 Builders<UserClaimModel>.Filter.Eq(f => f.Value, claim.Value)));
 
-        using var documents = await _collection.FindAsync(filter, cancellationToken: cancellationToken);
-        return await documents.ToListAsync(cancellationToken);
+        using var cursor = await _collection.FindAsync(filter, cancellationToken: cancellationToken);
+        return await cursor.ToListAsync(cancellationToken);
     }
 
     public Task<bool> HasPasswordAsync(UserModel user, CancellationToken cancellationToken)
@@ -289,7 +289,7 @@ internal sealed class UserStore :
         var filter = Builders<UserModel>.Filter.ElemMatch(f => f.Claims,
                 Builders<UserClaimModel>.Filter.Eq(f => f.Type, ClaimsIdentity.DefaultRoleClaimType));
 
-        using var documents = await _collection.FindAsync(filter, cancellationToken: cancellationToken);
-        return await documents.ToListAsync(cancellationToken);
+        using var cursor = await _collection.FindAsync(filter, cancellationToken: cancellationToken);
+        return await cursor.ToListAsync(cancellationToken);
     }
 }

@@ -70,7 +70,7 @@ public class IndexModel : PageModel
 
     private async Task<UserDto?> UpdateView(CancellationToken cancellationToken)
     {
-        var user = await _mediator.Send(new GetUserQuery(User.GetId()!), cancellationToken);
+        var user = await _mediator.Send(new FindUserByIdQuery(User.GetId()!), cancellationToken);
         if (user is null)
         {
             ModelState.AddModelError(string.Empty, Messages.UserNotFound);

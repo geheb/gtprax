@@ -75,7 +75,7 @@ public class EditModel : PageModel
 
     private async Task<bool> UpdateView(string id, CancellationToken cancellationToken)
     {
-        var user = await _mediator.Send(new GetUserQuery(id), cancellationToken);
+        var user = await _mediator.Send(new FindUserByIdQuery(id), cancellationToken);
         if (user is null)
         {
             ModelState.AddModelError(string.Empty, Messages.UserNotFound);

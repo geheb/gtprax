@@ -39,7 +39,7 @@ internal sealed class WaitingListStore : IWaitingListStore
             Projection = Builders<WaitingListModel>.Projection.Include(f => f.Id).Include(f => f.Name)
         };
 
-        var cursor = await _collection.FindAsync(filter, find, cancellationToken);
+        using var cursor = await _collection.FindAsync(filter, find, cancellationToken);
         var models = await cursor.ToListAsync(cancellationToken);
         return models.MapToIdentityDomain();
     }
@@ -48,7 +48,7 @@ internal sealed class WaitingListStore : IWaitingListStore
     {
         var filter = Builders<WaitingListModel>.Filter.Empty;
 
-        var cursor = await _collection.FindAsync(filter, cancellationToken: cancellationToken);
+        using var cursor = await _collection.FindAsync(filter, cancellationToken: cancellationToken);
         var models = await cursor.ToListAsync(cancellationToken);
         return models.MapToDomain();
     }

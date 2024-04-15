@@ -1,5 +1,6 @@
 namespace GtPrax.Infrastructure.Stores;
 
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using GtPrax.Application.UseCases.PatientFiles;
@@ -43,7 +44,7 @@ internal sealed class PatientFileStore : IPatientFileStore
             Projection = Builders<PatientFileModel>.Projection.Include(f => f.Name).Include(f => f.BirthDate)
         };
 
-        var cursor = await _collection.FindAsync(filter, find, cancellationToken);
+        using var cursor = await _collection.FindAsync(filter, find, cancellationToken);
         var models = await cursor.ToListAsync(cancellationToken);
         return models.MapToIdentityDomain();
     }
@@ -52,7 +53,7 @@ internal sealed class PatientFileStore : IPatientFileStore
     {
         var filter = Builders<PatientFileModel>.Filter.Empty;
 
-        var cursor = await _collection.FindAsync(filter, cancellationToken: cancellationToken);
+        using var cursor = await _collection.FindAsync(filter, cancellationToken: cancellationToken);
         var models = await cursor.ToListAsync(cancellationToken);
         return models.MapToDomain(_timeProvider.GetUtcNow());
     }
@@ -60,7 +61,14 @@ internal sealed class PatientFileStore : IPatientFileStore
     public async Task<PatientFile?> Find(string id, CancellationToken cancellationToken)
     {
         var filter = Builders<PatientFileModel>.Filter.Eq(f => f.Id, ObjectId.Parse(id));
-        using var entity = await _collection.FindAsync(filter, cancellationToken: cancellationToken);
-        return (await entity.FirstOrDefaultAsync(cancellationToken))?.MapToDomain(_timeProvider.GetUtcNow());
+        using var cursor = await _collection.FindAsync(filter, cancellationToken: cancellationToken);
+        return (await cursor.FirstOrDefaultAsync(cancellationToken))?.MapToDomain(_timeProvider.GetUtcNow());
+    }
+
+    public async Task<Dictionary<string, int>> GetCountByWaitingList(CancellationToken cancellationToken)
+    {
+        var aggregate = _collection.Aggregate().Group(m => m.WaitingListId, g => new { WaitingListId = g.Key, Count = g.Count() });
+        var result = await aggregate.ToListAsync(cancellationToken);
+        return result.ToDictionary(r => r.WaitingListId.ToString(), r => r.Count);
     }
 }
