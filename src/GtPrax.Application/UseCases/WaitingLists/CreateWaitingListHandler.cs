@@ -3,37 +3,36 @@ namespace GtPrax.Application.UseCases.WaitingLists;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentResults;
-using GtPrax.Domain.Entities;
+using GtPrax.Domain.Models;
+using GtPrax.Domain.Repositories;
 using Mediator;
 
 internal sealed class CreateWaitingListHandler : ICommandHandler<CreateWaitingListCommand, Result>
 {
     private readonly TimeProvider _timeProvider;
-    private readonly IWaitingListStore _store;
+    private readonly IWaitingListRepo _waitingListRepo;
 
     public CreateWaitingListHandler(
         TimeProvider timeProvider,
-        IWaitingListStore store)
+        IWaitingListRepo waitingListRepo)
     {
         _timeProvider = timeProvider;
-        _store = store;
+        _waitingListRepo = waitingListRepo;
     }
 
     public async ValueTask<Result> Handle(CreateWaitingListCommand command, CancellationToken cancellationToken)
     {
-        var waitingListIdentities = await _store.GetIdentities(cancellationToken);
+        var waitingListItems = await _waitingListRepo.GetAll(cancellationToken);
 
-        var waitingListResult = new WaitingListBuilder()
-            .SetName(command.Name)
-            .SetCreated(command.CreatedBy, _timeProvider.GetUtcNow())
-            .Build(waitingListIdentities);
-
-        if (waitingListResult.IsFailed)
+        var waitingList = new WaitingList(waitingListItems);
+        var result = waitingList.AddItem(command.Name, command.CreatedBy, _timeProvider.GetUtcNow());
+        if (result.IsFailed)
         {
-            return waitingListResult.ToResult();
+            return result.ToResult();
         }
 
-        await _store.Upsert(waitingListResult.Value, cancellationToken);
+        await _waitingListRepo.Upsert(result.Value, cancellationToken);
+
         return Result.Ok();
     }
 }

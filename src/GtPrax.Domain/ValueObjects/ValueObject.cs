@@ -4,9 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-/// <summary>
-/// https://docs.microsoft.com/en-us/dotnet/standard/microservices-architecture/microservice-ddd-cqrs-patterns/implement-value-objects
-/// </summary>
 public abstract class ValueObject
 {
     protected static bool EqualOperator(ValueObject left, ValueObject right)
@@ -19,20 +16,20 @@ public abstract class ValueObject
         return left?.Equals(right!) != false;
     }
 
-    protected static bool NotEqualOperator(ValueObject left, ValueObject right) => !EqualOperator(left, right);
-
     protected abstract IEnumerable<object> GetEqualityComponents();
 
     public override bool Equals(object? obj)
     {
-        if (obj == null || obj.GetType() != GetType())
+        if (obj is not ValueObject other)
         {
             return false;
         }
-
-        var other = (ValueObject)obj;
         return GetEqualityComponents().SequenceEqual(other.GetEqualityComponents());
     }
+
+    public static bool operator ==(ValueObject one, ValueObject two) => EqualOperator(one, two);
+
+    public static bool operator !=(ValueObject one, ValueObject two) => !EqualOperator(one, two);
 
     public override int GetHashCode()
     {

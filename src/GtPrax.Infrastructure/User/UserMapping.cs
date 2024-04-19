@@ -2,7 +2,7 @@ namespace GtPrax.Infrastructure.User;
 
 using System.Linq;
 using System.Security.Claims;
-using GtPrax.Domain.Entities;
+using GtPrax.Domain.Models;
 using GtPrax.Domain.ValueObjects;
 
 internal static class UserMapping

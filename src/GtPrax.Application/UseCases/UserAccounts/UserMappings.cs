@@ -1,7 +1,7 @@
 namespace GtPrax.Application.UseCases.UserAccounts;
 
 using GtPrax.Application.Converter;
-using GtPrax.Domain.Entities;
+using GtPrax.Domain.Models;
 
 internal static class UserMappings
 {

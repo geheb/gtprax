@@ -42,23 +42,23 @@ public class PatientInput
     [Display(Name = "Neurofeedback")]
     public bool IsNeurofeedbackTag { get; set; }
 
-    public CreatePatientFileDto ToDto()
+    public CreatePatientRecordDto ToDto()
     {
-        var tags = Array.Empty<PatientFileTag>();
+        var tags = Array.Empty<PatientRecordTag>();
         if (IsPriorityTag)
         {
             Array.Resize(ref tags, tags.Length + 1);
-            tags[^1] = PatientFileTag.Priority;
+            tags[^1] = PatientRecordTag.Priority;
         }
         if (IsJumperTag)
         {
             Array.Resize(ref tags, tags.Length + 1);
-            tags[^1] = PatientFileTag.Jumper;
+            tags[^1] = PatientRecordTag.Jumper;
         }
         if (IsNeurofeedbackTag)
         {
             Array.Resize(ref tags, tags.Length + 1);
-            tags[^1] = PatientFileTag.Neurofeedback;
+            tags[^1] = PatientRecordTag.Neurofeedback;
         }
 
         var days = TherapyTimes.ToDto();

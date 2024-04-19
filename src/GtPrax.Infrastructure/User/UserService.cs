@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentResults;
 using GtPrax.Application.Services;
-using GtPrax.Domain.Entities;
+using GtPrax.Domain.Models;
 using GtPrax.Domain.ValueObjects;
 using Microsoft.AspNetCore.Identity;
 using MongoDB.Bson;

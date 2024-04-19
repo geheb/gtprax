@@ -2,7 +2,7 @@ namespace GtPrax.Application.Services;
 
 using System.Threading.Tasks;
 using FluentResults;
-using GtPrax.Domain.Entities;
+using GtPrax.Domain.Models;
 using GtPrax.Domain.ValueObjects;
 
 public interface IUserService
