@@ -10,8 +10,8 @@ internal static class PatientRecordMapping
     public static PatientRecordModel MapToModel(this PatientRecord entity) =>
         new()
         {
-            Id = ObjectId.Parse(entity.Id.Value),
-            WaitingListId = ObjectId.Parse(entity.WaitingListItemId.Value),
+            Id = ObjectId.Parse(entity.Id),
+            WaitingListId = ObjectId.Parse(entity.WaitingListItemId),
             CreatedDate = entity.Audit.CreatedDate,
             CreatedById = ObjectId.Parse(entity.Audit.CreatedBy),
             LastModifiedDate = entity.Audit.LastModifiedDate,
@@ -37,8 +37,8 @@ internal static class PatientRecordMapping
         };
 
     public static PatientRecord MapToDomain(this PatientRecordModel model) =>
-        new(new(model.Id.ToString()),
-            new(model.WaitingListId.ToString()),
+        new(model.Id.ToString(),
+            model.WaitingListId.ToString(),
             new(model.CreatedById.ToString(), model.CreatedDate, model.LastModifiedById?.ToString(), model.LastModifiedDate),
             new(model.Name, DateOnly.FromDateTime(model.BirthDate), model.PhoneNumber),
             new(model.ReferralReason, model.ReferralDoctor),

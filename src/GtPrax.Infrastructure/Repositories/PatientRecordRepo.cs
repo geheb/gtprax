@@ -32,7 +32,7 @@ internal sealed class PatientRecordRepo : IPatientRecordRepo
 
     public async Task<PatientRecord?> Find(PatientRecordId id, CancellationToken cancellationToken)
     {
-        var filter = Builders<PatientRecordModel>.Filter.Eq(f => f.Id, ObjectId.Parse(id.Value));
+        var filter = Builders<PatientRecordModel>.Filter.Eq(f => f.Id, ObjectId.Parse(id));
         using var cursor = await _collection.FindAsync(filter, cancellationToken: cancellationToken);
         return (await cursor.FirstOrDefaultAsync(cancellationToken))?.MapToDomain();
     }

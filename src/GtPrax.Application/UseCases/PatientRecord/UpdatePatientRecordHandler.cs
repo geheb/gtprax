@@ -21,10 +21,10 @@ internal sealed class UpdatePatientRecordHandler : ICommandHandler<UpdatePatient
 
     public async ValueTask<Result> Handle(UpdatePatientRecordCommand command, CancellationToken cancellationToken)
     {
-        var patientRecord = await _patientRecordRepo.Find(new(command.Id), cancellationToken);
+        var patientRecord = await _patientRecordRepo.Find(command.Id, cancellationToken);
         if (patientRecord is null)
         {
-            return Result.Fail(Messages.PatientNotFound);
+            return Result.Fail("Der/die Patient(in) wurde nicht gefunden.");
         }
 
         var patientRecordUpdate = patientRecord.Update(

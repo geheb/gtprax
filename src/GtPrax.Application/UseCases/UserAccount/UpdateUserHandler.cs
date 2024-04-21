@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentResults;
 using GtPrax.Application.Services;
+using GtPrax.Application.UseCases.Login;
 using GtPrax.Domain.ValueObjects;
 using Mediator;
 using Microsoft.AspNetCore.Identity;

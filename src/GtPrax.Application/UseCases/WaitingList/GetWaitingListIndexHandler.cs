@@ -27,10 +27,8 @@ internal sealed class GetWaitingListIndexHandler : IQueryHandler<GetWaitingListI
         }
 
         var patientRecords = await _patientRecordRepo.GetAll(cancellationToken);
-        var patientRecordMap = patientRecords.GroupBy(p => p.WaitingListItemId.Value).ToDictionary(g => g.Key, g => g.Count());
 
-        return waitingLists
-            .Select(w => new WaitingListIndexDto(w.Id.Value, w.Name, patientRecordMap.TryGetValue(w.Id.Value, out var count) ? count : 0))
-            .ToArray();
+        var waitingList = new Domain.Models.WaitingList(waitingLists, patientRecords);
+        return waitingList.GetPatientsGroupedByWaitingList().Select(w => new WaitingListIndexDto(w.Item.Id, w.Item.Name, w.PatientCount)).ToArray();
     }
 }

@@ -24,17 +24,12 @@ public sealed class CreatePatientRecordHandler : ICommandHandler<CreatePatientRe
 
     public async ValueTask<Result> Handle(CreatePatientRecordCommand command, CancellationToken cancellationToken)
     {
-        var waitingList = await _waitingListRepo.Find(new(command.WaitingListId), cancellationToken);
-        if (waitingList is null)
-        {
-            return Result.Fail(Messages.WaitingListNotFound);
-        }
-
+        var waitingListItems = await _waitingListRepo.GetAll(cancellationToken);
         var patientRecords = await _patientRecordRepo.GetAll(cancellationToken);
 
-        var result = waitingList
-            .AddPatientRecords(patientRecords)
-            .AddPatientRecord(
+        var result = new Domain.Models.WaitingList(waitingListItems, patientRecords)
+            .AddPatient(
+                command.WaitingListItemId,
                 command.CreatedBy,
                 _timeProvider.GetUtcNow(),
                 new(command.PatientRecord.Name, command.PatientRecord.BirthDate, command.PatientRecord.PhoneNumber),

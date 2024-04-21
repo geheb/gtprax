@@ -6,7 +6,8 @@ using GtPrax.Domain.ValueObjects;
 internal static class PatientRecordMapping
 {
     public static PatientRecordDto MapToDto(this PatientRecord item) =>
-        new(Name: item.Person.Name,
+        new(Id: item.Id,
+            Name: item.Person.Name,
             BirthDate: item.Person.BirthDate,
             PhoneNumber: item.Person.PhoneNumber,
             ReferralReason: item.Referral?.Reason,
@@ -14,6 +15,9 @@ internal static class PatientRecordMapping
             TherapyDays: item.TherapyDays.Select(k => k.Value.MapToDto(k.Key)).ToArray(),
             Tags: item.Tags.Select(t => (PatientRecordTag)t.Key).ToArray(),
             Remark: item.Remark);
+
+    public static PatientRecordDto[] MapToDto(this IEnumerable<PatientRecord> items) =>
+        items.Select(item => item.MapToDto()).ToArray();
 
     public static TherapyDayDto MapToDto(this TherapyDay item, DayOfWeek day) =>
         new(Day: day,

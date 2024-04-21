@@ -32,7 +32,7 @@ internal sealed class WaitingListRepo : IWaitingListRepo
 
     public async Task<WaitingListItem?> Find(WaitingListItemId id, CancellationToken cancellationToken)
     {
-        var filter = Builders<WaitingListModel>.Filter.Eq(f => f.Id, ObjectId.Parse(id.Value));
+        var filter = Builders<WaitingListModel>.Filter.Eq(f => f.Id, ObjectId.Parse(id));
         using var cursor = await _collection.FindAsync(filter, cancellationToken: cancellationToken);
         return (await cursor.FirstOrDefaultAsync(cancellationToken))?.MapToDomain();
     }

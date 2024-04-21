@@ -24,8 +24,8 @@ internal sealed class CreateWaitingListHandler : ICommandHandler<CreateWaitingLi
     {
         var waitingListItems = await _waitingListRepo.GetAll(cancellationToken);
 
-        var waitingList = new WaitingList(waitingListItems);
-        var result = waitingList.AddItem(command.Name, command.CreatedBy, _timeProvider.GetUtcNow());
+        var waitingList = new WaitingList(waitingListItems, []);
+        var result = waitingList.AddWaitingList(command.Name, command.CreatedBy, _timeProvider.GetUtcNow());
         if (result.IsFailed)
         {
             return result.ToResult();

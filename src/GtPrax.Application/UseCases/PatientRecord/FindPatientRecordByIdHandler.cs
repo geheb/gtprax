@@ -16,7 +16,7 @@ internal sealed class FindPatientRecordByIdHandler : IQueryHandler<FindPatientRe
 
     public async ValueTask<PatientRecordDto?> Handle(FindPatientRecordByIdQuery query, CancellationToken cancellationToken)
     {
-        var patientFile = await _patientRecordRepo.Find(new(query.Id), cancellationToken);
+        var patientFile = await _patientRecordRepo.Find(query.Id, cancellationToken);
         return patientFile?.MapToDto();
     }
 }
