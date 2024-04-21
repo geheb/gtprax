@@ -43,7 +43,7 @@ public sealed class WaitingList
         return Result.Ok(_patientRecords.Where(p => p.WaitingListItemId == id).ToArray());
     }
 
-    public IEnumerable<(WaitingListItem Item, int PatientCount)> GetPatientsGroupedByWaitingList()
+    public IEnumerable<(WaitingListItem Item, int PatientCount)> GetWaitingListsGroupedByPatient()
     {
         var map = _patientRecords.GroupBy(p => p.WaitingListItemId).ToDictionary(g => g.Key, g => g.Count());
         return _waitingListItems.Select(w => (w, map.TryGetValue(w.Id, out var count) ? count : 0)).ToArray();
