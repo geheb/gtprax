@@ -1,6 +1,6 @@
 namespace GtPrax.UI.Converter;
 
-using GtPrax.Application.UseCases.UserAccounts;
+using GtPrax.Application.UseCases.UserAccount;
 
 public sealed class RoleConverter
 {

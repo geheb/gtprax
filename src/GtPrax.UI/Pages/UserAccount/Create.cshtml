@@ -1,0 +1,67 @@
+@page "~/UserAccount/Create"
+@model GtPrax.UI.Pages.UserAccount.CreateModel
+@{
+    ViewData["Title"] = Model.GetNode().Title;
+    ViewData["HasFooter"] = true;
+    Model.BuildHeaderMenu();
+    var roleConverter = new RoleConverter();
+}
+
+@await Html.PartialAsync("_Header")
+
+<section class="section">
+    <div class="container">
+
+        @Html.CreateBreadcrumb()
+
+        <div class="columns">
+            <div class="column is-half">
+
+                @if (!ModelState.IsValid)
+                {
+                    <div class="notification is-danger">
+                        <button class="delete"></button>
+                        <div asp-validation-summary="All"></div>
+                    </div>
+                }
+
+                <form method="post">
+                    <div class="field">
+                        <label class="label" asp-for="Input.Name"></label>
+                        <div class="control">
+                            <input class="input" type="text" asp-for="Input.Name" />
+                        </div>
+                        <span asp-validation-for="Input.Name"></span>
+                    </div>
+                    <div class="field">
+                        <label class="label" asp-for="Input.Email"></label>
+                        <div class="control">
+                            <input class="input" type="email" asp-for="Input.Email" />
+                        </div>
+                        <span asp-validation-for="Input.Email"></span>
+                    </div>
+                    <div class="field">
+                        <label class="label">Rollen</label>
+                    </div>
+                    <div class="field">
+                        <input id="checkBox0" type="checkbox" asp-for="Input.Roles[0]" />
+                        <label for="checkBox0">@roleConverter.RoleToName(UserRole.Staff)</label>
+
+                        <input id="checkBox1" type="checkbox" asp-for="Input.Roles[1]" />
+                        <label for="checkBox1">@roleConverter.RoleToName(UserRole.Admin)</label>
+
+                        <input id="checkBox2" type="checkbox" asp-for="Input.Roles[2]" />
+                        <label for="checkBox2">@roleConverter.RoleToName(UserRole.Manager)</label>
+                    </div>
+
+                    <button class="button is-primary" type="submit">Anlegen</button>
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+
+</section>
+
+@await Html.PartialAsync("_Footer")

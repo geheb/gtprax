@@ -1,0 +1,154 @@
+@page "~/UserAccount/Edit/{id}"
+@model GtPrax.UI.Pages.UserAccount.EditModel
+@{
+    ViewData["Title"] = Model.GetNode().Title;
+    ViewData["HasFooter"] = true;
+    Model.BuildHeaderMenu(new { id = Model.Info?.Id });
+    var dateConverter = new GermanDateTimeConverter();
+    var roleConverter = new RoleConverter();
+    var indexUrl = Url.PageLink(Model.PageLinkName<IndexModel>());
+}
+
+@await Html.PartialAsync("_Header")
+
+<section class="section">
+    <div class="container">
+
+        <div class="columns is-gapless is-mobile">
+            <div class="column is-flex is-align-items-center">@Html.CreateBreadcrumb()</div>
+            <div class="column is-narrow">
+                <div class="dropdown is-hoverable is-right">
+                    <div class="dropdown-trigger">
+                        <button class="button" aria-haspopup="true" aria-controls="user-action">
+                            <span class="icon is-small">
+                                <i class="fas fa-ellipsis-h"></i>
+                            </span>
+                        </button>
+                    </div>
+                    <div class="dropdown-menu" id="user-action" role="menu">
+                        <div class="dropdown-content">
+                            <div class="dropdown-item">
+                                <div>Konto bestätigt: @(Model.Info?.IsEmailConfirmed == true ? "Ja" : "Nein")</div>
+                                <div>Letztes Login: @dateConverter.ToDateTime(Model.Info?.LastLogin ?? DateTimeOffset.MinValue)</div>
+                                <div>Gesperrt bis: @(Model.Info?.IsLockout == true ? dateConverter.ToDateTime(Model.Info?.LockoutEnd ?? DateTimeOffset.MinValue) : "Unbekannt")</div>
+                            </div>
+                            <hr class="dropdown-divider" />
+                            @if (!Model.IsDisabled)
+                            {
+                                <a class="confirm-email dropdown-item" href="#"
+                                   data-user="@Model.Info?.Name"
+                                   data-url="@(Url.PageLink(string.Empty, "confirmemail", new { id = Model.Info?.Id }))">
+                                    Bestätigung anfordern
+                                </a>
+                                <a class="dropdown-item open-modal" href="#"
+                                   data-target="#deactivateUserModal"
+                                   data-user="@Model.Info?.Name"
+                                   data-url="@(Url.PageLink(string.Empty, "deactivateuser", new { id = Model.Info?.Id }))">
+                                    Benutzer deaktivieren
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="columns">
+            <div class="column is-half">
+
+                @if (!ModelState.IsValid)
+                {
+                    <div class="notification is-danger">
+                        <button class="delete"></button>
+                        <div asp-validation-summary="All"></div>
+                    </div>
+                }
+
+                <form method="post">
+                    <fieldset disabled="@Model.IsDisabled">
+                        <div class="field">
+                            <label class="label" asp-for="Input.Name"></label>
+                            <div class="control">
+                                <input class="input" type="text" asp-for="Input.Name" />
+                            </div>
+                            <span asp-validation-for="Input.Name"></span>
+                        </div>
+                        <div class="field">
+                            <label class="label" asp-for="Input.Email"></label>
+                            <div class="control">
+                                <input class="input" type="email" asp-for="Input.Email" />
+                            </div>
+                            <span asp-validation-for="Input.Email"></span>
+                        </div>
+                        <div class="field">
+                            <label class="label" asp-for="Input.Password"></label>
+                            <div class="control">
+                                <input class="input" type="password" asp-for="Input.Password" />
+                                <span class="icon toggle-eye">
+                                    <i class="fas fa-eye"></i>
+                                </span>
+                            </div>
+                            <span asp-validation-for="Input.Password"></span>
+                        </div>
+                        <div class="field">
+                            <label class="label">Rollen</label>
+                        </div>
+                        <div class="field">
+                            <input id="checkBox0" type="checkbox" asp-for="Input.Roles[0]" />
+                            <label for="checkBox0">@roleConverter.RoleToName(UserRole.Staff)</label>
+
+                            <input id="checkBox1" type="checkbox" asp-for="Input.Roles[1]" />
+                            <label for="checkBox1">@roleConverter.RoleToName(UserRole.Admin)</label>
+
+                            <input id="checkBox2" type="checkbox" asp-for="Input.Roles[2]" />
+                            <label for="checkBox2">@roleConverter.RoleToName(UserRole.Manager)</label>
+                        </div>
+
+                        <button class="button is-primary" type="submit">Speichern</button>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+@await Html.PartialAsync("_Footer")
+
+@Html.CreateModalTemplateWithOkCancel(
+    "deactivateUserModal",
+    "Benutzer deaktivieren",
+    "Möchtest du wirklich den aktuellen Benutzer deaktivieren? Dieser Schritt ist unwiderruflich!")
+
+@section Scripts
+{
+<script type="text/javascript">
+    $(function () {
+
+        $(".confirm-email").click(function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const url = $(this).data('url');
+            $.post(url, {@Html.AjaxCsrfToken()}).done(function (data) {
+                if (data.success) {
+                    createToast('Die Bestätigung der E-Mail-Adresse wurde angefordert.');
+                } else {
+                    createToast(data.error, 'is-danger');
+                }
+            });
+        });
+
+        handleModal({
+            id: '#deactivateUserModal',
+            token: {@Html.AjaxCsrfToken()},
+            confirm: {
+                dataurl: 'url',
+                action: function () {
+                    createToast(`Der Benutzer wurde deaktiviert.`);
+                    sleep(1000).then(() => window.location.replace('@indexUrl'));
+                }
+            }
+        });
+    });
+</script>
+}

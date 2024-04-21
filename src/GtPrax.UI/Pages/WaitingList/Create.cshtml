@@ -1,0 +1,45 @@
+@page
+@model GtPrax.UI.Pages.WaitingList.CreateModel
+@{
+    ViewData["Title"] = Model.GetNode().Title;
+    ViewData["HasFooter"] = true;
+    Model.BuildHeaderMenu();
+}
+
+@await Html.PartialAsync("_Header")
+
+<section class="section">
+    <div class="container">
+
+        @Html.CreateBreadcrumb()
+
+        <div class="columns">
+            <div class="column is-half">
+
+                @if (!ModelState.IsValid)
+                {
+                    <div class="notification is-danger">
+                        <button class="delete"></button>
+                        <div asp-validation-summary="All"></div>
+                    </div>
+                }
+
+                <form method="post">
+                    <div class="field">
+                        <label class="label" asp-for="Name"></label>
+                        <div class="control">
+                            <input class="input" type="text" asp-for="Name" autofocus />
+                        </div>
+                        <span asp-validation-for="Name"></span>
+                    </div>
+
+                    <button class="button is-primary" type="submit">Anlegen</button>
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</section>
+
+@await Html.PartialAsync("_Footer")

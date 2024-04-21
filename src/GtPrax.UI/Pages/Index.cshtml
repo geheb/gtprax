@@ -24,12 +24,12 @@
             </figure>
         }
 
-        @if (Model.HasNodeAccess(typeof(WaitingLists.IndexModel)))
+        @if (Model.HasNodeAccess(typeof(WaitingList.IndexModel)))
         {
             <p class="title">Patienten</p>
             <nav class="bd-links">
 
-                <a href="/WaitingLists" class="bd-link has-text-grey">
+                <a href="/WaitingList" class="bd-link has-text-grey">
                     <span class="icon bd-link-icon has-text-info">
                         <i class="fa-solid fa-clock"></i>
                     </span>
@@ -44,14 +44,14 @@
             </nav>
         }
 
-        @if (Model.HasNodeAccess(typeof(UserAccounts.IndexModel)))
+        @if (Model.HasNodeAccess(typeof(UserAccount.IndexModel)))
         {
             <p class="title">Administration</p>
             <nav class="bd-links">
 
-                @if (Model.HasNodeAccess(typeof(UserAccounts.IndexModel)))
+                @if (Model.HasNodeAccess(typeof(UserAccount.IndexModel)))
                 {
-                    <a href="/UserAccounts" class="bd-link has-text-grey">
+                    <a href="/UserAccount" class="bd-link has-text-grey">
                         <span class="icon bd-link-icon has-text-info">
                             <i class="fas fa-users"></i>
                         </span>

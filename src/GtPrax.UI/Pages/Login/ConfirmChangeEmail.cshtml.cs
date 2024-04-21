@@ -1,6 +1,6 @@
 namespace GtPrax.UI.Pages.Login;
 
-using GtPrax.Application.UseCases.UserAccounts;
+using GtPrax.Application.UseCases.UserAccount;
 using GtPrax.UI.Extensions;
 using Mediator;
 using Microsoft.AspNetCore.Authorization;
