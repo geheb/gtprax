@@ -16,17 +16,15 @@ public sealed class GermanDateTimeConverter
         _westEuropeTimeZone = TimeZoneInfo.FindSystemTimeZoneById(timezone);
     }
 
-    public string? ToDateTime(DateTimeOffset date) =>
-        date.ToString("dd.MM.yyyy HH\\:mm", _culture);
+    public string? ToDateTime(DateTimeOffset date) => date.ToString("dd.MM.yyyy HH\\:mm", _culture);
 
-    public string ToDateTimeShort(DateTimeOffset date) =>
-        date.ToString("dd.MM. HH\\:mm", _culture);
+    public string ToDateTimeShort(DateTimeOffset date) => date.ToString("dd.MM. HH\\:mm", _culture);
 
-    public string ToDate(DateTimeOffset date) =>
-        date.ToString("dd.MM.yyyy", _culture);
+    public string ToDate(DateTimeOffset date) => date.ToString("dd.MM.yyyy", _culture);
 
-    public string ToTime(DateTimeOffset date) =>
-        date.ToString("HH\\:mm", _culture);
+    public string ToDate(DateOnly date) => date.ToString("dd.MM.yyyy", _culture);
+
+    public string ToTime(DateTimeOffset date) => date.ToString("HH\\:mm", _culture);
 
     public DateTimeOffset ToUtc(DateOnly date)
     {

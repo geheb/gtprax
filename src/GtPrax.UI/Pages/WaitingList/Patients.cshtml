@@ -1,4 +1,5 @@
 @page "/WaitingList/{id}/Patients"
+@using GtPrax.Application.UseCases.PatientRecord
 @model GtPrax.UI.Pages.WaitingList.PatientsModel
 @{
     ViewData["Title"] = Model.GetNode().Title;
@@ -6,6 +7,7 @@
     Model.BuildHeaderMenu(new { id = Model.Id });
     var dateTimeConverter = new GermanDateTimeConverter();
     var createUrl = Url.PageLink(Model.PageLinkName<CreatePatientModel>(), null, new { id = Model.Id });
+    var editPatientPage = Model.PageLinkName<EditPatientModel>();
 }
 
 @await Html.PartialAsync("_Header")
@@ -31,7 +33,7 @@
                             </div>
                             <hr class="dropdown-divider" />
                             <a href="@createUrl" class="dropdown-item">
-                                Patient(in) hinzufügen
+                                Patient(in) anlegen
                             </a>
                         </div>
                     </div>
@@ -39,7 +41,7 @@
             </div>
         </div>
 
-        <h1 class="subtitle">@Model.Details</h1>
+        <h1 class="subtitle">#@(Model.WaitingListName ?? "Unbekannt")</h1>
 
         @if (!ModelState.IsValid)
         {
@@ -49,6 +51,55 @@
             </div>
         }
 
+        <div class="list">
+            @foreach (var i in Model.Items)
+            {
+                <div class="list-item list-item-clickable" data-url="@(Url.PageLink(editPatientPage, null, new { id = i.Id }))">
+                    <div class="list-item-image">
+                        <i class="fa-solid fa-hospital-user fa-2x has-text-info"></i>
+                    </div>
+                    <div class="list-item-content">
+                        <div class="list-item-title">@i.Name</div>
+                        <div class="list-item-description">
+                            <span class="tag is-rounded">
+                                @dateTimeConverter.ToDateTime(i.LastModified) &commat; @(i.LastModifedBy ?? "Unbekannt")
+                            </span>
+                            <span class="tag is-rounded is-success">@dateTimeConverter.ToDate(i.BirthDate)</span>
+                            <span class="tag is-rounded is-info">@i.PhoneNumber</span>
+                            @if (!string.IsNullOrEmpty(i.ReferralReason))
+                            {
+                                <span class="tag is-rounded is-warning">@i.ReferralReason</span>
+                            }
+                            @if (i.Tags!.Contains(PatientRecordTag.Priority))
+                            {
+                                <span class="tag is-rounded is-danger"><i class="fa-solid fa-star"></i></span>
+                            }
+                            @if (i.Tags!.Contains(PatientRecordTag.Neurofeedback))
+                            {
+                                <span class="tag is-rounded is-black"><i class="fa-solid fa-brain"></i></span>
+                            }
+                            @if (i.Tags!.Contains(PatientRecordTag.Jumper))
+                            {
+                                <span class="tag is-rounded is-black"><i class="fa-solid fa-horse"></i></span>
+                            }
+                            @if (i.HasTherapyDaysWithHomeVisit)
+                            {
+                                <span class="tag is-rounded is-black"><i class="fa-solid fa-house"></i></span>
+                            }
+                        </div>
+                    </div>
+                    <div class="list-item-controls">
+                        <div class="buttons is-right is-hidden-mobile">
+                            <a class="button" href="@(Url.PageLink(editPatientPage, null, new { id = i.Id }))">
+                                <span class="icon is-small"><i class="fa-solid fa-magnifying-glass"></i></span>
+                                <span>Anzeigen</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
 
     </div>
 </section>
@@ -56,5 +107,7 @@
 <a href="@createUrl" class="button is-floating is-success">
     <i class="fa-solid fa-circle-plus"></i>
 </a>
+
+
 
 @await Html.PartialAsync("_Footer")

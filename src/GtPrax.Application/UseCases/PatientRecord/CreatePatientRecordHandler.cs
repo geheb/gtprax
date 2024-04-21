@@ -30,7 +30,7 @@ public sealed class CreatePatientRecordHandler : ICommandHandler<CreatePatientRe
         var result = new Domain.Models.WaitingList(waitingListItems, patientRecords)
             .AddPatient(
                 command.WaitingListItemId,
-                command.CreatedBy,
+                command.CreatedById,
                 _timeProvider.GetUtcNow(),
                 new(command.PatientRecord.Name, command.PatientRecord.BirthDate, command.PatientRecord.PhoneNumber),
                 new(command.PatientRecord.ReferralReason, command.PatientRecord.ReferralDoctor),

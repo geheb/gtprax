@@ -1,12 +1,13 @@
 namespace GtPrax.Application.UseCases.PatientRecord;
 
-public sealed record PatientRecordDto(
+public sealed record PatientRecordIndexItemDto(
+    string Id,
+    DateTimeOffset LastModified,
+    string? LastModifedBy,
     string Name,
     DateOnly BirthDate,
     string PhoneNumber,
     string? ReferralReason,
-    string? ReferralDoctor,
-    TherapyDayDto[] TherapyDays,
     PatientRecordTag[] Tags,
-    string? Remark
+    bool HasTherapyDaysWithHomeVisit
 );

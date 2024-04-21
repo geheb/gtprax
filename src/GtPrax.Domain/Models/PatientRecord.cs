@@ -43,7 +43,7 @@ public sealed class PatientRecord : Entity<PatientRecordId>
     }
 
     public PatientRecord Update(
-        string modifiedBy,
+        string modifiedById,
         DateTimeOffset modifiedOn,
         string phoneNumber,
         Referral referral,
@@ -52,7 +52,7 @@ public sealed class PatientRecord : Entity<PatientRecordId>
         string? remark) =>
         new(Id,
             WaitingListItemId,
-            new(Audit.CreatedBy, Audit.CreatedDate, modifiedBy, modifiedOn),
+            new(Audit.CreatedById, Audit.CreatedDate, modifiedById, modifiedOn),
             Person.SetPhoneNumber(phoneNumber),
             referral,
             therapyDays,

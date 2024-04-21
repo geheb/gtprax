@@ -28,7 +28,7 @@ internal sealed class UpdatePatientRecordHandler : ICommandHandler<UpdatePatient
         }
 
         var patientRecordUpdate = patientRecord.Update(
-            command.ModifiedBy,
+            command.ModifiedById,
             _timeProvider.GetUtcNow(),
             command.PatientRecord.PhoneNumber,
             new(command.PatientRecord.ReferralReason, command.PatientRecord.ReferralDoctor),

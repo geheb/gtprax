@@ -15,10 +15,10 @@ public sealed class WaitingList
         _patientRecords = new(patientRecords);
     }
 
-    public Result<WaitingListItem> AddWaitingList(string name, string createdBy, DateTimeOffset createdOn)
+    public Result<WaitingListItem> AddWaitingList(string name, string createdById, DateTimeOffset createdOn)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
-        ArgumentException.ThrowIfNullOrWhiteSpace(createdBy);
+        ArgumentException.ThrowIfNullOrWhiteSpace(createdById);
 
         var exists = _waitingListItems.Any(i => i.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
         if (exists)
@@ -26,7 +26,7 @@ public sealed class WaitingList
             return Result.Fail("Die Warteliste existiert bereits.");
         }
 
-        var item = new WaitingListItem(DomainObjectId.NewId(), name, createdBy, createdOn);
+        var item = new WaitingListItem(DomainObjectId.NewId(), name, createdById, createdOn);
         _waitingListItems.Add(item);
 
         return item;
@@ -49,9 +49,11 @@ public sealed class WaitingList
         return _waitingListItems.Select(w => (w, map.TryGetValue(w.Id, out var count) ? count : 0)).ToArray();
     }
 
+    public WaitingListItem? FindWaitingList(WaitingListItemId id) => _waitingListItems.FirstOrDefault(w => w.Id == id);
+
     public Result<PatientRecord> AddPatient(
         WaitingListItemId id,
-        string createdBy,
+        string createdById,
         DateTimeOffset createdOn,
         Person person,
         Referral referral,
@@ -60,7 +62,7 @@ public sealed class WaitingList
         string? remark)
     {
         ArgumentNullException.ThrowIfNull(id);
-        ArgumentException.ThrowIfNullOrWhiteSpace(createdBy);
+        ArgumentException.ThrowIfNullOrWhiteSpace(createdById);
         ArgumentNullException.ThrowIfNull(person);
         ArgumentNullException.ThrowIfNull(therapyDays);
         ArgumentNullException.ThrowIfNull(tags);
@@ -83,7 +85,7 @@ public sealed class WaitingList
             return Result.Fail($"Der/die Patient(in) mit Name und Geburtsdatum existiert bereits. Siehe Warteliste \"{waitingList.Name}\"");
         }
 
-        var audit = new AuditMetadata(createdBy, createdOn);
+        var audit = new AuditMetadata(createdById, createdOn);
         var record = new PatientRecord(DomainObjectId.NewId(), id, audit, person, referral, therapyDays, tags, remark);
 
         _patientRecords.Add(record);

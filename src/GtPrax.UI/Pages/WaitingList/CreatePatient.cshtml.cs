@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using GtPrax.UI.Extensions;
+using GtPrax.Application.UseCases.WaitingList;
 
 [Node("Patient(in) anlegen", FromPage = typeof(PatientsModel))]
 [Authorize]
@@ -16,7 +17,8 @@ public class CreatePatientModel : PageModel
     private readonly IMediator _mediator;
 
     public string? Id { get; set; }
-    public string? Details { get; set; }
+    public string? WaitingListName { get; set; }
+    public bool IsDisabled { get; set; }
 
     [BindProperty]
     public PatientInput Input { get; set; } = new();
@@ -26,11 +28,12 @@ public class CreatePatientModel : PageModel
         _mediator = mediator;
     }
 
-    public void OnGet(string id) => Id = id;
+    public async Task OnGetAsync(string id, CancellationToken cancellationToken) =>
+        await UpdateView(id, cancellationToken);
 
     public async Task<IActionResult> OnPostAsync(string id, CancellationToken cancellationToken)
     {
-        if (!ModelState.IsValid)
+        if (!await UpdateView(id, cancellationToken))
         {
             return Page();
         }
@@ -43,5 +46,19 @@ public class CreatePatientModel : PageModel
         }
 
         return RedirectToPage(this.PageLinkName<PatientsModel>(), new { id });
+    }
+
+    private async Task<bool> UpdateView(string id, CancellationToken cancellationToken)
+    {
+        Id = id;
+        var waitingList = await _mediator.Send(new FindWaitingListByIdQuery(id), cancellationToken);
+        if (waitingList is null)
+        {
+            ModelState.AddModelError(string.Empty, "Die Warteliste wurde nicht gefunden.");
+            IsDisabled = true;
+            return false;
+        }
+        WaitingListName = waitingList.Name;
+        return ModelState.IsValid;
     }
 }

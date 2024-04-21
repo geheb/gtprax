@@ -11,7 +11,7 @@ internal static class WaitingListMapping
             Id = ObjectId.Parse(entity.Id),
             Name = entity.Name,
             CreatedDate = entity.Audit.CreatedDate,
-            CreatedById = ObjectId.Parse(entity.Audit.CreatedBy)
+            CreatedById = ObjectId.Parse(entity.Audit.CreatedById)
         };
 
     public static WaitingListItem MapToDomain(this WaitingListModel model) =>
