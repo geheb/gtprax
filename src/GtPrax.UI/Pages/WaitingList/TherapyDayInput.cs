@@ -1,6 +1,6 @@
 namespace GtPrax.UI.Pages.WaitingList;
 
-using System.Globalization;
+using GtPrax.Application.Converter;
 using GtPrax.Application.UseCases.PatientRecord;
 
 public class TherapyDayInput
@@ -12,9 +12,14 @@ public class TherapyDayInput
 
     public bool HasValues => IsMorning || IsAfternoon || IsHomeVisit || !string.IsNullOrWhiteSpace(AvailableFrom);
 
-    public TherapyDayDto ToDto(DayOfWeek day)
+    public TherapyDayDto ToDto(DayOfWeek day, GermanDateTimeConverter dateTimeConverter) =>
+        new(day, IsMorning, IsAfternoon, IsHomeVisit, dateTimeConverter.FromIsoTime(AvailableFrom));
+
+    public void FromDto(TherapyDayDto dto, GermanDateTimeConverter dateTimeConverter)
     {
-        TimeOnly? time = TimeOnly.TryParse(AvailableFrom, CultureInfo.InvariantCulture, out var t) ? t : null;
-        return new(day, IsMorning, IsAfternoon, IsHomeVisit, time);
+        IsMorning = dto.IsMorning;
+        IsAfternoon = dto.IsAfternoon;
+        IsHomeVisit = dto.IsHomeVisit;
+        AvailableFrom = dto.AvailableFrom is not null ? dateTimeConverter.ToIso(dto.AvailableFrom!.Value) : null;
     }
 }

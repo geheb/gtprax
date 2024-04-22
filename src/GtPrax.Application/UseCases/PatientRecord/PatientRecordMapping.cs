@@ -6,10 +6,10 @@ using GtPrax.Domain.ValueObjects;
 
 internal static class PatientRecordMapping
 {
-    public static PatientRecordIndexItemDto MapToIndexDto(this PatientRecord item, string? lastModiedBy, GermanDateTimeConverter dateTimeConverter) =>
+    public static PatientRecordIndexItemDto MapToIndexDto(this PatientRecord item, string? lastModifiedBy, GermanDateTimeConverter dateTimeConverter) =>
         new(Id: item.Id,
             LastModified: dateTimeConverter.ToLocal(item.Audit.LastModifiedDate ?? item.Audit.CreatedDate),
-            LastModifedBy: lastModiedBy,
+            LastModifiedBy: lastModifiedBy,
             Name: item.Person.Name,
             BirthDate: item.Person.BirthDate,
             PhoneNumber: item.Person.PhoneNumber,
@@ -17,8 +17,11 @@ internal static class PatientRecordMapping
             Tags: item.Tags.Select(t => (PatientRecordTag)t.Key).ToArray(),
             HasTherapyDaysWithHomeVisit: item.TherapyDays.Values.Any(t => t.IsHomeVisit));
 
-    public static PatientRecordDto MapToDto(this PatientRecord item) =>
-        new(Name: item.Person.Name,
+    public static PatientRecordItemDto MapToDto(this PatientRecord item, string? lastModifiedBy, GermanDateTimeConverter dateTimeConverter) =>
+        new(Created: dateTimeConverter.ToLocal(item.Audit.CreatedDate),
+            LastModified: item.Audit.LastModifiedDate is not null ? dateTimeConverter.ToLocal(item.Audit.LastModifiedDate.Value) : null,
+            LastModifiedBy: lastModifiedBy,
+            Name: item.Person.Name,
             BirthDate: item.Person.BirthDate,
             PhoneNumber: item.Person.PhoneNumber,
             ReferralReason: item.Referral?.Reason,

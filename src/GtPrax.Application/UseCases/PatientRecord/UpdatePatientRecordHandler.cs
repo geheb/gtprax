@@ -24,7 +24,7 @@ internal sealed class UpdatePatientRecordHandler : ICommandHandler<UpdatePatient
         var patientRecord = await _patientRecordRepo.Find(command.Id, cancellationToken);
         if (patientRecord is null)
         {
-            return Result.Fail("Der/die Patient(in) wurde nicht gefunden.");
+            return Result.Fail("Der/Die Patient(in) wurde nicht gefunden.");
         }
 
         var patientRecordUpdate = patientRecord.Update(

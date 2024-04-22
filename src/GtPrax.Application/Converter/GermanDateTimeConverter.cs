@@ -6,6 +6,8 @@ using System.Runtime.InteropServices;
 public sealed class GermanDateTimeConverter
 {
     private const string IsoDateTimeFormat = "yyyy-MM-ddTHH:mm";
+    private const string IsoDateFormat = "yyyy-MM-dd";
+    private const string TimeFormat = "HH\\:mm";
     private readonly CultureInfo _culture = CultureInfo.CreateSpecificCulture("de-DE");
     private readonly TimeZoneInfo _westEuropeTimeZone;
 
@@ -24,7 +26,7 @@ public sealed class GermanDateTimeConverter
 
     public string ToDate(DateOnly date) => date.ToString("dd.MM.yyyy", _culture);
 
-    public string ToTime(DateTimeOffset date) => date.ToString("HH\\:mm", _culture);
+    public string ToTime(DateTimeOffset date) => date.ToString(TimeFormat, _culture);
 
     public DateTimeOffset ToUtc(DateOnly date)
     {
@@ -36,12 +38,8 @@ public sealed class GermanDateTimeConverter
     public DateTimeOffset ToLocal(DateTimeOffset date) =>
         TimeZoneInfo.ConvertTime(date, _westEuropeTimeZone);
 
-    public DateTimeOffset? ParseIsoToUtc(string? isoDate)
+    public DateTimeOffset? FromIsoDateTime(string? isoDate)
     {
-        if (string.IsNullOrEmpty(isoDate))
-        {
-            return default;
-        }
         if (!DateTime.TryParseExact(isoDate, IsoDateTimeFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out var dateTime))
         {
             return default;
@@ -51,6 +49,30 @@ public sealed class GermanDateTimeConverter
 
     public string ToIso(DateTimeOffset date) =>
         date.ToString(IsoDateTimeFormat, CultureInfo.InvariantCulture);
+
+    public string ToIso(DateOnly date) =>
+        date.ToString(IsoDateFormat, CultureInfo.InvariantCulture);
+
+    public string ToIso(TimeOnly time) =>
+        time.ToString(TimeFormat, CultureInfo.InvariantCulture);
+
+    public TimeOnly? FromIsoTime(string? isoTime)
+    {
+        if (!TimeOnly.TryParseExact(isoTime, TimeFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out var time))
+        {
+            return default;
+        }
+        return time;
+    }
+
+    public DateOnly? FromIsoDate(string? isoDate)
+    {
+        if (!DateOnly.TryParseExact(isoDate, IsoDateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out var date))
+        {
+            return default;
+        }
+        return date;
+    }
 
     public string Format(DateTimeOffset start, DateTimeOffset end)
     {

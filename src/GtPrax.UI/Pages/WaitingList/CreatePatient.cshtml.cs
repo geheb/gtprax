@@ -1,14 +1,14 @@
 namespace GtPrax.UI.Pages.WaitingList;
 
-using GtPrax.Application.UseCases.UserAccount;
 using GtPrax.Application.UseCases.PatientRecord;
+using GtPrax.Application.UseCases.UserAccount;
+using GtPrax.Application.UseCases.WaitingList;
+using GtPrax.UI.Extensions;
 using GtPrax.UI.Models;
 using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using GtPrax.UI.Extensions;
-using GtPrax.Application.UseCases.WaitingList;
 
 [Node("Patient(in) anlegen", FromPage = typeof(PatientsModel))]
 [Authorize]
@@ -38,7 +38,8 @@ public class CreatePatientModel : PageModel
             return Page();
         }
 
-        var result = await _mediator.Send(new CreatePatientRecordCommand(id, User.GetId()!, Input.ToDto()), cancellationToken);
+        var dto = Input.ToCreateDto(new());
+        var result = await _mediator.Send(new CreatePatientRecordCommand(id, User.GetId()!, dto), cancellationToken);
         if (result.IsFailed)
         {
             result.Errors.ForEach(e => ModelState.AddModelError(string.Empty, e.Message));

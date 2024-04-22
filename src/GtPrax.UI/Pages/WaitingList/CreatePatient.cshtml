@@ -36,11 +36,11 @@
                             <span asp-validation-for="Input.Name"></span>
                         </div>
                         <div class="field">
-                            <label class="label" asp-for="Input.Birthday"></label>
+                            <label class="label" asp-for="Input.BirthDate"></label>
                             <div class="control">
-                                <input class="input" type="date" asp-for="Input.Birthday" />
+                                <input class="input" type="date" asp-for="Input.BirthDate" />
                             </div>
-                            <span asp-validation-for="Input.Birthday"></span>
+                            <span asp-validation-for="Input.BirthDate"></span>
                         </div>
                         <div class="field">
                             <label class="label" asp-for="Input.PhoneNumber"></label>
@@ -64,7 +64,7 @@
                             <span asp-validation-for="Input.Doctor"></span>
                         </div>
                         <div class="field">
-                            <label class="label" asp-for="Input.TherapyTimes"></label>
+                            <label class="label" asp-for="Input.TherapyDays"></label>
                         </div>
 
                         <div class="field is-horizontal">
@@ -74,22 +74,22 @@
                             <div class="field-body">
                                 <div class="field">
                                     <div class="control mt-1">
-                                        <label class="checkbox"><input type="checkbox" asp-for="Input.TherapyTimes.Monday.IsMorning" /> Vormittag</label>
+                                        <label class="checkbox"><input type="checkbox" asp-for="Input.TherapyDays.Monday.IsMorning" /> Vormittag</label>
                                     </div>
                                 </div>
                                 <div class="field">
                                     <div class="control mt-1">
-                                        <label class="checkbox"><input type="checkbox" asp-for="Input.TherapyTimes.Monday.IsAfternoon" /> Nachmittag</label>
+                                        <label class="checkbox"><input type="checkbox" asp-for="Input.TherapyDays.Monday.IsAfternoon" /> Nachmittag</label>
                                     </div>
                                 </div>
                                 <div class="field">
                                     <div class="control mt-1">
-                                        <label class="checkbox"><input type="checkbox" asp-for="Input.TherapyTimes.Monday.IsHomeVisit" /> Hausbesuch</label>
+                                        <label class="checkbox"><input type="checkbox" asp-for="Input.TherapyDays.Monday.IsHomeVisit" /> Hausbesuch</label>
                                     </div>
                                 </div>
                                 <div class="field">
                                     <div class="control">
-                                        <input class="input" type="time" asp-for="Input.TherapyTimes.Monday.AvailableFrom" />
+                                        <input class="input" type="time" asp-for="Input.TherapyDays.Monday.AvailableFrom" />
                                     </div>
                                 </div>
                             </div>
@@ -101,22 +101,22 @@
                             <div class="field-body">
                                 <div class="field">
                                     <div class="control mt-1">
-                                        <label class="checkbox"><input type="checkbox" asp-for="Input.TherapyTimes.Tuesday.IsMorning" /> Vormittag</label>
+                                        <label class="checkbox"><input type="checkbox" asp-for="Input.TherapyDays.Tuesday.IsMorning" /> Vormittag</label>
                                     </div>
                                 </div>
                                 <div class="field">
                                     <div class="control mt-1">
-                                        <label class="checkbox"><input type="checkbox" asp-for="Input.TherapyTimes.Tuesday.IsAfternoon" /> Nachmittag</label>
+                                        <label class="checkbox"><input type="checkbox" asp-for="Input.TherapyDays.Tuesday.IsAfternoon" /> Nachmittag</label>
                                     </div>
                                 </div>
                                 <div class="field">
                                     <div class="control mt-1">
-                                        <label class="checkbox"><input type="checkbox" asp-for="Input.TherapyTimes.Tuesday.IsHomeVisit" /> Hausbesuch</label>
+                                        <label class="checkbox"><input type="checkbox" asp-for="Input.TherapyDays.Tuesday.IsHomeVisit" /> Hausbesuch</label>
                                     </div>
                                 </div>
                                 <div class="field">
                                     <div class="control">
-                                        <input class="input" type="time" asp-for="Input.TherapyTimes.Tuesday.AvailableFrom" />
+                                        <input class="input" type="time" asp-for="Input.TherapyDays.Tuesday.AvailableFrom" />
                                     </div>
                                 </div>
                             </div>
@@ -128,22 +128,22 @@
                             <div class="field-body">
                                 <div class="field">
                                     <div class="control mt-1">
-                                        <label class="checkbox"><input type="checkbox" asp-for="Input.TherapyTimes.Wednesday.IsMorning" /> Vormittag</label>
+                                        <label class="checkbox"><input type="checkbox" asp-for="Input.TherapyDays.Wednesday.IsMorning" /> Vormittag</label>
                                     </div>
                                 </div>
                                 <div class="field">
                                     <div class="control mt-1">
-                                        <label class="checkbox"><input type="checkbox" asp-for="Input.TherapyTimes.Wednesday.IsAfternoon" /> Nachmittag</label>
+                                        <label class="checkbox"><input type="checkbox" asp-for="Input.TherapyDays.Wednesday.IsAfternoon" /> Nachmittag</label>
                                     </div>
                                 </div>
                                 <div class="field">
                                     <div class="control mt-1">
-                                        <label class="checkbox"><input type="checkbox" asp-for="Input.TherapyTimes.Wednesday.IsHomeVisit" /> Hausbesuch</label>
+                                        <label class="checkbox"><input type="checkbox" asp-for="Input.TherapyDays.Wednesday.IsHomeVisit" /> Hausbesuch</label>
                                     </div>
                                 </div>
                                 <div class="field">
                                     <div class="control">
-                                        <input class="input" type="time" asp-for="Input.TherapyTimes.Wednesday.AvailableFrom" />
+                                        <input class="input" type="time" asp-for="Input.TherapyDays.Wednesday.AvailableFrom" />
                                     </div>
                                 </div>
                             </div>
@@ -155,22 +155,22 @@
                             <div class="field-body">
                                 <div class="field">
                                     <div class="control mt-1">
-                                        <label class="checkbox"><input type="checkbox" asp-for="Input.TherapyTimes.Thursday.IsMorning" /> Vormittag</label>
+                                        <label class="checkbox"><input type="checkbox" asp-for="Input.TherapyDays.Thursday.IsMorning" /> Vormittag</label>
                                     </div>
                                 </div>
                                 <div class="field">
                                     <div class="control mt-1">
-                                        <label class="checkbox"><input type="checkbox" asp-for="Input.TherapyTimes.Thursday.IsAfternoon" /> Nachmittag</label>
+                                        <label class="checkbox"><input type="checkbox" asp-for="Input.TherapyDays.Thursday.IsAfternoon" /> Nachmittag</label>
                                     </div>
                                 </div>
                                 <div class="field">
                                     <div class="control mt-1">
-                                        <label class="checkbox"><input type="checkbox" asp-for="Input.TherapyTimes.Thursday.IsHomeVisit" /> Hausbesuch</label>
+                                        <label class="checkbox"><input type="checkbox" asp-for="Input.TherapyDays.Thursday.IsHomeVisit" /> Hausbesuch</label>
                                     </div>
                                 </div>
                                 <div class="field">
                                     <div class="control">
-                                        <input class="input" type="time" asp-for="Input.TherapyTimes.Thursday.AvailableFrom" />
+                                        <input class="input" type="time" asp-for="Input.TherapyDays.Thursday.AvailableFrom" />
                                     </div>
                                 </div>
                             </div>
@@ -182,22 +182,22 @@
                             <div class="field-body">
                                 <div class="field">
                                     <div class="control mt-1">
-                                        <label class="checkbox"><input type="checkbox" asp-for="Input.TherapyTimes.Friday.IsMorning" /> Vormittag</label>
+                                        <label class="checkbox"><input type="checkbox" asp-for="Input.TherapyDays.Friday.IsMorning" /> Vormittag</label>
                                     </div>
                                 </div>
                                 <div class="field">
                                     <div class="control mt-1">
-                                        <label class="checkbox"><input type="checkbox" asp-for="Input.TherapyTimes.Friday.IsAfternoon" /> Nachmittag</label>
+                                        <label class="checkbox"><input type="checkbox" asp-for="Input.TherapyDays.Friday.IsAfternoon" /> Nachmittag</label>
                                     </div>
                                 </div>
                                 <div class="field">
                                     <div class="control mt-1">
-                                        <label class="checkbox"><input type="checkbox" asp-for="Input.TherapyTimes.Friday.IsHomeVisit" /> Hausbesuch</label>
+                                        <label class="checkbox"><input type="checkbox" asp-for="Input.TherapyDays.Friday.IsHomeVisit" /> Hausbesuch</label>
                                     </div>
                                 </div>
                                 <div class="field">
                                     <div class="control">
-                                        <input class="input" type="time" asp-for="Input.TherapyTimes.Friday.AvailableFrom" />
+                                        <input class="input" type="time" asp-for="Input.TherapyDays.Friday.AvailableFrom" />
                                     </div>
                                 </div>
                             </div>

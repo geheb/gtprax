@@ -15,7 +15,7 @@ internal sealed class PatientRecordRepo : IPatientRecordRepo
     public PatientRecordRepo(
         MongoConnectionFactory connectionFactory)
     {
-        _collection = connectionFactory.GetPatientFilesCollection();
+        _collection = connectionFactory.GetPatientRecordCollection();
     }
 
     public async Task Upsert(PatientRecord entity, CancellationToken cancellationToken)

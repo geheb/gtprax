@@ -45,7 +45,7 @@ internal sealed class MongoConnectionFactory
         return database.GetCollection<WaitingListModel>(_options.WaitingListCollectionName);
     }
 
-    public IMongoCollection<PatientRecordModel> GetPatientFilesCollection()
+    public IMongoCollection<PatientRecordModel> GetPatientRecordCollection()
     {
         var client = new MongoClient(_settings);
         var database = client.GetDatabase(_options.DatabaseName);

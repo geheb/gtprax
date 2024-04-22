@@ -62,7 +62,7 @@
                         <div class="list-item-title">@i.Name</div>
                         <div class="list-item-description">
                             <span class="tag is-rounded">
-                                @dateTimeConverter.ToDateTime(i.LastModified) &commat; @(i.LastModifedBy ?? "Unbekannt")
+                                @dateTimeConverter.ToDateTime(i.LastModified) &commat; @(i.LastModifiedBy ?? "Unbekannt")
                             </span>
                             <span class="tag is-rounded is-success">@dateTimeConverter.ToDate(i.BirthDate)</span>
                             <span class="tag is-rounded is-info">@i.PhoneNumber</span>
