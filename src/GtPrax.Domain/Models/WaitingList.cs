@@ -1,5 +1,7 @@
 namespace GtPrax.Domain.Models;
 
+using System.Globalization;
+using System.Text.RegularExpressions;
 using FluentResults;
 using GtPrax.Domain.ValueObjects;
 
@@ -30,17 +32,6 @@ public sealed class WaitingList
         _waitingListItems.Add(item);
 
         return item;
-    }
-
-    public Result<PatientRecord[]> GetPatientsByWaitingList(WaitingListItemId id)
-    {
-        ArgumentNullException.ThrowIfNull(id);
-
-        if (!_waitingListItems.Any(w => w.Id == id))
-        {
-            return Result.Fail("Die Warteliste wurde nicht gefunden.");
-        }
-        return Result.Ok(_patientRecords.Where(p => p.WaitingListItemId == id).ToArray());
     }
 
     public IEnumerable<(WaitingListItem Item, int PatientCount)> GetWaitingListsGroupedByPatient()
@@ -91,5 +82,78 @@ public sealed class WaitingList
         _patientRecords.Add(record);
 
         return Result.Ok(record);
+    }
+
+    public Result<PatientRecord[]> FindPatients(WaitingListItemId id, string? searchTerms)
+    {
+        ArgumentNullException.ThrowIfNull(id);
+
+        var waitingList = _waitingListItems.FirstOrDefault(w => w.Id == id);
+        if (waitingList is null)
+        {
+            return Result.Fail("Die Warteliste wurde nicht gefunden.");
+        }
+
+        if (string.IsNullOrWhiteSpace(searchTerms))
+        {
+            return Result.Ok(_patientRecords.Where(p => p.WaitingListItemId == id).ToArray());
+        }
+
+        (var date, searchTerms) = ExtractDate(searchTerms);
+        (var numbers, searchTerms) = ExtractNumberSequence(searchTerms);
+        var words = ExtractWords(searchTerms);
+
+        if (date is null && numbers is null && words.Length < 1)
+        {
+            return Result.Ok(_patientRecords.Where(p => p.WaitingListItemId == id).ToArray());
+        }
+
+        var result = _patientRecords
+            .Where(p =>
+                (date is null || p.Person.BirthDate == date) &&
+                (numbers is null || p.Person.PhoneNumber.Contains(numbers)) &&
+                (words.Length == 0 || words.All(w => p.Person.Name.Contains(w, StringComparison.OrdinalIgnoreCase))))
+            .OrderBy(p => p.Audit.CreatedDate)
+            .ToArray();
+
+        if (result.Length > 0 && result.All(r => r.WaitingListItemId != id))
+        {
+            var waitingListsIds = result.Select(r => r.WaitingListItemId).Distinct().ToArray();
+            var waitingListNames = _waitingListItems.Where(w => waitingListsIds.Contains(w.Id)).Select(w => w.Name).ToArray();
+            return Result.Fail("Die Suchergebnisse sind in folgenden Wartelisten vorhanden: " + string.Join(", ", waitingListNames));
+        }
+
+        return result;
+    }
+
+    private static string[] ExtractWords(string searchTerms) => searchTerms.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+    private static (string?, string) ExtractNumberSequence(string searchTerms)
+    {
+        var match = Regex.Match(searchTerms, "(\\d+)");
+        if (!match.Success)
+        {
+            return (null, searchTerms);
+        }
+        var cleanedSearch = searchTerms.Remove(match.Index, match.Length);
+        return (match.Value, cleanedSearch);
+    }
+
+    private static (DateOnly?, string) ExtractDate(string searchTerms)
+    {
+        var match = Regex.Match(searchTerms, "(\\d{1,2}\\.\\d{1,2}\\.\\d{4})");
+        if (!match.Success)
+        {
+            return (null, searchTerms);
+        }
+
+        var splitDate = match.Groups[0].Value.Split('.');
+        var paddingDate = splitDate[0].PadLeft(2, '0') + '.' + splitDate[1].PadLeft(2, '0') + '.' + splitDate[2];
+        if (!DateOnly.TryParseExact(paddingDate, "dd.MM.yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var date))
+        {
+            return (null, searchTerms);
+        }
+        var cleanedSearch = searchTerms.Remove(match.Index, match.Length);
+        return (date, cleanedSearch);
     }
 }

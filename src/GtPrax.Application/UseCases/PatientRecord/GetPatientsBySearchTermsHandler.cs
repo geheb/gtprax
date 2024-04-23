@@ -8,13 +8,13 @@ using GtPrax.Application.Services;
 using GtPrax.Domain.Repositories;
 using Mediator;
 
-internal sealed class GetPatientRecordIndexHandler : IQueryHandler<GetPatientRecordIndexQuery, Result<PatientRecordIndexDto>>
+internal sealed class GetPatientsBySearchTermsHandler : IQueryHandler<GetPatientsBySearchTermsQuery, Result<PatientRecordIndexDto>>
 {
     private readonly IUserService _userService;
     private readonly IWaitingListRepo _waitingListRepo;
     private readonly IPatientRecordRepo _patientRecordRepo;
 
-    public GetPatientRecordIndexHandler(
+    public GetPatientsBySearchTermsHandler(
         IUserService userService,
         IWaitingListRepo waitingListRepo,
         IPatientRecordRepo patientRecordRepo)
@@ -24,14 +24,13 @@ internal sealed class GetPatientRecordIndexHandler : IQueryHandler<GetPatientRec
         _patientRecordRepo = patientRecordRepo;
     }
 
-    public async ValueTask<Result<PatientRecordIndexDto>> Handle(GetPatientRecordIndexQuery query, CancellationToken cancellationToken)
+    public async ValueTask<Result<PatientRecordIndexDto>> Handle(GetPatientsBySearchTermsQuery query, CancellationToken cancellationToken)
     {
         var waitingListItems = await _waitingListRepo.GetAll(cancellationToken);
         var patientRecords = await _patientRecordRepo.GetAll(cancellationToken);
 
         var waitingList = new Domain.Models.WaitingList(waitingListItems, patientRecords);
-        var result = waitingList.GetPatientsByWaitingList(query.WaitingListItemId);
-
+        var result = waitingList.FindPatients(query.WaitingListItemId, query.SearchTerms);
         if (result.IsFailed)
         {
             return result.ToResult();
@@ -39,7 +38,13 @@ internal sealed class GetPatientRecordIndexHandler : IQueryHandler<GetPatientRec
 
         var waitingListName = waitingList.FindWaitingList(query.WaitingListItemId)!.Name;
 
+        if (result.Value.Length < 1)
+        {
+            return Result.Ok(new PatientRecordIndexDto(waitingListName, []));
+        }
+
         var users = await _userService.GetAll(cancellationToken);
+
         var userMap = users.ToDictionary(u => u.Id);
         var dateTimeConverter = new GermanDateTimeConverter();
         var items = result.Value.Select(p =>

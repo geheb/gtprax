@@ -44,6 +44,5 @@ internal sealed class PatientRecordRepo : IPatientRecordRepo
         using var cursor = await _collection.FindAsync(filter, cancellationToken: cancellationToken);
         var models = await cursor.ToListAsync(cancellationToken);
         return models.MapToDomain();
-
     }
 }
