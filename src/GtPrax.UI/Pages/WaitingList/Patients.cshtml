@@ -29,12 +29,15 @@
                     <div class="dropdown-menu" id="user-action" role="menu">
                         <div class="dropdown-content">
                             <div class="dropdown-item">
-                                <div>Gesamt: 0</div>
+                                <div>Gesamtanzahl: @Model.TotalCount</div>
                             </div>
                             <hr class="dropdown-divider" />
-                            <a href="@createUrl" class="dropdown-item">
-                                Patient(in) anlegen
-                            </a>
+                            @if (!Model.IsDisabled)
+                            {
+                                <a href="@createUrl" class="dropdown-item">
+                                    Patient(in) anlegen
+                                </a>
+                            }
                         </div>
                     </div>
                 </div>
@@ -51,19 +54,29 @@
             </div>
         }
 
-        <form method="post">
-            <div class="field">
-                <div class="control">
-                    <input class="input" type="text" asp-for="SearchTerms" placeholder="Suchbegriffe (Name / Geburtsdatum / Telefonnummer)" />
+        <div class="columns is-variable is-1">
+            <div class="column is-narrow">
+                <div id="filterItems" class="select">
+                    <select asp-items="Model.FilterItems" disabled="@Model.IsDisabled"></select>
                 </div>
-                <span asp-validation-for="SearchTerms"></span>
             </div>
+        </div>
+
+        <form method="post">
+            <fieldset disabled="@Model.IsDisabled">
+                <div class="field">
+                    <div class="control">
+                        <input class="input" type="text" asp-for="SearchTerms" placeholder="Suchbegriffe (Name / Geburtsdatum / Telefonnummer)" />
+                    </div>
+                    <span asp-validation-for="SearchTerms"></span>
+                </div>
+            </fieldset>
         </form>
 
         <div class="list">
             @foreach (var i in Model.Items)
             {
-                <div class="list-item list-item-clickable" data-url="@(Url.PageLink(editPatientPage, null, new { id = i.Id }))">
+                <div class="list-item list-item-clickable" data-url="@(Url.PageLink(editPatientPage, null, new { waitingListId = Model.Id, id = i.Id }))">
                     <div class="list-item-image">
                         <i class="fa-solid fa-hospital-user fa-2x has-text-info"></i>
                     </div>
@@ -83,13 +96,13 @@
                             {
                                 <span class="tag is-rounded is-danger"><i class="fa-solid fa-star"></i></span>
                             }
-                            @if (i.Tags!.Contains(PatientRecordTag.Neurofeedback))
-                            {
-                                <span class="tag is-rounded is-black"><i class="fa-solid fa-brain"></i></span>
-                            }
                             @if (i.Tags!.Contains(PatientRecordTag.Jumper))
                             {
                                 <span class="tag is-rounded is-black"><i class="fa-solid fa-horse"></i></span>
+                            }
+                            @if (i.Tags!.Contains(PatientRecordTag.Neurofeedback))
+                            {
+                                <span class="tag is-rounded is-black"><i class="fa-solid fa-brain"></i></span>
                             }
                             @if (i.HasTherapyDaysWithHomeVisit)
                             {
@@ -113,19 +126,29 @@
     </div>
 </section>
 
-<a href="@createUrl" class="button is-floating is-success">
-    <i class="fa-solid fa-circle-plus"></i>
-</a>
+@if (!Model.IsDisabled)
+{
+    <a href="@createUrl" class="button is-floating is-success">
+        <i class="fa-solid fa-circle-plus"></i>
+    </a>
+}
 
 @await Html.PartialAsync("_Footer")
 
 @section Scripts
 {
-    <script type="text/javascript">
-        $(function () {
-            const elem = $('#@Html.IdFor(m => m.SearchTerms)');
-            elem.focus();
-            elem.prop({ 'selectionStart': 1000, 'selectionEnd': 1000 });
-        });
-    </script>
+<script type="text/javascript">
+$(function () {
+    const elem = $('#@Html.IdFor(m => m.SearchTerms)');
+    elem.focus();
+    elem.prop({ 'selectionStart': 1000, 'selectionEnd': 1000 });
+
+    $('#filterItems').change(function () {
+        const filter = $(this).find(':selected').val();
+        const url = new URL(window.location.href);
+        url.searchParams.set('filter', filter);
+        window.location.replace(url.href);
+    });
+});
+</script>
 }

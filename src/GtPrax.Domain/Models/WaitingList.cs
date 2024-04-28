@@ -1,6 +1,7 @@
 namespace GtPrax.Domain.Models;
 
 using System.Globalization;
+using System.Linq;
 using System.Text.RegularExpressions;
 using FluentResults;
 using GtPrax.Domain.ValueObjects;
@@ -84,19 +85,33 @@ public sealed class WaitingList
         return Result.Ok(record);
     }
 
-    public Result<PatientRecord[]> FindPatients(WaitingListItemId id, string? searchTerms)
+    public (PatientRecord[] Items, int TotalCount) FindPatients(WaitingListItemId id, string? searchTerms, FilterType? filter, DateTime now)
     {
         ArgumentNullException.ThrowIfNull(id);
 
-        var waitingList = _waitingListItems.FirstOrDefault(w => w.Id == id);
-        if (waitingList is null)
+        if (_patientRecords.Count < 1)
         {
-            return Result.Fail("Die Warteliste wurde nicht gefunden.");
+            return ([], 0);
         }
 
+        var result = _patientRecords.Where(r => r.WaitingListItemId == id).ToArray();
+
+        if (string.IsNullOrWhiteSpace(searchTerms) && filter is null)
+        {
+            return (result, result.Length);
+        }
+
+        var searchResult = ApplySearchTerms(result, searchTerms);
+        searchResult = ApplyFilter(searchResult, filter, now);
+
+        return (searchResult.OrderBy(r => r.Audit.CreatedDate).ToArray(), result.Length);
+    }
+
+    private static IEnumerable<PatientRecord> ApplySearchTerms(IEnumerable<PatientRecord> result, string? searchTerms)
+    {
         if (string.IsNullOrWhiteSpace(searchTerms))
         {
-            return Result.Ok(_patientRecords.Where(p => p.WaitingListItemId == id).ToArray());
+            return result;
         }
 
         (var date, searchTerms) = ExtractDate(searchTerms);
@@ -105,25 +120,56 @@ public sealed class WaitingList
 
         if (date is null && numbers is null && words.Length < 1)
         {
-            return Result.Ok(_patientRecords.Where(p => p.WaitingListItemId == id).ToArray());
+            return result;
         }
 
-        var result = _patientRecords
-            .Where(p =>
-                (date is null || p.Person.BirthDate == date) &&
-                (numbers is null || p.Person.PhoneNumber.Contains(numbers)) &&
-                (words.Length == 0 || words.All(w => p.Person.Name.Contains(w, StringComparison.OrdinalIgnoreCase))))
-            .OrderBy(p => p.Audit.CreatedDate)
-            .ToArray();
+        return result.Where(p =>
+            (date is null || p.Person.BirthDate == date) &&
+            (numbers is null || p.Person.PhoneNumber.Contains(numbers)) &&
+            (words.Length == 0 || words.All(w => p.Person.Name.Contains(w, StringComparison.OrdinalIgnoreCase))));
+    }
 
-        if (result.Length > 0 && result.All(r => r.WaitingListItemId != id))
+    private static IEnumerable<PatientRecord> ApplyFilter(IEnumerable<PatientRecord> result, FilterType? filter, DateTime now)
+    {
+        if (!result.Any() || filter is null)
         {
-            var waitingListsIds = result.Select(r => r.WaitingListItemId).Distinct().ToArray();
-            var waitingListNames = _waitingListItems.Where(w => waitingListsIds.Contains(w.Id)).Select(w => w.Name).ToArray();
-            return Result.Fail("Die Suchergebnisse sind in folgenden Wartelisten vorhanden: " + string.Join(", ", waitingListNames));
+            return result;
         }
 
-        return result;
+        if (filter == FilterType.ChildrenInTheMorning)
+        {
+            return result.Where(r => r.TherapyDaysHasMorning && r.Person.CalcAge(now) < 18);
+        }
+        if (filter == FilterType.ChildrenInTheAfternoon)
+        {
+            return result.Where(r => r.TherapyDaysHasAfternoon && r.Person.CalcAge(now) < 18);
+        }
+        if (filter == FilterType.AdultsInTheMorning)
+        {
+            return result.Where(r => r.TherapyDaysHasMorning && r.Person.CalcAge(now) >= 18);
+        }
+        if (filter == FilterType.AdultsInTheAfternoon)
+        {
+            return result.Where(r => r.TherapyDaysHasAfternoon && r.Person.CalcAge(now) >= 18);
+        }
+        if (filter == FilterType.TherapyDayWithHomeVisit)
+        {
+            return result.Where(r => r.TherapyDaysHasHomeVisit);
+        }
+        if (filter == FilterType.HasTagPriority)
+        {
+            return result.Where(r => r.Tags.Contains(TagType.Priority));
+        }
+        if (filter == FilterType.HasTagJumper)
+        {
+            return result.Where(r => r.Tags.Contains(TagType.Jumper));
+        }
+        if (filter == FilterType.HasTagNeurofeedback)
+        {
+            return result.Where(r => r.Tags.Contains(TagType.Neurofeedback));
+        }
+
+        throw new NotImplementedException($"Missing filter {filter}");
     }
 
     private static string[] ExtractWords(string searchTerms) => searchTerms.Split(' ', StringSplitOptions.RemoveEmptyEntries);

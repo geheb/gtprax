@@ -1,3 +1,3 @@
 namespace GtPrax.Application.UseCases.PatientRecord;
 
-public sealed record PatientRecordIndexDto(string WaitingListName, PatientRecordIndexItemDto[] Items);
+public sealed record PatientRecordIndexDto(PatientRecordIndexItemDto[] Items, int TotalCount);

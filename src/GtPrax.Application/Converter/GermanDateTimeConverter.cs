@@ -35,8 +35,7 @@ public sealed class GermanDateTimeConverter
         return offset.ToUniversalTime();
     }
 
-    public DateTimeOffset ToLocal(DateTimeOffset date) =>
-        TimeZoneInfo.ConvertTime(date, _westEuropeTimeZone);
+    public DateTimeOffset ToLocal(DateTimeOffset date) => TimeZoneInfo.ConvertTime(date, _westEuropeTimeZone);
 
     public DateTimeOffset? FromIsoDateTime(string? isoDate)
     {
@@ -47,14 +46,11 @@ public sealed class GermanDateTimeConverter
         return TimeZoneInfo.ConvertTimeToUtc(dateTime, _westEuropeTimeZone);
     }
 
-    public string ToIso(DateTimeOffset date) =>
-        date.ToString(IsoDateTimeFormat, CultureInfo.InvariantCulture);
+    public string ToIso(DateTimeOffset date) => date.ToString(IsoDateTimeFormat, CultureInfo.InvariantCulture);
 
-    public string ToIso(DateOnly date) =>
-        date.ToString(IsoDateFormat, CultureInfo.InvariantCulture);
+    public string ToIso(DateOnly date) => date.ToString(IsoDateFormat, CultureInfo.InvariantCulture);
 
-    public string ToIso(TimeOnly time) =>
-        time.ToString(TimeFormat, CultureInfo.InvariantCulture);
+    public string ToIso(TimeOnly time) => time.ToString(TimeFormat, CultureInfo.InvariantCulture);
 
     public TimeOnly? FromIsoTime(string? isoTime)
     {

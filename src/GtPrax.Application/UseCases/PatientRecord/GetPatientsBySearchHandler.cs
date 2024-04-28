@@ -6,50 +6,50 @@ using FluentResults;
 using GtPrax.Application.Converter;
 using GtPrax.Application.Services;
 using GtPrax.Domain.Repositories;
+using GtPrax.Domain.ValueObjects;
 using Mediator;
 
-internal sealed class GetPatientsBySearchTermsHandler : IQueryHandler<GetPatientsBySearchTermsQuery, Result<PatientRecordIndexDto>>
+internal sealed class GetPatientsBySearchHandler : IQueryHandler<GetPatientsBySearchQuery, PatientRecordIndexDto>
 {
+    private readonly TimeProvider _timeProvider;
     private readonly IUserService _userService;
     private readonly IWaitingListRepo _waitingListRepo;
     private readonly IPatientRecordRepo _patientRecordRepo;
 
-    public GetPatientsBySearchTermsHandler(
+    public GetPatientsBySearchHandler(
+        TimeProvider timeProvider,
         IUserService userService,
         IWaitingListRepo waitingListRepo,
         IPatientRecordRepo patientRecordRepo)
     {
+        _timeProvider = timeProvider;
         _userService = userService;
         _waitingListRepo = waitingListRepo;
         _patientRecordRepo = patientRecordRepo;
     }
 
-    public async ValueTask<Result<PatientRecordIndexDto>> Handle(GetPatientsBySearchTermsQuery query, CancellationToken cancellationToken)
+    public async ValueTask<PatientRecordIndexDto> Handle(GetPatientsBySearchQuery query, CancellationToken cancellationToken)
     {
         var waitingListItems = await _waitingListRepo.GetAll(cancellationToken);
         var patientRecords = await _patientRecordRepo.GetAll(cancellationToken);
 
         var waitingList = new Domain.Models.WaitingList(waitingListItems, patientRecords);
-        var result = waitingList.FindPatients(query.WaitingListItemId, query.SearchTerms);
-        if (result.IsFailed)
-        {
-            return result.ToResult();
-        }
+        var localNow = new GermanDateTimeConverter().ToLocal(_timeProvider.GetUtcNow()).DateTime;
+        var filter = query.Filter != PatientRecordFilter.None ? FilterType.From((int)query.Filter) : null;
 
-        var waitingListName = waitingList.FindWaitingList(query.WaitingListItemId)!.Name;
-
-        if (result.Value.Length < 1)
+        var (items, totalCount) = waitingList.FindPatients(query.WaitingListItemId, query.SearchTerms, filter, localNow);
+        if (items.Length < 1)
         {
-            return Result.Ok(new PatientRecordIndexDto(waitingListName, []));
+            return new([], totalCount);
         }
 
         var users = await _userService.GetAll(cancellationToken);
 
         var userMap = users.ToDictionary(u => u.Id);
         var dateTimeConverter = new GermanDateTimeConverter();
-        var items = result.Value.Select(p =>
+        var mappedItems = items.Select(p =>
             p.MapToIndexDto(userMap.TryGetValue(p.Audit.LastModifiedById ?? p.Audit.CreatedById, out var user) ? user.Name : null, dateTimeConverter)).ToArray();
 
-        return Result.Ok(new PatientRecordIndexDto(waitingListName, items));
+        return new(mappedItems, totalCount);
     }
 }

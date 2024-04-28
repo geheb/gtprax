@@ -8,6 +8,8 @@ public sealed class TherapyDay
     public bool IsAfternoon { get; private set; }
     public bool IsHomeVisit { get; private set; }
     public TimeOnly? AvailableFrom { get; private set; }
+    public bool IsAvailableMorning => IsMorning || AvailableFrom?.Hour <= 12;
+    public bool IsAvailableAfternoon => IsAfternoon || AvailableFrom?.Hour > 12;
 
     public TherapyDay(bool isMorning, bool isAfternoon, bool isHomeVisit, TimeOnly? availableFrom)
     {

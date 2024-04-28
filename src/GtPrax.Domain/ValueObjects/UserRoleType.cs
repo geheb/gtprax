@@ -9,9 +9,9 @@ public sealed class UserRoleType : ValueObject
     private const string AdminName = "Admin";
     private const string ManagerName = "Manager";
 
-    public static readonly UserRoleType Staff = new(0, StaffName);
-    public static readonly UserRoleType Admin = new(1, AdminName);
-    public static readonly UserRoleType Manager = new(2, ManagerName);
+    public static readonly UserRoleType Staff = new(1, StaffName);
+    public static readonly UserRoleType Admin = new(2, AdminName);
+    public static readonly UserRoleType Manager = new(3, ManagerName);
 
     public static UserRoleType From(string value) =>
         value switch
@@ -25,9 +25,9 @@ public sealed class UserRoleType : ValueObject
     public static UserRoleType From(int key) =>
         key switch
         {
-            0 => Staff,
-            1 => Admin,
-            2 => Manager,
+            1 => Staff,
+            2 => Admin,
+            3 => Manager,
             _ => throw new NotImplementedException()
         };
 
@@ -50,4 +50,6 @@ public sealed class UserRoleType : ValueObject
     {
         yield return Key;
     }
+
+    public override string ToString() => Value;
 }

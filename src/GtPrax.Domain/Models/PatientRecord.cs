@@ -13,6 +13,9 @@ public sealed class PatientRecord : Entity<PatientRecordId>
     public Person Person { get; private set; }
     public Referral? Referral { get; private set; }
     public IReadOnlyDictionary<DayOfWeek, TherapyDay> TherapyDays => _therapyDays;
+    public bool TherapyDaysHasMorning => _therapyDays.Count < 1 || _therapyDays.Values.Any(v => v.IsAvailableMorning);
+    public bool TherapyDaysHasAfternoon => _therapyDays.Count < 1 || _therapyDays.Values.Any(v => v.IsAvailableAfternoon);
+    public bool TherapyDaysHasHomeVisit => _therapyDays.Values.Any(v => v.IsHomeVisit);
     public IReadOnlyCollection<TagType> Tags => _tags;
     public string? Remark { get; private set; }
 

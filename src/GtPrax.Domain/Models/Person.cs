@@ -8,6 +8,14 @@ public sealed class Person
     public DateOnly BirthDate { get; private set; }
     public string PhoneNumber { get; private set; } = null!;
 
+    public int CalcAge(DateTime today)
+    {
+        var age = today.Year - BirthDate.Year;
+        var birthdayTime = BirthDate.ToDateTime(TimeOnly.MinValue);
+        // Go back to the year in which the person was born in case of a leap year
+        return birthdayTime > today.AddYears(-age) ? age - 1 : age;
+    }
+
     public Person(string name, DateOnly birthDate, string phoneNumber)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(name);

@@ -4,9 +4,9 @@ using System.Collections.Generic;
 
 public sealed class TagType : ValueObject
 {
-    public static readonly TagType Priority = new(0, nameof(Priority));
-    public static readonly TagType Jumper = new(1, nameof(Jumper));
-    public static readonly TagType Neurofeedback = new(2, nameof(Neurofeedback));
+    public static readonly TagType Priority = new(1, nameof(Priority));
+    public static readonly TagType Jumper = new(2, nameof(Jumper));
+    public static readonly TagType Neurofeedback = new(3, nameof(Neurofeedback));
 
     public int Key { get; private set; }
     public string Value { get; private set; }
@@ -14,9 +14,9 @@ public sealed class TagType : ValueObject
     public static TagType From(int key) =>
         key switch
         {
-            0 => Priority,
-            1 => Jumper,
-            2 => Neurofeedback,
+            1 => Priority,
+            2 => Jumper,
+            3 => Neurofeedback,
             _ => throw new NotImplementedException()
         };
 
@@ -30,4 +30,6 @@ public sealed class TagType : ValueObject
     {
         yield return Key;
     }
+
+    public override string ToString() => Value;
 }
