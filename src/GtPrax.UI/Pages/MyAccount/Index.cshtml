@@ -4,6 +4,9 @@
     ViewData["Title"] = Model.GetNode().Title;
     ViewData["HasFooter"] = true;
     Model.BuildHeaderMenu();
+    var changePasswordPage = Model.PageLinkName<ChangePasswordModel>();
+    var changeEmailPage = Model.PageLinkName<ChangeEmailModel>();
+    var editTwoFactorPage = Model.PageLinkName<EditTwoFactorModel>();
 }
 
 @await Html.PartialAsync("_Header")
@@ -24,11 +27,14 @@
                     </div>
                     <div class="dropdown-menu" id="user-action" role="menu">
                         <div class="dropdown-content">
-                            <a href="@Url.PageLink("ChangePassword")" class="dropdown-item">
+                            <a href="@Url.PageLink(changePasswordPage)" class="dropdown-item">
                                 @(Model.GetNode<ChangePasswordModel>().Title)
                             </a>
-                            <a href="@Url.PageLink("ChangeEmail")" class="dropdown-item">
+                            <a href="@Url.PageLink(changeEmailPage)" class="dropdown-item">
                                 @(Model.GetNode<ChangeEmailModel>().Title)
+                            </a>
+                            <a href="@Url.PageLink(editTwoFactorPage)" class="dropdown-item">
+                                @(Model.GetNode<EditTwoFactorModel>().Title)
                             </a>
                         </div>
                     </div>

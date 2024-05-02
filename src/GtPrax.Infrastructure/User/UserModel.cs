@@ -40,6 +40,7 @@ internal sealed class UserModel
     public DateTimeOffset? DeactivationDate { get; set; }
 
     public required string Name { get; set; }
+    public string? AuthenticatorKey { get; set; }
 
     public ICollection<UserClaimModel> Claims { get; set; } = new List<UserClaimModel>();
 }

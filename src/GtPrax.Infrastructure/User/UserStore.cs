@@ -12,11 +12,16 @@ internal sealed class UserStore :
     IUserPasswordStore<UserModel>,
     IUserSecurityStampStore<UserModel>,
     IUserEmailStore<UserModel>,
+    IUserAuthenticatorKeyStore<UserModel>,
+    IUserTwoFactorStore<UserModel>,
     IUserLockoutStore<UserModel>
 {
     private readonly IdentityErrorDescriber _identityErrorDescriber;
     private readonly TimeProvider _timeProvider;
     private readonly IMongoCollection<UserModel> _collection;
+
+    // Authentication Method Reference (amr)
+    private static readonly UserClaimModel TwoFactorClaim = new("amr", "mfa");
 
     public UserStore(
         IdentityErrorDescriber identityErrorDescriber,
@@ -292,4 +297,25 @@ internal sealed class UserStore :
         using var cursor = await _collection.FindAsync(filter, cancellationToken: cancellationToken);
         return await cursor.ToListAsync(cancellationToken);
     }
+
+    public Task SetAuthenticatorKeyAsync(UserModel user, string key, CancellationToken cancellationToken)
+    {
+        user.AuthenticatorKey = key;
+        return Task.CompletedTask;
+    }
+
+    public Task<string?> GetAuthenticatorKeyAsync(UserModel user, CancellationToken cancellationToken) =>
+        Task.FromResult(user.AuthenticatorKey);
+
+    public Task SetTwoFactorEnabledAsync(UserModel user, bool enabled, CancellationToken cancellationToken)
+    {
+        if (!user.Claims.Contains(TwoFactorClaim))
+        {
+            user.Claims.Add(TwoFactorClaim);
+        }
+        return Task.CompletedTask;
+    }
+
+    public Task<bool> GetTwoFactorEnabledAsync(UserModel user, CancellationToken cancellationToken) =>
+        Task.FromResult(user.Claims.Contains(TwoFactorClaim));
 }

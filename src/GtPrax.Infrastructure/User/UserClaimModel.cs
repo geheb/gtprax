@@ -47,5 +47,5 @@ internal sealed class UserClaimModel : IEquatable<UserClaimModel>, IEquatable<Cl
         }
     }
 
-    public override int GetHashCode() => Type.GetHashCode() ^ Value.GetHashCode();
+    public override int GetHashCode() => HashCode.Combine(Type, Value);
 }

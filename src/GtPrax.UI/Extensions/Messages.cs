@@ -19,4 +19,6 @@ public static class Messages
     public const string InvalidConfirmEmailToken = "Der Bestätigungslink für die E-Mail-Adresse ist leider unültig bzw. bereits abgelaufen.";
     public const string InvalidResetPasswordToken = "Der Link zum Zurücksetzen des Passworts ist leider unültig bzw. bereits abgelaufen.";
     public const string InvalidChangeEmailToken = "Der Bestätigungslink für die Änderung der E-Mail-Adresse ist leider unültig bzw. bereits abgelaufen.";
+    public const string TwoFactorEnabled = "Zwei-Faktor-Authentifizierung (2FA) wurde aktiviert.";
+    public const string TwoFactorDisabled = "Zwei-Faktor-Authentifizierung (2FA) wurde deaktiviert.";
 }

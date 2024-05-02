@@ -10,7 +10,8 @@ public interface IUserService
     Task<Result> Create(string email, string name, UserRoleType[] roles);
     Task<Result> CreateAdmin(string email, string password);
 
-    Task<Result> SignIn(string email, string password, CancellationToken cancellationToken);
+    Task<Result<SignInAction>> SignIn(string email, string password, CancellationToken cancellationToken);
+    Task<Result> SignInTwoFactor(string code, bool rememberClient, CancellationToken cancellationToken);
     Task SignOutCurrent();
 
     Task<User?> Find(string id);
@@ -37,4 +38,8 @@ public interface IUserService
     Task<Result> CheckPassword(string id, string currentPassword);
 
     Task<Result> Deactivate(string id);
+
+    Task<Result<UserTwoFactor>> CreateTwoFactor(string id, string appName);
+    Task<Result> EnableTwoFactor(string id, string code);
+    Task<Result> DisableTwoFactor(string id, string code);
 }

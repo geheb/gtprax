@@ -74,6 +74,9 @@ public class IndexModel : PageModel
             ModelState.AddModelError(string.Empty, Messages.SignInFailed);
             return Page();
         }
+        else
+        {
+        }
 
         return LocalRedirect(returnUrl ?? Url.Content("~/"));
     }

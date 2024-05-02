@@ -50,6 +50,13 @@
         "css/bulma-list.min.css",
         "css/bulma-list.css.map"
       ]
+    },
+    {
+      "library": "qrcode@1.5.1",
+      "destination": "wwwroot/lib/qrcode/",
+      "files": [
+        "qrcode.min.js"
+      ]
     }
   ]
 }

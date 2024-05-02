@@ -65,6 +65,8 @@ public class IndexModel : PageModel
             0 => Messages.ChangesSaved,
             1 => Messages.PasswordSaved,
             2 => Messages.ChangeEmailSent,
+            3 => Messages.TwoFactorEnabled,
+            4 => Messages.TwoFactorDisabled,
             _ => default
         };
 

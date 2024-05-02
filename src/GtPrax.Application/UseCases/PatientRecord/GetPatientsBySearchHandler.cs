@@ -2,7 +2,6 @@ namespace GtPrax.Application.UseCases.PatientRecord;
 
 using System.Threading;
 using System.Threading.Tasks;
-using FluentResults;
 using GtPrax.Application.Converter;
 using GtPrax.Application.Services;
 using GtPrax.Domain.Repositories;
@@ -34,10 +33,12 @@ internal sealed class GetPatientsBySearchHandler : IQueryHandler<GetPatientsBySe
         var patientRecords = await _patientRecordRepo.GetAll(cancellationToken);
 
         var waitingList = new Domain.Models.WaitingList(waitingListItems, patientRecords);
-        var localNow = new GermanDateTimeConverter().ToLocal(_timeProvider.GetUtcNow()).DateTime;
+
+        var dateTimeConverter = new GermanDateTimeConverter();
+        var now = dateTimeConverter.ToLocal(_timeProvider.GetUtcNow()).DateTime;
         var filter = query.Filter != PatientRecordFilter.None ? FilterType.From((int)query.Filter) : null;
 
-        var (items, totalCount) = waitingList.FindPatients(query.WaitingListItemId, query.SearchTerms, filter, localNow);
+        var (items, totalCount) = waitingList.FindPatients(query.WaitingListItemId, query.SearchTerms, filter, now);
         if (items.Length < 1)
         {
             return new([], totalCount);
@@ -46,7 +47,6 @@ internal sealed class GetPatientsBySearchHandler : IQueryHandler<GetPatientsBySe
         var users = await _userService.GetAll(cancellationToken);
 
         var userMap = users.ToDictionary(u => u.Id);
-        var dateTimeConverter = new GermanDateTimeConverter();
         var mappedItems = items.Select(p =>
             p.MapToIndexDto(userMap.TryGetValue(p.Audit.LastModifiedById ?? p.Audit.CreatedById, out var user) ? user.Name : null, dateTimeConverter)).ToArray();
 

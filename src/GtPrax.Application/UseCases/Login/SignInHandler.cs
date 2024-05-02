@@ -4,7 +4,7 @@ using FluentResults;
 using GtPrax.Application.Services;
 using Mediator;
 
-internal sealed class SignInHandler : ICommandHandler<SignInCommand, Result>
+internal sealed class SignInHandler : ICommandHandler<SignInCommand, Result<SignInAction>>
 {
     private readonly IUserService _userService;
 
@@ -13,7 +13,7 @@ internal sealed class SignInHandler : ICommandHandler<SignInCommand, Result>
         _userService = userService;
     }
 
-    public async ValueTask<Result> Handle(SignInCommand command, CancellationToken cancellationToken)
+    public async ValueTask<Result<SignInAction>> Handle(SignInCommand command, CancellationToken cancellationToken)
     {
         var result = await _userService.SignIn(command.Email, command.Password, cancellationToken);
         return result;

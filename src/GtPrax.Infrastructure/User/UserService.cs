@@ -2,6 +2,7 @@ namespace GtPrax.Infrastructure.User;
 
 using System.Linq;
 using System.Security.Claims;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentResults;
@@ -84,7 +85,7 @@ internal sealed class UserService : IUserService
     public async Task<User[]> GetAll(CancellationToken cancellationToken) =>
         (await _store.GetAllUsers(cancellationToken)).MapToDomain();
 
-    public async Task<Result> SignIn(string email, string password, CancellationToken cancellationToken)
+    public async Task<Result<SignInAction>> SignIn(string email, string password, CancellationToken cancellationToken)
     {
         var user = await _signInManager.UserManager.FindByEmailAsync(email);
         if (user == null)
@@ -96,7 +97,11 @@ internal sealed class UserService : IUserService
         if (signInResult.Succeeded)
         {
             var result = await _store.SetLastLogin(user.Id.ToString(), _timeProvider.GetUtcNow(), cancellationToken);
-            return result.Succeeded ? Result.Ok() : Result.Fail(result.Errors.Select(e => e.Description));
+            return result.Succeeded ? Result.Ok(SignInAction.None) : Result.Fail(result.Errors.Select(e => e.Description));
+        }
+        else if (signInResult.RequiresTwoFactor)
+        {
+            return Result.Ok(SignInAction.RequiresTwoFactor);
         }
         else if (signInResult.IsLockedOut)
         {
@@ -110,6 +115,22 @@ internal sealed class UserService : IUserService
         {
             return Result.Fail(Messages.LoginFailed);
         }
+    }
+
+    public async Task<Result> SignInTwoFactor(string code, bool rememberClient, CancellationToken cancellationToken)
+    {
+        var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
+        if (user is null)
+        {
+            return Result.Fail(Messages.LoginFailed);
+        }
+        var signInResult = await _signInManager.TwoFactorAuthenticatorSignInAsync(code, false, rememberClient);
+        if (!signInResult.Succeeded)
+        {
+            return Result.Fail(Messages.LoginFailed);
+        }
+        var result = await _store.SetLastLogin(user.Id.ToString(), _timeProvider.GetUtcNow(), cancellationToken);
+        return result.Succeeded ? Result.Ok() : Result.Fail(result.Errors.Select(e => e.Description));
     }
 
     public Task SignOutCurrent() =>
@@ -474,5 +495,116 @@ internal sealed class UserService : IUserService
 
         var result = await userManager.UpdateAsync(user);
         return result.Succeeded ? Result.Ok() : Result.Fail(result.Errors.Select(e => e.Description));
+    }
+
+    public async Task<Result<UserTwoFactor>> CreateTwoFactor(string id, string appName)
+    {
+        var userManager = _signInManager.UserManager;
+        var user = await userManager.FindByIdAsync(id);
+        if (user is null)
+        {
+            return Result.Fail(Messages.AccountNotFound);
+        }
+
+        var isTwoFactorEnabled = await _signInManager.IsTwoFactorEnabledAsync(user);
+
+        var key = await userManager.GetAuthenticatorKeyAsync(user);
+        if (string.IsNullOrEmpty(key))
+        {
+            var result = await userManager.ResetAuthenticatorKeyAsync(user);
+            if (!result.Succeeded)
+            {
+                return Result.Fail(result.Errors.Select(e => e.Description));
+            }
+            key = await userManager.GetAuthenticatorKeyAsync(user);
+            if (string.IsNullOrEmpty(key))
+            {
+                return Result.Fail(_errorDescriber.DefaultError().Description);
+            }
+        }
+
+        var uri = GenerateOtpAuthUri(appName, user.Email, key);
+        return Result.Ok(new UserTwoFactor(isTwoFactorEnabled, key, uri));
+    }
+
+    public async Task<Result> EnableTwoFactor(string id, string code)
+    {
+        var userManager = _signInManager.UserManager;
+        var user = await userManager.FindByIdAsync(id);
+        if (user is null)
+        {
+            return Result.Fail(Messages.AccountNotFound);
+        }
+
+        var isValid = await userManager.VerifyTwoFactorTokenAsync(user,
+            userManager.Options.Tokens.AuthenticatorTokenProvider, code);
+
+        if (!isValid)
+        {
+            return Result.Fail(_errorDescriber.InvalidToken().Description);
+        }
+
+        var result = await userManager.SetTwoFactorEnabledAsync(user, true);
+        if (!result.Succeeded)
+        {
+            return Result.Fail(result.Errors.Select(e => e.Description));
+        }
+
+        return Result.Ok();
+    }
+
+    public async Task<Result> DisableTwoFactor(string id, string code)
+    {
+        var userManager = _signInManager.UserManager;
+        var user = await userManager.FindByIdAsync(id);
+        if (user is null)
+        {
+            return Result.Fail(Messages.AccountNotFound);
+        }
+
+        var isValid = await userManager.VerifyTwoFactorTokenAsync(user,
+            userManager.Options.Tokens.AuthenticatorTokenProvider, code);
+
+        if (!isValid)
+        {
+            return Result.Fail(_errorDescriber.InvalidToken().Description);
+        }
+
+        var result = await userManager.SetTwoFactorEnabledAsync(user, false);
+        if (!result.Succeeded)
+        {
+            return Result.Fail(result.Errors.Select(e => e.Description));
+        }
+
+        return Result.Ok();
+    }
+
+    private static string GenerateOtpAuthUri(string issuer, string user, string secret)
+    {
+        var dictionary = new Dictionary<string, string>
+        {
+            { "secret", secret },
+            { "issuer", Uri.EscapeDataString(issuer) },
+            { "algorithm","SHA1" },
+            { "digits", "6" },
+            { "period", "30" }
+        };
+
+        var uri = new StringBuilder("otpauth://totp/");
+        uri.Append(Uri.EscapeDataString(issuer));
+        uri.Append(':');
+        uri.Append(Uri.EscapeDataString(user));
+        uri.Append('?');
+        foreach (var item in dictionary)
+        {
+            uri.Append(item.Key);
+            uri.Append('=');
+            uri.Append(item.Value);
+            uri.Append('&');
+        }
+
+        // remove '&' at the end
+        uri.Remove(uri.Length - 1, 1);
+        return uri.ToString();
     }
 }
