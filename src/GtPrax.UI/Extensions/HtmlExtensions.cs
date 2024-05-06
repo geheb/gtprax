@@ -14,7 +14,8 @@ public static class HtmlExtensions
         return new HtmlString($"{tokens.FormFieldName}:'{tokens.RequestToken}'");
     }
 
-    public static string AppendVersion(this IHtmlHelper helper, string path) => helper.ViewContext.HttpContext
+    public static string AppendVersion(this IHtmlHelper helper, string path) =>
+        helper.ViewContext.HttpContext
             .RequestServices
             .GetRequiredService<IFileVersionProvider>()
             .AddFileVersionToPath(helper.ViewContext.HttpContext.Request.PathBase, path);

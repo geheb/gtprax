@@ -73,6 +73,12 @@ public class EditModel : PageModel
         return new JsonResult(new { success = result.IsSuccess, error = string.Join(", ", result.Errors.Select(e => e.Message)) });
     }
 
+    public async Task<IActionResult> OnPostResetTwoFactorAsync(string id, CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(new ResetUserTwoFactorCommand(id), cancellationToken);
+        return new JsonResult(new { success = result.IsSuccess, error = string.Join(", ", result.Errors.Select(e => e.Message)) });
+    }
+
     private async Task<bool> UpdateView(string id, CancellationToken cancellationToken)
     {
         var user = await _mediator.Send(new FindUserByIdQuery(id), cancellationToken);

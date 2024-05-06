@@ -19,12 +19,6 @@ public class ExitModel : PageModel
     public async Task<IActionResult> OnGetAsync(CancellationToken cancellationToken)
     {
         await _mediator.Send(new SignOutCommand(), cancellationToken);
-
-        foreach (var cookie in Request.Cookies.Keys)
-        {
-            Response.Cookies.Delete(cookie);
-        }
-
         return LocalRedirect(Url.Content("~/"));
     }
 }

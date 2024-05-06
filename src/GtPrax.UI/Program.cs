@@ -36,12 +36,12 @@ try
     var config = builder.Configuration;
     var services = builder.Services;
 
-    services.AddAuthentication(IdentityConstants.ApplicationScheme)
+    var authBuilder = services.AddAuthentication(IdentityConstants.ApplicationScheme)
         .AddCookie(IdentityConstants.ApplicationScheme, options =>
         {
             options.Cookie.HttpOnly = true;
             options.Cookie.SameSite = SameSiteMode.Strict;
-            options.Cookie.Name = "__GtPrax-AppToken";
+            options.Cookie.Name = CookieNames.AppToken;
             options.ExpireTimeSpan = TimeSpan.FromHours(1);
 
             options.LoginPath = "/Login";
@@ -50,6 +50,22 @@ try
             options.SlidingExpiration = true;
         });
 
+    authBuilder.AddTwoFactorRememberMeCookie().Configure(options =>
+    {
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SameSite = SameSiteMode.Strict;
+        options.Cookie.Name = CookieNames.TwoFactorTrustToken;
+        options.SlidingExpiration = true;
+        options.ExpireTimeSpan = TimeSpan.FromDays(30);
+    });
+
+    authBuilder.AddTwoFactorUserIdCookie().Configure(options =>
+    {
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SameSite = SameSiteMode.Strict;
+        options.Cookie.Name = CookieNames.TwoFactorIdToken;
+    });
+
     services.AddAuthorization();
 
     services.AddInfrastructure(config);
@@ -57,11 +73,12 @@ try
 
     services.Configure<AntiforgeryOptions>(options =>
     {
-        options.Cookie.Name = "__GtPrax-XCsrfToken";
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SameSite = SameSiteMode.Strict;
+        options.Cookie.Name = CookieNames.XcsrfToken;
     });
 
-    services.Configure<ForwardedHeadersOptions>(
-        options =>
+    services.Configure<ForwardedHeadersOptions>(options =>
     {
         options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
     });

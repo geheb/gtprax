@@ -29,6 +29,10 @@ function closeModal(event) {
     modal.trigger("modal:close");
 }
 
+function sleep(time) {
+  return new Promise((resolve) => setTimeout(resolve, time));
+}
+
 function handleModal(args) {
     const defaults = {
         id: '',
@@ -55,8 +59,9 @@ function handleModal(args) {
             const info = e.relatedTarget.dataset[params.init.datainfo];
             params.init.action(e.target, info);
         }
-        const confirm = $(e.target).find(".confirm");
+        const confirmButton = $(e.target).find(".confirm");
         const loading = $(e.target).find('.loading-value');
+        const closeButton = $(e.target).find(".close-modal:first");
 
         if (params.load.dataurl) {
             loading.removeClass('is-hidden');
@@ -65,26 +70,27 @@ function handleModal(args) {
                 if (response.success) {
                     loading.addClass('is-hidden');
                     params.load.action(e.target, response.data);
-                    confirm.attr("disabled", false);
+                    confirmButton.attr("disabled", false);
                 } else {
                     createToast(response.error, 'is-danger');
                 }
             });
         } else {
-            confirm.attr("disabled", false);
+          confirmButton.attr("disabled", false);
         }
 
         if (params.confirm.dataurl) {
             const dataurl = e.relatedTarget.dataset[params.confirm.dataurl];
             
-            confirm.on('click', function (evClick) {
+            confirmButton.on('click', function (evClick) {
                 evClick.preventDefault();
-                confirm.addClass("is-loading");
+                confirmButton.addClass("is-loading");
                 const url = params.confirm.geturl ? params.confirm.geturl(e.target, dataurl) : dataurl;
 
                 $.post(url, params.token).done(function (response) {
                     if (response.success) {
-                        params.confirm.action();
+                      params.confirm.action();
+                      sleep(1000).then(() => closeButton.trigger("click"));
                     } else {
                         createToast(response.error, 'is-danger');
                     }
@@ -103,11 +109,6 @@ function handleModal(args) {
         }
     });
 }
-
-function sleep(time) {
-    return new Promise((resolve) => setTimeout(resolve, time));
-}
-
 
 $(function () {
     $(".navbar-burger").on('click', function () {

@@ -1,12 +1,14 @@
 namespace GtPrax.UI.Pages.MyAccount;
 
 using System.ComponentModel.DataAnnotations;
+using System.Net;
 using GtPrax.Application.Options;
 using GtPrax.Application.UseCases.UserAccount;
 using GtPrax.UI.Attributes;
 using GtPrax.UI.Extensions;
 using GtPrax.UI.Models;
 using Mediator;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -19,7 +21,7 @@ public class EditTwoFactorModel : PageModel
     private readonly IMediator _mediator;
     private readonly string _appName;
 
-    [BindProperty, Display(Name = "6-Stelliger Code aus der Authenticator-App")]
+    [BindProperty, Display(Name = "6-stelliger Code aus der Authenticator-App")]
     [RequiredField, TextLengthField(6, MinimumLength = 6)]
     public string? Code { get; set; }
 
@@ -30,7 +32,9 @@ public class EditTwoFactorModel : PageModel
 
     public bool IsDisabled { get; set; }
 
-    public EditTwoFactorModel(IMediator mediator, IOptions<AppOptions> appOptions)
+    public EditTwoFactorModel(
+        IMediator mediator,
+        IOptions<AppOptions> appOptions)
     {
         _mediator = mediator;
         _appName = appOptions.Value.HeaderTitle;
@@ -44,7 +48,22 @@ public class EditTwoFactorModel : PageModel
         {
             return Page();
         }
-        return RedirectToPage(this.PageLinkName<IndexModel>(), new { message = 3 });
+
+        var enable = IsTwoFactorEnabled == false;
+
+        var result = await _mediator.Send(new EnableUserTwoFactorCommand(User.GetId()!, enable, Code!), cancellationToken);
+        if (result.IsFailed)
+        {
+            result.Errors.ForEach(e => ModelState.AddModelError(string.Empty, e.Message));
+            return Page();
+        }
+
+        if (!enable)
+        {
+            Response.Cookies.Delete(CookieNames.TwoFactorTrustToken);
+        }
+
+        return RedirectToPage(this.PageLinkName<IndexModel>(), new { message = enable ? 3 : 4 });
     }
 
     private async Task<bool> UpdateView(CancellationToken cancellationToken)

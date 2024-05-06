@@ -51,7 +51,7 @@ public static class ServiceExtensions
             options.Password.RequireLowercase = true;
             options.Password.RequiredUniqueChars = 5;
 
-            options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromHours(60);
+            options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(90);
             options.Lockout.MaxFailedAccessAttempts = 3;
 
             options.Lockout.AllowedForNewUsers = true;

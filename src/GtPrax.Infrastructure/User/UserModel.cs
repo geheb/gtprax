@@ -41,6 +41,8 @@ internal sealed class UserModel
 
     public required string Name { get; set; }
     public string? AuthenticatorKey { get; set; }
+    public string? PhoneNumber { get; set; }
+    public bool IsPhoneNumberConfirmed { get; set; }
 
     public ICollection<UserClaimModel> Claims { get; set; } = new List<UserClaimModel>();
 }

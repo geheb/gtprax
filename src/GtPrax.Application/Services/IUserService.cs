@@ -40,6 +40,6 @@ public interface IUserService
     Task<Result> Deactivate(string id);
 
     Task<Result<UserTwoFactor>> CreateTwoFactor(string id, string appName);
-    Task<Result> EnableTwoFactor(string id, string code);
-    Task<Result> DisableTwoFactor(string id, string code);
+    Task<Result> EnableTwoFactor(string id, bool enable, string code);
+    Task<Result> ResetTwoFactor(string id);
 }

@@ -14,7 +14,8 @@ internal sealed class UserStore :
     IUserEmailStore<UserModel>,
     IUserAuthenticatorKeyStore<UserModel>,
     IUserTwoFactorStore<UserModel>,
-    IUserLockoutStore<UserModel>
+    IUserLockoutStore<UserModel>,
+    IUserPhoneNumberStore<UserModel>
 {
     private readonly IdentityErrorDescriber _identityErrorDescriber;
     private readonly TimeProvider _timeProvider;
@@ -309,13 +310,35 @@ internal sealed class UserStore :
 
     public Task SetTwoFactorEnabledAsync(UserModel user, bool enabled, CancellationToken cancellationToken)
     {
-        if (!user.Claims.Contains(TwoFactorClaim))
+        if (enabled)
         {
             user.Claims.Add(TwoFactorClaim);
+        }
+        else
+        {
+            user.Claims.Remove(TwoFactorClaim);
         }
         return Task.CompletedTask;
     }
 
     public Task<bool> GetTwoFactorEnabledAsync(UserModel user, CancellationToken cancellationToken) =>
         Task.FromResult(user.Claims.Contains(TwoFactorClaim));
+
+    public Task SetPhoneNumberAsync(UserModel user, string? phoneNumber, CancellationToken cancellationToken)
+    {
+        user.PhoneNumber = phoneNumber;
+        return Task.CompletedTask;
+    }
+
+    public Task<string?> GetPhoneNumberAsync(UserModel user, CancellationToken cancellationToken) =>
+        Task.FromResult(user.PhoneNumber);
+
+    public Task<bool> GetPhoneNumberConfirmedAsync(UserModel user, CancellationToken cancellationToken) =>
+        Task.FromResult(user.IsPhoneNumberConfirmed);
+
+    public Task SetPhoneNumberConfirmedAsync(UserModel user, bool confirmed, CancellationToken cancellationToken)
+    {
+        user.IsPhoneNumberConfirmed = confirmed;
+        return Task.CompletedTask;
+    }
 }

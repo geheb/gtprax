@@ -527,7 +527,7 @@ internal sealed class UserService : IUserService
         return Result.Ok(new UserTwoFactor(isTwoFactorEnabled, key, uri));
     }
 
-    public async Task<Result> EnableTwoFactor(string id, string code)
+    public async Task<Result> EnableTwoFactor(string id, bool enable, string code)
     {
         var userManager = _signInManager.UserManager;
         var user = await userManager.FindByIdAsync(id);
@@ -544,7 +544,7 @@ internal sealed class UserService : IUserService
             return Result.Fail(_errorDescriber.InvalidToken().Description);
         }
 
-        var result = await userManager.SetTwoFactorEnabledAsync(user, true);
+        var result = await userManager.SetTwoFactorEnabledAsync(user, enable);
         if (!result.Succeeded)
         {
             return Result.Fail(result.Errors.Select(e => e.Description));
@@ -553,7 +553,7 @@ internal sealed class UserService : IUserService
         return Result.Ok();
     }
 
-    public async Task<Result> DisableTwoFactor(string id, string code)
+    public async Task<Result> ResetTwoFactor(string id)
     {
         var userManager = _signInManager.UserManager;
         var user = await userManager.FindByIdAsync(id);
@@ -562,14 +562,7 @@ internal sealed class UserService : IUserService
             return Result.Fail(Messages.AccountNotFound);
         }
 
-        var isValid = await userManager.VerifyTwoFactorTokenAsync(user,
-            userManager.Options.Tokens.AuthenticatorTokenProvider, code);
-
-        if (!isValid)
-        {
-            return Result.Fail(_errorDescriber.InvalidToken().Description);
-        }
-
+        user.AuthenticatorKey = null;
         var result = await userManager.SetTwoFactorEnabledAsync(user, false);
         if (!result.Succeeded)
         {

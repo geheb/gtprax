@@ -1,6 +1,7 @@
 namespace GtPrax.UI.Pages.Login;
 
 using System.ComponentModel.DataAnnotations;
+using GtPrax.Application.Services;
 using GtPrax.Application.UseCases.Login;
 using GtPrax.UI.Attributes;
 using GtPrax.UI.Extensions;
@@ -74,8 +75,9 @@ public class IndexModel : PageModel
             ModelState.AddModelError(string.Empty, Messages.SignInFailed);
             return Page();
         }
-        else
+        else if (result.Value == SignInAction.RequiresTwoFactor)
         {
+            return RedirectToPage(this.PageLinkName<ConfirmTwoFactorModel>(), new { returnUrl });
         }
 
         return LocalRedirect(returnUrl ?? Url.Content("~/"));

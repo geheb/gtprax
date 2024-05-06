@@ -46,6 +46,12 @@
                                    data-url="@(Url.PageLink(string.Empty, "deactivateuser", new { id = Model.Info?.Id }))">
                                     Benutzer deaktivieren
                                 </a>
+                                <a class="dropdown-item open-modal" href="#"
+                                   data-target="#resetTwoFactorModal"
+                                   data-user="@Model.Info?.Name"
+                                   data-url="@(Url.PageLink(string.Empty, "resettwofactor", new { id = Model.Info?.Id }))">
+                                    Zwei-Faktor-Authentifizierung zurücksetzen
+                                </a>
                             }
                         </div>
                     </div>
@@ -120,6 +126,11 @@
     "Benutzer deaktivieren",
     "Möchtest du wirklich den aktuellen Benutzer deaktivieren? Dieser Schritt ist unwiderruflich!")
 
+@Html.CreateModalTemplateWithOkCancel(
+    "resetTwoFactorModal",
+    "Zwei-Faktor-Authentifizierung zurücksetzen",
+    "Möchtest du wirklich die Zwei-Faktor-Authentifizierung für den aktuellen Benutzer zurücksetzen?")
+
 @section Scripts
 {
 <script type="text/javascript">
@@ -149,6 +160,18 @@
                 }
             }
         });
+
+        handleModal({
+            id: '#resetTwoFactorModal',
+            token: {@Html.AjaxCsrfToken()},
+            confirm: {
+                dataurl: 'url',
+                action: function () {
+                    createToast(`Die Zwei-Faktor-Authentifizierung wurde zurückgesetzt.`);
+                }
+            }
+        });
+
     });
 </script>
 }
