@@ -1,13 +1,13 @@
 @page
 @model GtPrax.UI.Pages.UserAccount.IndexModel
 @{
-    ViewData["Title"] = Model.GetNode().Title;
-    ViewData["HasFooter"] = true;
-    Model.BuildHeaderMenu();
-    var roleConverter = new RoleConverter();
-    var dateConverter = new GermanDateTimeConverter();
-    var editUserPage = Model.PageLinkName<EditModel>();
-    var createUserPage = Model.PageLinkName<CreateModel>();
+	ViewData["Title"] = Model.GetNode().Title;
+	ViewData["HasFooter"] = true;
+	Model.BuildHeaderMenu();
+	var roleConverter = new RoleConverter();
+	var dateConverter = new GermanDateTimeConverter();
+	var editUserPage = Model.GetNode<EditModel>().Page;
+	var createUserPage = Model.GetNode<CreateModel>().Page;
 }
 
 @await Html.PartialAsync("_Header")

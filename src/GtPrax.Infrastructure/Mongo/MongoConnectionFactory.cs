@@ -9,46 +9,49 @@ using MongoDB.Driver.Core.Configuration;
 
 internal sealed class MongoConnectionFactory
 {
-    private readonly MongoClientSettings _settings;
     private readonly MongoConnectionOptions _options;
+    private readonly MongoClient _client;
 
     public MongoConnectionFactory(IOptions<MongoConnectionOptions> options)
     {
         _options = options.Value;
-        _settings = new MongoClientSettings()
+
+        var identity = new MongoInternalIdentity("admin", _options.Username);
+        var evidence = new PasswordEvidence(_options.Password);
+
+        var settings = new MongoClientSettings()
         {
             Scheme = ConnectionStringScheme.MongoDB,
             Server = new MongoServerAddress(_options.Host, _options.Port),
             ConnectTimeout = TimeSpan.FromSeconds(30),
-            UseTls = false
+            UseTls = false,
+            ApplicationName = "GtPrax",
+            Credential = new MongoCredential("SCRAM-SHA-256", identity, evidence)
         };
+        _client = new MongoClient(settings);
     }
 
     public IMongoCollection<UserModel> GetUsersCollection()
     {
-        var client = new MongoClient(_settings);
-        var database = client.GetDatabase(_options.DatabaseName);
+        var database = _client.GetDatabase(_options.DatabaseName);
         return database.GetCollection<UserModel>(_options.UserCollectionName);
     }
 
     public IMongoCollection<EmailQueueModel> GetEmailQueueCollection()
     {
-        var client = new MongoClient(_settings);
-        var database = client.GetDatabase(_options.DatabaseName);
+        var database = _client.GetDatabase(_options.DatabaseName);
         return database.GetCollection<EmailQueueModel>(_options.EmailQueueCollectionName);
     }
 
     public IMongoCollection<WaitingListModel> GetWaitingListsCollection()
     {
-        var client = new MongoClient(_settings);
-        var database = client.GetDatabase(_options.DatabaseName);
+        var database = _client.GetDatabase(_options.DatabaseName);
         return database.GetCollection<WaitingListModel>(_options.WaitingListCollectionName);
     }
 
     public IMongoCollection<PatientRecordModel> GetPatientRecordCollection()
     {
-        var client = new MongoClient(_settings);
-        var database = client.GetDatabase(_options.DatabaseName);
+        var database = _client.GetDatabase(_options.DatabaseName);
         return database.GetCollection<PatientRecordModel>(_options.PatientRecordCollectionName);
     }
 }

@@ -5,6 +5,7 @@ using System.Threading;
 using GtPrax.Application.UseCases.Login;
 using GtPrax.UI.Attributes;
 using GtPrax.UI.Extensions;
+using GtPrax.UI.Routing;
 using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,6 +15,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 public class ConfirmEmailModel : PageModel
 {
     private readonly IMediator _mediator;
+    private readonly NodeGeneratorService _nodeGeneratorService;
 
     [BindProperty]
     public string? UserNameBot { get; set; }
@@ -29,9 +31,10 @@ public class ConfirmEmailModel : PageModel
 
     public bool IsDisabled { get; set; }
 
-    public ConfirmEmailModel(IMediator mediator)
+    public ConfirmEmailModel(IMediator mediator, NodeGeneratorService nodeGeneratorService)
     {
         _mediator = mediator;
+        _nodeGeneratorService = nodeGeneratorService;
     }
 
     public async Task OnGetAsync(string id, string token, CancellationToken cancellationToken)
@@ -73,6 +76,6 @@ public class ConfirmEmailModel : PageModel
             return Page();
         }
 
-        return RedirectToPage(this.PageLinkName<IndexModel>(), new { message = 3 });
+        return RedirectToPage(_nodeGeneratorService.GetNode<IndexModel>().Page, new { message = 3 });
     }
 }

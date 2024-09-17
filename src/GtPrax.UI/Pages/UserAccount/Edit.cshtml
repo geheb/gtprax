@@ -1,4 +1,4 @@
-@page "~/UserAccount/Edit/{id}"
+@page "/UserAccount/Edit/{id:objectid}"
 @model GtPrax.UI.Pages.UserAccount.EditModel
 @{
     ViewData["Title"] = Model.GetNode().Title;
@@ -6,7 +6,7 @@
     Model.BuildHeaderMenu(new { id = Model.Info?.Id });
     var dateConverter = new GermanDateTimeConverter();
     var roleConverter = new RoleConverter();
-    var indexUrl = Url.PageLink(Model.PageLinkName<IndexModel>());
+    var indexUrl = Url.PageLink(Model.GetNode<IndexModel>().Page);
 }
 
 @await Html.PartialAsync("_Header")

@@ -10,11 +10,21 @@
 <section class="section">
     <div class="container">
 
-        <h3 class="title is-3">@ViewData["Title"]</h3>
-        <h4 class="subtitle is-4">Bei der Anfrage ist ein Fehler aufgetreten.</h4>
+        <div class="has-text-centered">
 
-        <p><strong>Code: @Model.Code</strong></p>
-        <p><strong>Beschreibung: @Model.Description</strong></p>
+            <i class="fa-solid fa-ghost fa-fade icon-big mb-6"></i>
+            <h1 class="title">Fehlercode: @Model.Code</h1>
+            <h2 class="subtitle mt-6">@Model.Description</h2>
+
+            @if (Model.Is2faRequired)
+            {
+                <div class="content">
+                    <blockquote>
+                        Für diese Seite wird Zwei-Faktor-Authentifizierung (2FA) benötigt. Unter "Mein Konto" kann dieses aktiviert werden.
+                    </blockquote>
+                </div>
+            }
+        </div>
     </div>
 </section>
 

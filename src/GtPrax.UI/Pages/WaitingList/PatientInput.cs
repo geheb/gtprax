@@ -8,9 +8,11 @@ using GtPrax.UI.Attributes;
 public class PatientInput
 {
     [Display(Name = "Name")]
+    [RequiredField, TextLengthField]
     public string? Name { get; set; }
 
     [Display(Name = "Geburtsdatum")]
+    [RequiredField]
     public string? BirthDate { get; set; }
 
     [Display(Name = "Telefonnummer")]

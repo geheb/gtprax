@@ -1,8 +1,8 @@
 namespace GtPrax.UI.Pages;
 
 using GtPrax.UI.Extensions;
+using GtPrax.UI.Routing;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -11,14 +11,15 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 [IgnoreAntiforgeryToken]
 public class ErrorModel : PageModel
 {
-    private readonly ILogger _logger;
+    private readonly NodeGeneratorService _nodeGeneratorService;
 
     public int Code { get; set; }
     public string? Description { get; set; }
+    public bool Is2faRequired { get; set; }
 
-    public ErrorModel(ILogger<ErrorModel> logger)
+    public ErrorModel(NodeGeneratorService nodeGeneratorService)
     {
-        _logger = logger;
+        _nodeGeneratorService = nodeGeneratorService;
     }
 
     public void OnGet(int code, string? returnUrl = null)
@@ -37,5 +38,11 @@ public class ErrorModel : PageModel
             404 => Messages.PageNotFound,
             _ => Messages.InternalServerError
         };
+
+        if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
+        {
+            var node = _nodeGeneratorService.Find(returnUrl);
+            Is2faRequired = node?.AllowedPolicy == Policies.Require2fa;
+        }
     }
 }

@@ -1,14 +1,13 @@
 namespace GtPrax.UI.Pages.MyAccount;
 
 using System.ComponentModel.DataAnnotations;
-using System.Net;
 using GtPrax.Application.Options;
 using GtPrax.Application.UseCases.UserAccount;
 using GtPrax.UI.Attributes;
 using GtPrax.UI.Extensions;
 using GtPrax.UI.Models;
+using GtPrax.UI.Routing;
 using Mediator;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -19,6 +18,7 @@ using Microsoft.Extensions.Options;
 public class EditTwoFactorModel : PageModel
 {
     private readonly IMediator _mediator;
+    private readonly NodeGeneratorService _nodeGeneratorService;
     private readonly string _appName;
 
     [BindProperty, Display(Name = "6-stelliger Code aus der Authenticator-App")]
@@ -34,9 +34,11 @@ public class EditTwoFactorModel : PageModel
 
     public EditTwoFactorModel(
         IMediator mediator,
+        NodeGeneratorService nodeGeneratorService,
         IOptions<AppOptions> appOptions)
     {
         _mediator = mediator;
+        _nodeGeneratorService = nodeGeneratorService;
         _appName = appOptions.Value.HeaderTitle;
     }
 
@@ -49,7 +51,7 @@ public class EditTwoFactorModel : PageModel
             return Page();
         }
 
-        var enable = IsTwoFactorEnabled == false;
+        var enable = !IsTwoFactorEnabled;
 
         var result = await _mediator.Send(new EnableUserTwoFactorCommand(User.GetId()!, enable, Code!), cancellationToken);
         if (result.IsFailed)
@@ -63,7 +65,7 @@ public class EditTwoFactorModel : PageModel
             Response.Cookies.Delete(CookieNames.TwoFactorTrustToken);
         }
 
-        return RedirectToPage(this.PageLinkName<IndexModel>(), new { message = enable ? 3 : 4 });
+        return RedirectToPage(_nodeGeneratorService.GetNode<IndexModel>().Page, new { message = enable ? 3 : 4 });
     }
 
     private async Task<bool> UpdateView(CancellationToken cancellationToken)

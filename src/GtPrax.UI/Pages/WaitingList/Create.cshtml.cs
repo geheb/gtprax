@@ -8,23 +8,25 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using GtPrax.Application.UseCases.WaitingList;
-using GtPrax.UI.Extensions;
 using GtPrax.Application.UseCases.UserAccount;
+using GtPrax.UI.Routing;
 
 [Node("Warteliste anlegen", FromPage = typeof(IndexModel))]
 [Authorize]
 public class CreateModel : PageModel
 {
     private readonly IMediator _mediator;
+    private readonly NodeGeneratorService _nodeGeneratorService;
 
     [BindProperty]
     [Display(Name = "Name")]
     [RequiredField, TextLengthField]
     public string? Name { get; set; }
 
-    public CreateModel(IMediator mediator)
+    public CreateModel(IMediator mediator, NodeGeneratorService nodeGeneratorService)
     {
         _mediator = mediator;
+        _nodeGeneratorService = nodeGeneratorService;
     }
 
     public void OnGet()
@@ -45,6 +47,6 @@ public class CreateModel : PageModel
             return Page();
         }
 
-        return RedirectToPage(this.PageLinkName<IndexModel>());
+        return RedirectToPage(_nodeGeneratorService.GetNode<IndexModel>().Page);
     }
 }

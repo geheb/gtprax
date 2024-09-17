@@ -4,18 +4,19 @@ using System.Threading;
 using GtPrax.Application.Converter;
 using GtPrax.Application.UseCases.PatientRecord;
 using GtPrax.Application.UseCases.UserAccount;
-using GtPrax.UI.Extensions;
 using GtPrax.UI.Models;
+using GtPrax.UI.Routing;
 using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 [Node("Patient(in) bearbeiten", FromPage = typeof(PatientsModel))]
-[Authorize]
+[Authorize(Policy = Policies.Require2fa)]
 public class EditPatientModel : PageModel
 {
     private readonly IMediator _mediator;
+    private readonly NodeGeneratorService _nodeGeneratorService;
 
     public string? Id { get; set; }
     public string? WaitingListId { get; set; }
@@ -28,9 +29,10 @@ public class EditPatientModel : PageModel
     [BindProperty]
     public PatientInput Input { get; set; } = new();
 
-    public EditPatientModel(IMediator mediator)
+    public EditPatientModel(IMediator mediator, NodeGeneratorService nodeGeneratorService)
     {
         _mediator = mediator;
+        _nodeGeneratorService = nodeGeneratorService;
     }
 
     public async Task OnGetAsync(string id, CancellationToken cancellationToken)
@@ -59,7 +61,7 @@ public class EditPatientModel : PageModel
             return Page();
         }
 
-        return RedirectToPage(this.PageLinkName<PatientsModel>(), new { id = WaitingListId });
+        return RedirectToPage(_nodeGeneratorService.GetNode<PatientsModel>().Page, new { id = WaitingListId });
     }
 
     private async Task<PatientRecordItemDto?> UpdateView(string id, CancellationToken cancellationToken)

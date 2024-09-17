@@ -1,29 +1,27 @@
 namespace GtPrax.UI.Extensions;
 
 using GtPrax.UI.Models;
-using GtPrax.UI.Services;
+using GtPrax.UI.Routing;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.Reflection;
 
 public static class NodeExtensions
 {
-    public static void UseNodeGenerator(this IApplicationBuilder app, Assembly assembly)
+    public static void UseNodeGenerator(this IApplicationBuilder app)
     {
         var nodeGenerator = app.ApplicationServices.GetRequiredService<NodeGeneratorService>();
-        nodeGenerator.Add(assembly);
+        nodeGenerator.AddNodes();
     }
 
     public static Node GetNode(this PageModel model)
     {
         var breadcrumbGenerator = model.HttpContext.RequestServices.GetRequiredService<NodeGeneratorService>();
-
         return breadcrumbGenerator.GetNode(model.GetType());
     }
 
     public static Node GetNode<T>(this PageModel model) where T : PageModel
     {
         var breadcrumbGenerator = model.HttpContext.RequestServices.GetRequiredService<NodeGeneratorService>();
-        return breadcrumbGenerator.GetNode(typeof(T));
+        return breadcrumbGenerator.GetNode<T>();
     }
 
     public static bool HasNodeAccess(this PageModel model, params Type[] pageModels)

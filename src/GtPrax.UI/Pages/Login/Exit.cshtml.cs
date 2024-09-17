@@ -19,6 +19,6 @@ public class ExitModel : PageModel
     public async Task<IActionResult> OnGetAsync(CancellationToken cancellationToken)
     {
         await _mediator.Send(new SignOutCommand(), cancellationToken);
-        return LocalRedirect(Url.Content("~/"));
+        return LocalRedirect("/");
     }
 }

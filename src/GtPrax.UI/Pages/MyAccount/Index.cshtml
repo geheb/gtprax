@@ -4,9 +4,9 @@
     ViewData["Title"] = Model.GetNode().Title;
     ViewData["HasFooter"] = true;
     Model.BuildHeaderMenu();
-    var changePasswordPage = Model.PageLinkName<ChangePasswordModel>();
-    var changeEmailPage = Model.PageLinkName<ChangeEmailModel>();
-    var editTwoFactorPage = Model.PageLinkName<EditTwoFactorModel>();
+    var changePasswordPage = Model.GetNode<ChangePasswordModel>().Page;
+    var changeEmailPage = Model.GetNode<ChangeEmailModel>().Page;
+    var editTwoFactorPage = Model.GetNode<EditTwoFactorModel>().Page;
 }
 
 @await Html.PartialAsync("_Header")

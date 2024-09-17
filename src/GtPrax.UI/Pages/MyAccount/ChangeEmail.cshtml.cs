@@ -6,6 +6,7 @@ using GtPrax.UI.Attributes;
 using GtPrax.UI.Extensions;
 using GtPrax.UI.Models;
 using GtPrax.UI.Pages.Login;
+using GtPrax.UI.Routing;
 using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,6 +17,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 public class ChangeEmailModel : PageModel
 {
     private readonly IMediator _mediator;
+    private readonly NodeGeneratorService _nodeGeneratorService;
 
     [Display(Name = "Aktuelle E-Mail-Adresse")]
     public string? CurrentEmail { get; private set; }
@@ -30,9 +32,10 @@ public class ChangeEmailModel : PageModel
 
     public bool IsDisabled { get; set; }
 
-    public ChangeEmailModel(IMediator mediator)
+    public ChangeEmailModel(IMediator mediator, NodeGeneratorService nodeGeneratorService)
     {
         _mediator = mediator;
+        _nodeGeneratorService = nodeGeneratorService;
     }
 
     public async Task OnGetAsync(CancellationToken cancellationToken) =>
@@ -45,7 +48,7 @@ public class ChangeEmailModel : PageModel
             return Page();
         }
 
-        var callbackUrl = Url.PageLink(this.PageLinkName<ConfirmChangeEmailModel>());
+        var callbackUrl = Url.PageLink(_nodeGeneratorService.GetNode<ConfirmChangeEmailModel>().Page);
 
         var result = await _mediator.Send(new ChangeMyEmailCommand(User.GetId()!, CurrentPassword!, NewEmail!, callbackUrl!), cancellationToken);
         if (result.IsFailed)
@@ -54,7 +57,7 @@ public class ChangeEmailModel : PageModel
             return Page();
         }
 
-        return RedirectToPage(this.PageLinkName<IndexModel>(), new { message = 2 });
+        return RedirectToPage(_nodeGeneratorService.GetNode<IndexModel>().Page, new { message = 2 });
     }
 
     private async Task<bool> UpdateView(CancellationToken cancellationToken)

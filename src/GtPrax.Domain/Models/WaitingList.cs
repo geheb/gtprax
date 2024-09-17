@@ -176,7 +176,7 @@ public sealed class WaitingList
 
     private static (string?, string) ExtractNumberSequence(string searchTerms)
     {
-        var match = Regex.Match(searchTerms, "(\\d+)");
+        var match = Regex.Match(searchTerms, "(\\d+)", RegexOptions.CultureInvariant, TimeSpan.FromMilliseconds(500));
         if (!match.Success)
         {
             return (null, searchTerms);
@@ -187,7 +187,7 @@ public sealed class WaitingList
 
     private static (DateOnly?, string) ExtractDate(string searchTerms)
     {
-        var match = Regex.Match(searchTerms, "(\\d{1,2}\\.\\d{1,2}\\.\\d{4})");
+        var match = Regex.Match(searchTerms, "(\\d{1,2}\\.\\d{1,2}\\.\\d{4})", RegexOptions.CultureInvariant, TimeSpan.FromMilliseconds(500));
         if (!match.Success)
         {
             return (null, searchTerms);

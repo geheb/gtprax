@@ -4,16 +4,18 @@ using GtPrax.Application.UseCases.UserAccount;
 using GtPrax.UI.Extensions;
 using GtPrax.UI.Models;
 using GtPrax.UI.Pages.Login;
+using GtPrax.UI.Routing;
 using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 [Node("Benutzer bearbeiten", FromPage = typeof(IndexModel))]
-[Authorize(Roles = "Admin,Manager")]
+[Authorize(Roles = "Admin,Manager", Policy = Policies.Require2fa)]
 public class EditModel : PageModel
 {
     private readonly IMediator _mediator;
+    private readonly NodeGeneratorService _nodeGeneratorService;
 
     [BindProperty]
     public EditInput Input { get; set; } = new();
@@ -22,9 +24,10 @@ public class EditModel : PageModel
 
     public bool IsDisabled { get; set; }
 
-    public EditModel(IMediator mediator)
+    public EditModel(IMediator mediator, NodeGeneratorService nodeGeneratorService)
     {
         _mediator = mediator;
+        _nodeGeneratorService = nodeGeneratorService;
     }
 
     public async Task OnGetAsync(string id, CancellationToken cancellationToken)
@@ -57,12 +60,12 @@ public class EditModel : PageModel
             return Page();
         }
 
-        return RedirectToPage(this.PageLinkName<IndexModel>());
+        return RedirectToPage(_nodeGeneratorService.GetNode<IndexModel>().Page);
     }
 
     public async Task<IActionResult> OnPostConfirmEmailAsync(string id, CancellationToken cancellationToken)
     {
-        var callbackUrl = Url.PageLink(this.PageLinkName<ConfirmEmailModel>());
+        var callbackUrl = Url.PageLink(_nodeGeneratorService.GetNode<ConfirmEmailModel>().Page);
         var result = await _mediator.Send(new SendConfirmEmailCommand(id, callbackUrl!), cancellationToken);
         return new JsonResult(new { success = result.IsSuccess, error = string.Join(", ", result.Errors.Select(e => e.Message)) });
     }

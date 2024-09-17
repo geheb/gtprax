@@ -1,13 +1,13 @@
-@page "/WaitingList/{id}/Patients"
+@page "/WaitingList/{id:objectid}/Patients"
 @using GtPrax.Application.UseCases.PatientRecord
 @model GtPrax.UI.Pages.WaitingList.PatientsModel
 @{
-    ViewData["Title"] = Model.GetNode().Title;
-    ViewData["HasFooter"] = true;
-    Model.BuildHeaderMenu(new { id = Model.Id });
-    var dateTimeConverter = new GermanDateTimeConverter();
-    var createUrl = Url.PageLink(Model.PageLinkName<CreatePatientModel>(), null, new { id = Model.Id });
-    var editPatientPage = Model.PageLinkName<EditPatientModel>();
+	ViewData["Title"] = Model.GetNode().Title;
+	ViewData["HasFooter"] = true;
+	Model.BuildHeaderMenu(new { id = Model.Id });
+	var dateTimeConverter = new GermanDateTimeConverter();
+	var createUrl = Url.PageLink(Model.GetNode<CreatePatientModel>().Page, null, new { id = Model.Id });
+	var editPatientPage = Model.GetNode<EditPatientModel>().Page;
 }
 
 @await Html.PartialAsync("_Header")
@@ -76,7 +76,7 @@
         <div class="list">
             @foreach (var i in Model.Items)
             {
-                <div class="list-item list-item-clickable" data-url="@(Url.PageLink(editPatientPage, null, new { waitingListId = Model.Id, id = i.Id }))">
+                <div class="list-item list-item-clickable" data-url="@(Url.PageLink(editPatientPage, null, new { id = i.Id }))">
                     <div class="list-item-image">
                         <i class="fa-solid fa-hospital-user fa-2x has-text-info"></i>
                     </div>

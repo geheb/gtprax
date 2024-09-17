@@ -3,8 +3,8 @@ namespace GtPrax.UI.Pages.WaitingList;
 using GtPrax.Application.UseCases.PatientRecord;
 using GtPrax.Application.UseCases.UserAccount;
 using GtPrax.Application.UseCases.WaitingList;
-using GtPrax.UI.Extensions;
 using GtPrax.UI.Models;
+using GtPrax.UI.Routing;
 using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 public class CreatePatientModel : PageModel
 {
     private readonly IMediator _mediator;
+    private readonly NodeGeneratorService _nodeGeneratorService;
 
     public string? Id { get; set; }
     public string? WaitingListName { get; set; }
@@ -23,9 +24,10 @@ public class CreatePatientModel : PageModel
     [BindProperty]
     public PatientInput Input { get; set; } = new();
 
-    public CreatePatientModel(IMediator mediator)
+    public CreatePatientModel(IMediator mediator, NodeGeneratorService nodeGeneratorService)
     {
         _mediator = mediator;
+        _nodeGeneratorService = nodeGeneratorService;
     }
 
     public async Task OnGetAsync(string id, CancellationToken cancellationToken) =>
@@ -46,7 +48,7 @@ public class CreatePatientModel : PageModel
             return Page();
         }
 
-        return RedirectToPage(this.PageLinkName<PatientsModel>(), new { id });
+        return RedirectToPage(_nodeGeneratorService.GetNode<PatientsModel>().Page, new { id });
     }
 
     private async Task<bool> UpdateView(string id, CancellationToken cancellationToken)

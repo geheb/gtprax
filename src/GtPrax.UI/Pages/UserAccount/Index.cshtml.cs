@@ -2,16 +2,16 @@ namespace GtPrax.UI.Pages.UserAccount;
 
 using GtPrax.Application.UseCases.UserAccount;
 using GtPrax.UI.Models;
+using GtPrax.UI.Routing;
 using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 [Node("Benutzerverwaltung", FromPage = typeof(Pages.IndexModel))]
-[Authorize(Roles = "Admin,Manager")]
+[Authorize(Roles = "Admin,Manager", Policy = Policies.Require2fa)]
 public class IndexModel : PageModel
 {
     private readonly IMediator _mediator;
-    private readonly TimeProvider _timeProvider;
 
     public UserDto[] Items { get; set; } = [];
     public int UsersConfirmed { get; set; }
@@ -19,11 +19,9 @@ public class IndexModel : PageModel
     public int UsersLocked { get; set; }
 
     public IndexModel(
-        IMediator mediator,
-        TimeProvider timeProvider)
+        IMediator mediator)
     {
         _mediator = mediator;
-        _timeProvider = timeProvider;
     }
 
     public async Task OnGetAsync(CancellationToken cancellationToken)

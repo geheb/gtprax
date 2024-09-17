@@ -5,9 +5,9 @@ using System.Globalization;
 using System.Threading;
 using GtPrax.Application.UseCases.PatientRecord;
 using GtPrax.Application.UseCases.WaitingList;
-using GtPrax.Domain.Models;
 using GtPrax.UI.Attributes;
 using GtPrax.UI.Models;
+using GtPrax.UI.Routing;
 using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,7 +15,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 [Node("Patient(inn)en", FromPage = typeof(IndexModel))]
-[Authorize]
+[Authorize(Policy = Policies.Require2fa)]
 public class PatientsModel : PageModel
 {
     private readonly IMediator _mediator;

@@ -5,6 +5,7 @@ using GtPrax.Application.Services;
 using GtPrax.Application.UseCases.Login;
 using GtPrax.UI.Attributes;
 using GtPrax.UI.Extensions;
+using GtPrax.UI.Routing;
 using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +16,7 @@ public class IndexModel : PageModel
 {
     private readonly ILogger _logger;
     private readonly IMediator _mediator;
+    private readonly NodeGeneratorService _nodeGeneratorService;
 
     [BindProperty]
     public string? UserNameBot { get; set; }
@@ -30,10 +32,12 @@ public class IndexModel : PageModel
 
     public IndexModel(
         ILogger<IndexModel> logger,
-        IMediator mediator)
+        IMediator mediator,
+        NodeGeneratorService nodeGeneratorService)
     {
         _logger = logger;
         _mediator = mediator;
+        _nodeGeneratorService = nodeGeneratorService;
     }
 
     public void OnGet(int? message)
@@ -77,9 +81,9 @@ public class IndexModel : PageModel
         }
         else if (result.Value == SignInAction.RequiresTwoFactor)
         {
-            return RedirectToPage(this.PageLinkName<ConfirmTwoFactorModel>(), new { returnUrl });
+            return RedirectToPage("ConfirmTwoFactor", new { returnUrl });
         }
 
-        return LocalRedirect(returnUrl ?? Url.Content("~/"));
+        return !string.IsNullOrWhiteSpace(returnUrl) ? LocalRedirect(returnUrl) : Redirect("/");
     }
 }

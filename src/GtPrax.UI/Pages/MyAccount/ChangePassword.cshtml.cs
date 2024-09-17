@@ -3,8 +3,8 @@ namespace GtPrax.UI.Pages.MyAccount;
 using System.ComponentModel.DataAnnotations;
 using GtPrax.Application.UseCases.UserAccount;
 using GtPrax.UI.Attributes;
-using GtPrax.UI.Extensions;
 using GtPrax.UI.Models;
+using GtPrax.UI.Routing;
 using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 public class ChangePasswordModel : PageModel
 {
     private readonly IMediator _mediator;
+    private readonly NodeGeneratorService _nodeGeneratorService;
 
     [BindProperty, Display(Name = "Aktuelles Passwort")]
     [RequiredField, PasswordLengthField]
@@ -31,9 +32,10 @@ public class ChangePasswordModel : PageModel
 
     public bool IsDisabled { get; set; }
 
-    public ChangePasswordModel(IMediator mediator)
+    public ChangePasswordModel(IMediator mediator, NodeGeneratorService nodeGeneratorService)
     {
         _mediator = mediator;
+        _nodeGeneratorService = nodeGeneratorService;
     }
 
     public void OnGet()
@@ -55,7 +57,7 @@ public class ChangePasswordModel : PageModel
         }
         else
         {
-            return RedirectToPage(this.PageLinkName<IndexModel>(), new { message = 1 });
+            return RedirectToPage(_nodeGeneratorService.GetNode<IndexModel>().Page, new { message = 1 });
         }
     }
 }

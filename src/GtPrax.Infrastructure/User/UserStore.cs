@@ -2,6 +2,7 @@ namespace GtPrax.Infrastructure.User;
 
 using System.Security.Claims;
 using GtPrax.Infrastructure.Mongo;
+using GtPrax.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Identity;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -20,9 +21,6 @@ internal sealed class UserStore :
     private readonly IdentityErrorDescriber _identityErrorDescriber;
     private readonly TimeProvider _timeProvider;
     private readonly IMongoCollection<UserModel> _collection;
-
-    // Authentication Method Reference (amr)
-    private static readonly UserClaimModel TwoFactorClaim = new("amr", "mfa");
 
     public UserStore(
         IdentityErrorDescriber identityErrorDescriber,
@@ -310,19 +308,23 @@ internal sealed class UserStore :
 
     public Task SetTwoFactorEnabledAsync(UserModel user, bool enabled, CancellationToken cancellationToken)
     {
+        var claim = new UserClaimModel(UserClaims.TwoFactorClaim);
         if (enabled)
         {
-            user.Claims.Add(TwoFactorClaim);
+            user.Claims.Add(claim);
         }
         else
         {
-            user.Claims.Remove(TwoFactorClaim);
+            user.Claims.Remove(claim);
         }
         return Task.CompletedTask;
     }
 
-    public Task<bool> GetTwoFactorEnabledAsync(UserModel user, CancellationToken cancellationToken) =>
-        Task.FromResult(user.Claims.Contains(TwoFactorClaim));
+    public Task<bool> GetTwoFactorEnabledAsync(UserModel user, CancellationToken cancellationToken)
+    {
+        var claim = new UserClaimModel(UserClaims.TwoFactorClaim);
+        return Task.FromResult(user.Claims.Contains(claim));
+    }
 
     public Task SetPhoneNumberAsync(UserModel user, string? phoneNumber, CancellationToken cancellationToken)
     {

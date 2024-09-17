@@ -1,11 +1,11 @@
 @page
 @model GtPrax.UI.Pages.WaitingList.IndexModel
 @{
-    ViewData["Title"] = Model.GetNode().Title;
-    ViewData["HasFooter"] = true;
-    Model.BuildHeaderMenu();
-    var createUrl = Url.PageLink(Model.PageLinkName<CreateModel>());
-    var patientsPage = Model.PageLinkName<PatientsModel>();
+	ViewData["Title"] = Model.GetNode().Title;
+	ViewData["HasFooter"] = true;
+	Model.BuildHeaderMenu();
+	var createUrl = Url.PageLink(Model.GetNode<CreateModel>().Page);
+	var patientsPage = Model.GetNode<PatientsModel>().Page;
 }
 
 @await Html.PartialAsync("_Header")

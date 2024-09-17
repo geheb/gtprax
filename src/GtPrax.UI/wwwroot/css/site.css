@@ -146,3 +146,7 @@ input::-ms-reveal {
   display: none;
   visibility: hidden;
 }
+
+.icon-big {
+  font-size: 6rem;
+}

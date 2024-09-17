@@ -4,6 +4,7 @@ using GtPrax.Application.UseCases.UserAccount;
 using GtPrax.UI.Extensions;
 using GtPrax.UI.Models;
 using GtPrax.UI.Pages.Login;
+using GtPrax.UI.Routing;
 using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,13 +15,15 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 public class CreateModel : PageModel
 {
     private readonly IMediator _mediator;
+    private readonly NodeGeneratorService _nodeGeneratorService;
 
     [BindProperty]
     public CreateInput Input { get; set; } = new();
 
-    public CreateModel(IMediator mediator)
+    public CreateModel(IMediator mediator, NodeGeneratorService nodeGeneratorService)
     {
         _mediator = mediator;
+        _nodeGeneratorService = nodeGeneratorService;
     }
 
     public void OnGet()
@@ -41,7 +44,7 @@ public class CreateModel : PageModel
             return Page();
         }
 
-        var callbackUrl = Url.PageLink(this.PageLinkName<ConfirmEmailModel>());
+        var callbackUrl = Url.PageLink(_nodeGeneratorService.GetNode<ConfirmEmailModel>().Page);
 
         var result = await _mediator.Send(new CreateUserCommand(Input.Name!, Input.Email!, roles, callbackUrl!), cancellationToken);
         if (result.IsFailed)
@@ -50,6 +53,6 @@ public class CreateModel : PageModel
             return Page();
         }
 
-        return RedirectToPage(this.PageLinkName<IndexModel>());
+        return RedirectToPage(_nodeGeneratorService.GetNode<IndexModel>().Page);
     }
 }

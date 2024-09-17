@@ -1,18 +1,19 @@
 namespace GtPrax.Infrastructure;
 
 using GtPrax.Application.Services;
+using GtPrax.Domain.Repositories;
 using GtPrax.Infrastructure.Email;
-using GtPrax.Infrastructure.User;
 using GtPrax.Infrastructure.Mongo;
+using GtPrax.Infrastructure.Repositories;
+using GtPrax.Infrastructure.User;
 using GtPrax.Infrastructure.Worker;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using MongoDB.Bson.Serialization;
-using GtPrax.Infrastructure.Repositories;
-using GtPrax.Domain.Repositories;
 
 public static class ServiceExtensions
 {
@@ -35,7 +36,7 @@ public static class ServiceExtensions
 
         services.AddMemoryCache();
 
-        services.AddTransient<IUserService, UserService>();
+        services.AddScoped<IUserService, UserService>();
 
         services.AddSingleton(TimeProvider.System);
 
@@ -71,17 +72,20 @@ public static class ServiceExtensions
         services.Configure<SmtpConnectionOptions>(config.GetSection("SmtpConnection"));
 
         services.AddHostedService<HostedWorker>();
-        services.AddTransient<UserStore>();
-        services.AddTransient<MongoConnectionFactory>();
-        services.AddTransient<AdminService>();
-        services.AddTransient<EmailDispatchService>();
-        services.AddTransient<EmailQueueStore>();
-        services.AddTransient<IEmailSender, SmtpDispatcher>();
-        services.AddTransient<IEmailQueueService, EmailQueueService>();
+        services.AddScoped<UserStore>();
+        services.AddScoped<MongoConnectionFactory>();
+        services.AddScoped<AdminService>();
+        services.AddScoped<EmailDispatchService>();
+        services.AddScoped<EmailQueueStore>();
+        services.AddScoped<IEmailSender, SmtpDispatcher>();
+        services.AddScoped<IEmailQueueService, EmailQueueService>();
         services.AddSingleton<IEmailValidatorService, EmailValidatorService>();
-        services.AddTransient<IWaitingListRepo, WaitingListRepo>();
-        services.AddTransient<IPatientRecordRepo, PatientRecordRepo>();
+        services.AddScoped<IWaitingListRepo, WaitingListRepo>();
+        services.AddScoped<IPatientRecordRepo, PatientRecordRepo>();
 
         return services;
     }
+
+    public static void AddPolicyTwoFactor(this AuthorizationBuilder builder, string name) =>
+        builder.AddPolicy(name, policy => policy.RequireClaim(UserClaims.TwoFactorClaim.Type, UserClaims.TwoFactorClaim.Value));
 }

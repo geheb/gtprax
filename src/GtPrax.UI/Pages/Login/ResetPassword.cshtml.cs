@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using GtPrax.Application.UseCases.Login;
 using GtPrax.UI.Attributes;
 using GtPrax.UI.Extensions;
+using GtPrax.UI.Routing;
 using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,6 +15,7 @@ public class ResetPasswordModel : PageModel
 {
     private readonly ILogger _logger;
     private readonly IMediator _mediator;
+    private readonly NodeGeneratorService _nodeGeneratorService;
 
     [BindProperty]
     public string? UserNameBot { get; set; }
@@ -26,10 +28,12 @@ public class ResetPasswordModel : PageModel
 
     public ResetPasswordModel(
         ILogger<ResetPasswordModel> logger,
-        IMediator mediator)
+        IMediator mediator,
+        NodeGeneratorService nodeGeneratorService)
     {
         _logger = logger;
         _mediator = mediator;
+        _nodeGeneratorService = nodeGeneratorService;
     }
 
     public void OnGet()
@@ -50,13 +54,13 @@ public class ResetPasswordModel : PageModel
             return Page();
         }
 
-        var callbackUrl = Url.PageLink(this.PageLinkName<ConfirmResetPasswordModel>());
+        var callbackUrl = Url.PageLink(_nodeGeneratorService.GetNode<ConfirmResetPasswordModel>().Page);
         var result = await _mediator.Send(new ResetPasswordCommand(Email!, callbackUrl!), cancellationToken);
         if (result.IsFailed)
         {
             _logger.ResetPasswordFailed(Email!.AnonymizeEmail(), result.Errors);
         }
 
-        return RedirectToPage(this.PageLinkName<IndexModel>(), new { message = 1 });
+        return RedirectToPage(_nodeGeneratorService.GetNode<IndexModel>().Page, new { message = 1 });
     }
 }

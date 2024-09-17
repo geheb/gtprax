@@ -4,7 +4,7 @@ using GtPrax.Infrastructure;
 using GtPrax.UI.Extensions;
 using GtPrax.UI.Middlewares;
 using GtPrax.UI.Models;
-using GtPrax.UI.Services;
+using GtPrax.UI.Routing;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
@@ -66,6 +66,9 @@ try
         options.Cookie.Name = CookieNames.TwoFactorIdToken;
     });
 
+    services.AddAuthorizationBuilder()
+        .AddPolicyTwoFactor(Policies.Require2fa);
+
     services.AddAuthorization();
 
     services.AddInfrastructure(config);
@@ -85,6 +88,11 @@ try
 
     services.AddRazorPages();
 
+    services.Configure<RouteOptions>(routeOptions =>
+    {
+        routeOptions.ConstraintMap.Add("objectid", typeof(ObjectIdConstraint));
+    });
+
     services.Configure<PageContentOptions>(config.GetSection("PageContent"));
     services.AddSingleton<NodeGeneratorService>();
 
@@ -103,7 +111,7 @@ try
     app.UseRequestLocalization("de-DE");
     app.UseMiddleware<CspMiddleware>();
 
-    app.UseNodeGenerator(typeof(GtPrax.UI.Pages.IndexModel).Assembly);
+    app.UseNodeGenerator();
     app.UseExceptionHandler("/Error/500"); // handle exceptions
     app.UseStatusCodePagesWithReExecute("/Error/{0}");
     app.UseStaticFiles();

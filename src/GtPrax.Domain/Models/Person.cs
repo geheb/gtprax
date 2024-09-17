@@ -29,7 +29,7 @@ public sealed class Person
         Name = name;
         BirthDate = birthDate;
 
-        if (!Regex.IsMatch(phoneNumber, "^(\\d{4,16})$"))
+        if (!Regex.IsMatch(phoneNumber, "^(\\d{4,16})$", RegexOptions.CultureInvariant, TimeSpan.FromMilliseconds(500)))
         {
             throw new ArgumentException("Invalid value", nameof(phoneNumber));
         }

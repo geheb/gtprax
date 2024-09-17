@@ -13,7 +13,7 @@ public static class ServiceExtensions
         services.AddMediator(options =>
         {
             options.Namespace = "GtPrax.Application.MediatorGenerated";
-            options.ServiceLifetime = ServiceLifetime.Transient;
+            options.ServiceLifetime = ServiceLifetime.Scoped;
         });
 
         return services;
