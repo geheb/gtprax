@@ -16,7 +16,6 @@ public class IndexModel : PageModel
 {
     private readonly ILogger _logger;
     private readonly IMediator _mediator;
-    private readonly NodeGeneratorService _nodeGeneratorService;
 
     [BindProperty]
     public string? UserNameBot { get; set; }
@@ -32,12 +31,10 @@ public class IndexModel : PageModel
 
     public IndexModel(
         ILogger<IndexModel> logger,
-        IMediator mediator,
-        NodeGeneratorService nodeGeneratorService)
+        IMediator mediator)
     {
         _logger = logger;
         _mediator = mediator;
-        _nodeGeneratorService = nodeGeneratorService;
     }
 
     public void OnGet(int? message)
@@ -84,6 +81,6 @@ public class IndexModel : PageModel
             return RedirectToPage("ConfirmTwoFactor", new { returnUrl });
         }
 
-        return !string.IsNullOrWhiteSpace(returnUrl) ? LocalRedirect(returnUrl) : Redirect("/");
+        return LocalRedirect(returnUrl ?? "/");
     }
 }

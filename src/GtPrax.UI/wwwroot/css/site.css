@@ -150,3 +150,11 @@ input::-ms-reveal {
 .icon-big {
   font-size: 6rem;
 }
+
+.is-gray {
+    color: gray;
+}
+
+.is-yellow {
+    color: yellow;
+}

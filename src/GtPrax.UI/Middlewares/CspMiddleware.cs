@@ -28,7 +28,7 @@ internal sealed class CspMiddleware
         value.Append(GetDirective("default-src", "'self'"));
         value.Append(GetDirective("script-src", "'self'", "'unsafe-inline'"));
         value.Append(GetDirective("style-src", "'self'", "'unsafe-inline'"));
-        value.Append(GetDirective("img-src", "'self'"));
+        value.Append(GetDirective("img-src", "'self'", "data:"));
         value.Append(GetDirective("font-src", "'self'"));
         value.Append(GetDirective("media-src", "'self'"));
         return value.ToString();

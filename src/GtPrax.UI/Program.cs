@@ -110,6 +110,7 @@ try
 
     app.UseRequestLocalization("de-DE");
     app.UseMiddleware<CspMiddleware>();
+    app.UseMiddleware<ThemeMiddleware>();
 
     app.UseNodeGenerator();
     app.UseExceptionHandler("/Error/500"); // handle exceptions

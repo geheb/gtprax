@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Options;
+using QRCoder;
 
 [Node("Zwei-Faktor-Authentifizierung bearbeiten", FromPage = typeof(IndexModel))]
 [Authorize]
@@ -28,6 +29,7 @@ public class EditTwoFactorModel : PageModel
     [Display(Name = "Geheimer Schlüssel")]
     public string? SecretKey { get; set; }
     public string? AuthUri { get; set; }
+    public string? AuthQrCodeEncoded { get; set; }
     public bool IsTwoFactorEnabled { get; set; }
 
     public bool IsDisabled { get; set; }
@@ -81,7 +83,17 @@ public class EditTwoFactorModel : PageModel
         IsTwoFactorEnabled = result.Value.IsEnabled;
         SecretKey = result.Value.SecretKey;
         AuthUri = result.Value.AuthUri;
+        AuthQrCodeEncoded = GenerateQrCodeEncoded(result.Value.AuthUri);
 
         return ModelState.IsValid;
+    }
+
+    private static string GenerateQrCodeEncoded(string data)
+    {
+        using var generator = new QRCodeGenerator();
+        using var code = generator.CreateQrCode(data, QRCodeGenerator.ECCLevel.H);
+        using var image = new PngByteQRCode(code);
+        var content = image.GetGraphic(5);
+        return "data:image/png;base64," + Convert.ToBase64String(content);
     }
 }

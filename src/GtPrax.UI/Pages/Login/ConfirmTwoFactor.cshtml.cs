@@ -49,6 +49,6 @@ public class ConfirmTwoFactorModel : PageModel
             return Page();
         }
 
-        return LocalRedirect(returnUrl ?? Url.Content("~/"));
+        return LocalRedirect(returnUrl ?? "/");
     }
 }

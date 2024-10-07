@@ -111,34 +111,34 @@ function handleModal(args) {
 }
 
 $(function () {
-    $(".navbar-burger").on('click', function () {
-        $(".navbar-burger").toggleClass("is-active");
-        $(".navbar-menu").toggleClass("is-active");
-    });
 
-    // should work for dynamic created elements also
-    $("body").on("click", ".notification > button.delete", function () {
-        $(this).parent().addClass('is-hidden').remove();
-        return false;
-    });
+  $(".navbar-burger").on('click', function () {
+    $(".navbar-burger").toggleClass("is-active");
+    $(".navbar-menu").toggleClass("is-active");
+  });
 
-    $('.open-modal').on('click', openModal);
-    $('.close-modal').on('click', closeModal);
+  $("body").on("click", ".notification > button.delete", function () {
+    $(this).parent().addClass('is-hidden').remove();
+    return false;
+  });
 
-    $('input[type=password]').on('input', function () {
-        const eye = $(this).parent().find('.toggle-eye');
-        eye?.css('visibility', $(this).val() ? 'visible' : 'hidden');
-    });
+  $('.open-modal').on('click', openModal);
+  $('.close-modal').on('click', closeModal);
 
-    $('.toggle-eye > i').on('click', function () {
-        const input = $(this).parent().parent().find('input');
-        const isPassword = input.attr('type') === 'password';
-        input.attr('type', isPassword ? 'text' : 'password');
-        $(this).toggleClass("fa-eye fa-eye-slash");
-    });
+  $('input[type=password]').on('input', function () {
+    const eye = $(this).parent().find('.toggle-eye');
+    eye?.css('visibility', $(this).val() ? 'visible' : 'hidden');
+  });
 
-    $(".list-item-clickable").on('click', function (e) {
-        e.stopPropagation();
-        window.location = $(this).data("url");
-    });
+  $('.toggle-eye > i').on('click', function () {
+    const input = $(this).parent().parent().find('input');
+    const isPassword = input.attr('type') === 'password';
+    input.attr('type', isPassword ? 'text' : 'password');
+    $(this).toggleClass("fa-eye fa-eye-slash");
+  });
+
+  $(".list-item-clickable").on('click', function (e) {
+    e.stopPropagation();
+    window.location = $(this).data("url");
+  });
 });

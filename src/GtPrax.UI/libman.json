@@ -10,7 +10,7 @@
       ]
     },
     {
-      "library": "font-awesome@6.4.2",
+      "library": "font-awesome@6.6.0",
       "destination": "wwwroot/lib/font-awesome/",
       "files": [
         "css/all.min.css",
@@ -21,14 +21,14 @@
       ]
     },
     {
-      "library": "bulma@0.9.4",
+      "library": "bulma@1.0.2",
       "destination": "wwwroot/lib/bulma/",
       "files": [
         "css/bulma.min.css"
       ]
     },
     {
-      "library": "jquery-validate@1.20.0",
+      "library": "jquery-validate@1.20.1",
       "destination": "wwwroot/lib/jquery-validate/",
       "files": [
         "jquery.validate.min.js",
@@ -44,18 +44,11 @@
     },
     {
       "provider": "jsdelivr",
-      "library": "bulma-list@1.2.0",
+      "library": "bulma-list@2.1.0",
       "destination": "wwwroot/lib/bulma-list/",
       "files": [
         "css/bulma-list.min.css",
         "css/bulma-list.css.map"
-      ]
-    },
-    {
-      "library": "qrcode@1.5.1",
-      "destination": "wwwroot/lib/qrcode/",
-      "files": [
-        "qrcode.min.js"
       ]
     }
   ]

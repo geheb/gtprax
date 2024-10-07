@@ -1,4 +1,4 @@
-@{ 
+@{
     var menu = ViewData["HeaderMenu"] as MenuItem;
 }
 
@@ -21,7 +21,26 @@
         <div id="navMenu" class="navbar-menu">
 
             <div class="navbar-end">
-                        
+
+                <div class="navbar-item">
+                    @if (Context.Items["theme"] as string == "dark")
+                    {
+                        <a href="@Url.Page(string.Empty, null, new { theme = 1 })" class="navbar-theme">
+                            <span class="icon">
+                                <i class="fas fa-sun is-yellow"></i>
+                            </span>
+                        </a>
+                    }
+                    else
+                    {
+                        <a href="@Url.Page(string.Empty, null, new { theme = 0 })" class="navbar-theme">
+                            <span class="icon">
+                                <i class="fas fa-moon is-gray"></i>
+                            </span>
+                        </a>
+                    }
+                </div>
+
                 <a class="navbar-item" href="/">
                     <span class="icon">
                         <i class="fas fa-home" aria-hidden="true"></i>
