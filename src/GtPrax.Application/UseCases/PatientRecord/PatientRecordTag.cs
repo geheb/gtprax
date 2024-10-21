@@ -4,5 +4,6 @@ public enum PatientRecordTag
 {
     Priority = 1,
     Jumper = 2,
-    Neurofeedback = 3
+    Neurofeedback = 3,
+    School = 4
 }

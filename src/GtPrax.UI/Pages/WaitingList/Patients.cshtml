@@ -94,7 +94,7 @@
                             }
                             @if (i.Tags!.Contains(PatientRecordTag.Priority))
                             {
-                                <span class="tag is-rounded is-danger"><i class="fa-solid fa-star"></i></span>
+								<span class="tag is-rounded is-black"><i class="fa-solid fa-star"></i></span>
                             }
                             @if (i.Tags!.Contains(PatientRecordTag.Jumper))
                             {
@@ -108,7 +108,11 @@
                             {
                                 <span class="tag is-rounded is-black"><i class="fa-solid fa-house"></i></span>
                             }
-                        </div>
+							@if (i.Tags!.Contains(PatientRecordTag.School))
+							{
+								<span class="tag is-rounded is-black"><i class="fa-solid fa-school"></i></span>
+							}
+						</div>
                     </div>
                     <div class="list-item-controls">
                         <div class="buttons is-right is-hidden-mobile">

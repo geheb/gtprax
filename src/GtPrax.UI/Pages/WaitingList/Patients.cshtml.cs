@@ -90,7 +90,11 @@ public class PatientsModel : PageModel
 
             new("Neurofeedback",
                 ((int)PatientRecordFilter.HasTagNeurofeedback).ToString(CultureInfo.InvariantCulture),
-                filterType is PatientRecordFilter.HasTagNeurofeedback)
+                filterType is PatientRecordFilter.HasTagNeurofeedback),
+
+            new("Schule",
+                ((int)PatientRecordFilter.HasTagSchool).ToString(CultureInfo.InvariantCulture),
+                filterType is PatientRecordFilter.HasTagSchool)
         ];
 
         var result = await _mediator.Send(new GetPatientsBySearchQuery(id, SearchTerms, filterType), cancellationToken);

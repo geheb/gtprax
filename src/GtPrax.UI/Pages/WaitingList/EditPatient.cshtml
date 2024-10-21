@@ -55,14 +55,14 @@
                         <div class="field">
                             <label class="label" asp-for="Input.Name"></label>
                             <div class="control">
-                                <input class="input" type="text" asp-for="Input.Name" disabled />
+								<input class="input is-static" type="text" asp-for="Input.Name" readonly />
                             </div>
                             <span asp-validation-for="Input.Name"></span>
                         </div>
                         <div class="field">
                             <label class="label" asp-for="Input.BirthDate"></label>
                             <div class="control">
-                                <input class="input" type="date" asp-for="Input.BirthDate" disabled />
+								<input class="input is-static" type="date" asp-for="Input.BirthDate" readonly />
                             </div>
                             <span asp-validation-for="Input.BirthDate"></span>
                         </div>
@@ -240,6 +240,9 @@
                             <div class="control mt-1">
                                 <label class="checkbox"><input type="checkbox" asp-for="Input.IsNeurofeedbackTag" /> @Html.DisplayNameFor(m => m.Input.IsNeurofeedbackTag)</label>
                             </div>
+							<div class="control mt-1">
+								<label class="checkbox"><input type="checkbox" asp-for="Input.IsSchoolTag" /> @Html.DisplayNameFor(m => m.Input.IsSchoolTag)</label>
+							</div>
                         </div>
 
                         <div class="field">

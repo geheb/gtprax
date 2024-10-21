@@ -10,6 +10,7 @@ public sealed class FilterType : ValueObject
     public static readonly FilterType HasTagPriority = new(6, nameof(HasTagPriority));
     public static readonly FilterType HasTagJumper = new(7, nameof(HasTagJumper));
     public static readonly FilterType HasTagNeurofeedback = new(8, nameof(HasTagNeurofeedback));
+    public static readonly FilterType HasTagSchool = new(9, nameof(HasTagSchool));
 
     public int Key { get; private set; }
     public string Value { get; private set; }
@@ -24,6 +25,7 @@ public sealed class FilterType : ValueObject
         6 => HasTagPriority,
         7 => HasTagJumper,
         8 => HasTagNeurofeedback,
+        9 => HasTagSchool,
         _ => throw new NotImplementedException()
     };
 

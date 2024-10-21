@@ -168,6 +168,10 @@ public sealed class WaitingList
         {
             return result.Where(r => r.Tags.Contains(TagType.Neurofeedback));
         }
+        if (filter == FilterType.HasTagSchool)
+        {
+            return result.Where(r => r.Tags.Contains(TagType.School));
+        }
 
         throw new NotImplementedException($"Missing filter {filter}");
     }

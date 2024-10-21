@@ -10,5 +10,6 @@ public enum PatientRecordFilter
     TherapyDayWithHomeVisit = 5,
     HasTagPriority = 6,
     HasTagJumper = 7,
-    HasTagNeurofeedback = 8
+    HasTagNeurofeedback = 8,
+    HasTagSchool = 9
 }

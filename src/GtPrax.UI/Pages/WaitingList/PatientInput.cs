@@ -43,24 +43,12 @@ public class PatientInput
     [Display(Name = "Neurofeedback")]
     public bool IsNeurofeedbackTag { get; set; }
 
+    [Display(Name = "Schule")]
+    public bool IsSchoolTag { get; set; }
+
     public CreatePatientRecordDto ToCreateDto(GermanDateTimeConverter dateTimeConverter)
     {
-        var tags = Array.Empty<PatientRecordTag>();
-        if (IsPriorityTag)
-        {
-            Array.Resize(ref tags, tags.Length + 1);
-            tags[^1] = PatientRecordTag.Priority;
-        }
-        if (IsJumperTag)
-        {
-            Array.Resize(ref tags, tags.Length + 1);
-            tags[^1] = PatientRecordTag.Jumper;
-        }
-        if (IsNeurofeedbackTag)
-        {
-            Array.Resize(ref tags, tags.Length + 1);
-            tags[^1] = PatientRecordTag.Neurofeedback;
-        }
+        var tags = GetTags();
 
         var days = TherapyDays.ToDto(dateTimeConverter);
         var birthdate = dateTimeConverter.FromIsoDate(BirthDate);
@@ -70,22 +58,7 @@ public class PatientInput
 
     public UpdatePatientRecordDto ToUpdateDto(GermanDateTimeConverter dateTimeConverter)
     {
-        var tags = Array.Empty<PatientRecordTag>();
-        if (IsPriorityTag)
-        {
-            Array.Resize(ref tags, tags.Length + 1);
-            tags[^1] = PatientRecordTag.Priority;
-        }
-        if (IsJumperTag)
-        {
-            Array.Resize(ref tags, tags.Length + 1);
-            tags[^1] = PatientRecordTag.Jumper;
-        }
-        if (IsNeurofeedbackTag)
-        {
-            Array.Resize(ref tags, tags.Length + 1);
-            tags[^1] = PatientRecordTag.Neurofeedback;
-        }
+        var tags = GetTags();
 
         var days = TherapyDays.ToDto(dateTimeConverter);
         var birthdate = dateTimeConverter.FromIsoDate(BirthDate);
@@ -105,5 +78,32 @@ public class PatientInput
         IsPriorityTag = dto.Tags.Contains(PatientRecordTag.Priority);
         IsJumperTag = dto.Tags.Contains(PatientRecordTag.Jumper);
         IsNeurofeedbackTag = dto.Tags.Contains(PatientRecordTag.Neurofeedback);
+        IsSchoolTag = dto.Tags.Contains(PatientRecordTag.School);
+    }
+
+    private PatientRecordTag[] GetTags()
+    {
+        var tags = Array.Empty<PatientRecordTag>();
+        if (IsPriorityTag)
+        {
+            Array.Resize(ref tags, tags.Length + 1);
+            tags[^1] = PatientRecordTag.Priority;
+        }
+        if (IsJumperTag)
+        {
+            Array.Resize(ref tags, tags.Length + 1);
+            tags[^1] = PatientRecordTag.Jumper;
+        }
+        if (IsNeurofeedbackTag)
+        {
+            Array.Resize(ref tags, tags.Length + 1);
+            tags[^1] = PatientRecordTag.Neurofeedback;
+        }
+        if (IsSchoolTag)
+        {
+            Array.Resize(ref tags, tags.Length + 1);
+            tags[^1] = PatientRecordTag.School;
+        }
+        return tags;
     }
 }
