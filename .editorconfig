@@ -127,6 +127,15 @@ csharp_style_prefer_null_check_over_type_check = true:warning
 dotnet_style_namespace_match_folder = true:suggestion
 dotnet_diagnostic.IDE0130.severity = suggestion
 
+# IDE0040: Add accessibility modifiers
+dotnet_diagnostic.IDE0040.severity = none
+
+# Avoid potentially expensive logging
+dotnet_diagnostic.CA1873.severity = none
+
+# IDE0042: Deconstruct variable declaration
+dotnet_diagnostic.IDE0042.severity = none
+
 # C# Style Rules
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/language-rules#c-style-rules
 [*.{cs,csx,cake}]
@@ -426,6 +435,7 @@ dotnet_naming_rule.parameters_rule.severity             = warning
 # Use the LoggerMessage delegates
 dotnet_diagnostic.CA1848.severity = none
 
+
 ##########################################
 # License
 ##########################################
@@ -460,3 +470,4 @@ dotnet_diagnostic.CA1848.severity = none
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
 ##########################################
+

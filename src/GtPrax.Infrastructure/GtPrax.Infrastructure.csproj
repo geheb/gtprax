@@ -1,28 +1,58 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <EmbeddedResource Include="Email\ConfirmChangeEmail.html" />
+    <EmbeddedResource Include="Email\ConfirmRegistration.html" />
+    <EmbeddedResource Include="Email\ConfirmPasswordForgotten.html" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="DnsClient" />
-    <FrameworkReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Microsoft.Extensions.Identity.Stores" />
-    <PackageReference Include="MongoDB.Driver" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" />
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" />
     <PackageReference Include="Scriban" />
   </ItemGroup>
 
+	<ItemGroup>
+		<Compile Update="AspNetCore\Messages.Designer.cs">
+		  <DependentUpon>Messages.resx</DependentUpon>
+		  <DesignTime>True</DesignTime>
+		  <AutoGen>True</AutoGen>
+		</Compile>
+		<Compile Update="Extensions\Messages.Designer.cs">
+		  <DependentUpon>Messages.resx</DependentUpon>
+		  <DesignTime>True</DesignTime>
+		  <AutoGen>True</AutoGen>
+		</Compile>
+		<Compile Update="Identity\Messages.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Messages.resx</DependentUpon>
+		</Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Update="AspNetCore\Messages.resx">
+		  <LastGenOutput>Messages.Designer.cs</LastGenOutput>
+		  <Generator>ResXFileCodeGenerator</Generator>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Extensions\Messages.resx">
+		  <LastGenOutput>Messages.Designer.cs</LastGenOutput>
+		  <Generator>ResXFileCodeGenerator</Generator>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Identity\Messages.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>Messages.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+	</ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\GtPrax.Application\GtPrax.Application.csproj" />
-    <ProjectReference Include="..\GtPrax.Domain\GtPrax.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Email\ChangeEmail.html" />
-    <None Remove="Email\ConfirmEmail.html" />
-    <None Remove="Email\ResetPassword.html" />
+    <Folder Include="Database\Migrations\" />
   </ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Include="Email\ChangeEmail.html" />
-    <EmbeddedResource Include="Email\ConfirmEmail.html" />
-    <EmbeddedResource Include="Email\ResetPassword.html" />
-  </ItemGroup>
-  
 </Project>

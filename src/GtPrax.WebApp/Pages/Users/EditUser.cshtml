@@ -1,0 +1,160 @@
+@page "/Users/Edit/{id:guid}"
+@model GtPrax.WebApp.Pages.Users.EditUserModel
+@{
+    ViewData["Title"] = Model.GetNode().Title;
+    ViewData["HasFooter"] = true;
+    Model.BuildHeaderMenu(new { id = Model.Id });
+    var roleConverter = new RoleConverter();
+    var usersUrl = Url.PageLink("Index");
+}
+
+@await Html.PartialAsync("_Header")
+
+<section class="section">
+    <div class="container">
+
+        <div class="columns is-gapless is-mobile">
+            <div class="column is-flex is-align-items-center">@Html.CreateBreadcrumb(new { id = Model.Id })</div>
+            <div class="column is-narrow">
+                <div class="dropdown is-hoverable is-right">
+                    <div class="dropdown-trigger">
+                        <button class="button" aria-haspopup="true" aria-controls="user-action">
+                            <span class="icon is-small">
+                                <i class="fas fa-ellipsis-h"></i>
+                            </span>
+                        </button>
+                    </div>
+                    <div class="dropdown-menu" id="user-action" role="menu">
+                        <div class="dropdown-content">
+                            @if (!Model.IsDisabled)
+                            {
+                                <a class="confirm-email dropdown-item" href="#"
+                                    data-user="@Model.Name"
+                                    data-url="@(Url.PageLink(string.Empty, "confirmemail", new { id = Model.Id }))">
+                                    Bestätigung anfordern
+                                </a>
+                                <a class="remove-user dropdown-item open-modal" href="#"
+                                    data-target="#removeUserModal"
+                                    data-user="@Model.Name"
+                                    data-url="@(Url.PageLink(string.Empty, "removeuser", new { id = Model.Id }))">
+                                    Benutzer entfernen
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @if (!ModelState.IsValid)
+        {
+            <div class="notification is-danger">
+                <button class="delete"></button>
+                <div asp-validation-summary="All"></div>
+            </div>
+        }
+
+        <div class="columns">
+            <div class="column is-half">
+
+                <form method="post">
+                    <fieldset disabled="@Model.IsDisabled">
+                        <div class="field">
+                            <label class="label" asp-for="Input.Name"></label>
+                            <div class="control">
+                                <input class="input" type="text" asp-for="Input.Name" />
+                            </div>
+                            <span asp-validation-for="Input.Name"></span>
+                        </div>
+                        <div class="field">
+                            <label class="label" asp-for="Input.Email"></label>
+                            <div class="control">
+                                <input class="input" type="email" asp-for="Input.Email" />
+                            </div>
+                            <span asp-validation-for="Input.Email"></span>
+                        </div>
+                        <div class="field">
+                            <label class="label" asp-for="Input.Password"></label>
+                            <div class="control">
+                                <input class="input" type="password" asp-for="Input.Password" />
+                                <span class="icon toggle-eye">
+                                    <i class="fas fa-eye"></i>
+                                </span>
+                            </div>
+                            <span asp-validation-for="Input.Password"></span>
+                        </div>
+                        <div class="field">
+                            <label class="label">Rollen</label>
+                        </div>
+                        <div class="field">
+                            <input id="checkBoxAdmin" type="checkbox" asp-for="Input.Roles[0]" />
+                            <label for="checkBoxAdmin">@roleConverter.RoleToName(Roles.Admin)</label>
+
+                            <input id="checkBoxManager" type="checkbox" asp-for="Input.Roles[1]" />
+                            <label for="checkBoxManager">@roleConverter.RoleToName(Roles.Manager)</label>
+
+                            <input id="checkBoxStaff" type="checkbox" asp-for="Input.Roles[2]" />
+                            <label for="checkBoxStaff">@roleConverter.RoleToName(Roles.Staff)</label>
+                        </div>
+
+                        <button class="button is-primary" type="submit">Speichern</button>
+                    </fieldset>
+                </form>
+            </div>
+
+        </div>
+
+
+    </div>
+
+</section>
+
+@await Html.PartialAsync("_Footer")
+
+@Html.CreateModalTemplateWithOkCancel(
+    "removeUserModal",
+    "Benutzer entfernen",
+    @"Möchtest du wirklich den Benutzer ""<span class=""modal-item""></span>"" entfernen?")
+
+@section Scripts {
+<script type="text/javascript">
+    $(function () {
+
+        $(".confirm-email").click(function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const user = $(this).data('user');
+            const url = $(this).data('url');
+            const spinner = $('<i class="fas fa-spinner fa-spin"></i>');
+            $(this).append(spinner);
+            $.post(url, {@Html.AjaxCsrfToken()}).done(function () {
+                createToast(`Eine Bestätigung für "${user}" wurde angefordert.`);
+            }).always(function () {
+                spinner.remove();
+            });
+        });
+
+        handleModal({
+            id: '#removeUserModal',
+            token: {@Html.AjaxCsrfToken()},
+            init: {
+                datainfo: 'user',
+                action: function(target, data) {
+                    $(target).find('.modal-item').text(data);
+                }
+            },
+            confirm: {
+                dataurl: 'url',
+                post: function (data) {
+                    sleep(1000).then(() => window.location.replace('@usersUrl'));
+                    return true;
+                },
+                toast: {
+                    success: 'Benutzer wurde entfernt.',
+                    failed: 'Benutzer konnte nicht entfernt werden.'
+                }
+            }
+        });
+    });
+</script>
+}

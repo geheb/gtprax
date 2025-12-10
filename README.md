@@ -1,4 +1,5 @@
 # GtPrax
+
 Die Web-App hilft bei der Praxis-Organisation.
 
 ## Frontend
@@ -13,13 +14,10 @@ Die Web-App hilft bei der Praxis-Organisation.
 ## Backend
 
 * https://github.com/dotnet/aspnetcore
-* https://github.com/martinothamar/Mediator
-* https://github.com/mongodb/mongo-csharp-driver
 * https://github.com/scriban/scriban
-* https://github.com/altmann/FluentResults
 * https://github.com/MichaCo/DnsClient.NET
-* https://github.com/codebude/QRCoder
 * https://github.com/serilog/serilog-aspnetcore
+* https://github.com/PomeloFoundation/Pomelo.EntityFrameworkCore.MySql
 
 # Bildnachweise
 

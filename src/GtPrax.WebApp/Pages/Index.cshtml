@@ -1,0 +1,74 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = Model.GetNode().Title;
+    ViewData["HasFooter"] = true;
+    ViewData["IsHome"] = true;
+    Model.BuildHeaderMenu();
+}
+
+@await Html.PartialAsync("_Header")
+
+<section class="section">
+    <div class="container">
+
+        @if (!User.Identity?.IsAuthenticated ?? false)
+        {
+            <div class="has-text-centered">
+                <h3 class="title is-3">Willkommen !</h3>
+                <h4 class="subtitle is-4">@appSettings.Value.Slogan</h4>
+            </div>
+
+            <figure class="has-centered mt-5">
+                <img src="~/images/intro.png" asp-append-version="true" alt="Praxis" />
+            </figure>
+        }
+
+        @if (Model.HasNodeAccess())
+        {
+            <p class="title">Patienten</p>
+            <nav class="bd-links">
+
+                <a href="/Waitlist" class="bd-link has-text-grey">
+                    <span class="icon bd-link-icon has-text-info">
+                        <i class="fa-solid fa-clock"></i>
+                    </span>
+                    <div>
+                        <h2 class="bd-link-title">Warteliste</h2>
+                        <div class="bd-link-subtitle">
+                            Warteliste für Patienten verwalten.
+                        </div>
+                    </div>
+                </a>
+
+            </nav>
+        }
+
+        @if (Model.HasNodeAccess(typeof(Users.IndexModel)))
+        {
+            <p class="title">Administration</p>
+            <nav class="bd-links">
+
+            @if (Model.HasNodeAccess(typeof(Users.IndexModel)))
+            {
+                <a href="/Users" class="bd-link has-text-grey">
+                    <span class="icon bd-link-icon has-text-info">
+                        <i class="fas fa-users"></i>
+                    </span>
+                    <div>
+                        <h2 class="bd-link-title">Benutzerverwaltung</h2>
+                        <div class="bd-link-subtitle">
+                            Benutzer für das Portal verwalten.
+                        </div>
+                    </div>
+                </a>
+            }
+
+            </nav>
+        }
+
+
+    </div>
+</section>
+
+@await Html.PartialAsync("_Footer")

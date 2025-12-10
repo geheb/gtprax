@@ -1,7 +1,8 @@
 namespace GtPrax.Infrastructure.Worker;
 
+using GtPrax.Infrastructure.Database;
 using GtPrax.Infrastructure.Email;
-using GtPrax.Infrastructure.User;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -19,43 +20,55 @@ internal sealed class HostedWorker : BackgroundService
         _serviceScopeFactory = serviceScopeFactory;
     }
 
+    private async Task HandleSuperUser()
+    {
+        await using var scope = _serviceScopeFactory.CreateAsyncScope();
+        var contextInitializer = scope.ServiceProvider.GetRequiredService<AppDbContextInitialiser>();
+        await contextInitializer.SeedSuperAdmin();
+    }
+
+    private async Task HandleEmails(CancellationToken cancellationToken)
+    {
+        await using var scope = _serviceScopeFactory.CreateAsyncScope();
+        var notificationWorker = scope.ServiceProvider.GetRequiredService<AccountNotificationWorker>();
+
+        try
+        {
+            await notificationWorker.Execute(cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error on send emails");
+        }
+    }
+
+    private async Task HandleMigration(CancellationToken cancellationToken)
+    {
+        await using var scope = _serviceScopeFactory.CreateAsyncScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var migrations = await dbContext.Database.GetPendingMigrationsAsync(cancellationToken);
+        if (migrations.Any())
+        {
+            _logger.LogInformation("apply pending migrations '{Migrations}'", string.Join(",", migrations));
+            await dbContext.Database.MigrateAsync(cancellationToken);
+        }
+    }
+
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        await CreateAdmin();
+        await HandleMigration(stoppingToken);
 
-        while (true)
-        {
-            await DispatchEmails(stoppingToken);
+        await HandleSuperUser();
 
-            await Task.Delay(30000, stoppingToken);
-        }
-    }
+        var rand = new Random();
 
-    private async Task CreateAdmin()
-    {
-        try
+        while (!stoppingToken.IsCancellationRequested)
         {
-            using var scope = _serviceScopeFactory.CreateScope();
-            var service = scope.ServiceProvider.GetRequiredService<AdminService>();
-            await service.Create();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Create Admin failed");
-        }
-    }
+            await HandleEmails(stoppingToken);
 
-    private async Task DispatchEmails(CancellationToken cancellationToken)
-    {
-        try
-        {
-            using var scope = _serviceScopeFactory.CreateScope();
-            var service = scope.ServiceProvider.GetRequiredService<EmailDispatchService>();
-            await service.HandleEmails(cancellationToken);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Handle emails failed");
+            var waitMs = rand.Next(20, 30) * 1000;
+
+            await Task.Delay(waitMs, stoppingToken);
         }
     }
 }

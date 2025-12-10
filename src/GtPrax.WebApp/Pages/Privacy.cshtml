@@ -1,0 +1,16 @@
+﻿@page
+@inject IOptions<PageContentSettings> pageContent
+@model PrivacyModel
+@{
+    ViewData["Title"] = "Datenschutz";
+}
+
+@await Html.PartialAsync("_Header")
+
+<section class="section has-footer">
+	<div class="container">
+		@await Html.ReadTextContent(pageContent.Value.PrivacyFile)
+	</div>
+</section>
+
+@await Html.PartialAsync("_Footer")

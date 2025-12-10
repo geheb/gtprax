@@ -1,0 +1,21 @@
+﻿@page "{statusCode:int=0}"
+@model ErrorModel
+@{
+    ViewData["Title"] = "Fehler";
+    ViewData["HasFooter"] = true;
+}
+
+@await Html.PartialAsync("_Header")
+
+<section class="section">
+    <div class="container">
+
+        <div class="has-text-centered">
+            <i class="fa-solid fa-ghost fa-fade icon-big mb-6"></i>
+            <h1 class="title">Fehlercode: @Model.ErrorCode</h1>
+            <h2 class="subtitle mt-6">@Model.ErrorDescription</h2>
+        </div>
+    </div>
+</section>
+
+@await Html.PartialAsync("_Footer")

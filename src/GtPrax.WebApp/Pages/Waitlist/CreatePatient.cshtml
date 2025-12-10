@@ -1,0 +1,254 @@
+@page "/Waitlist/{waitlistId:guid}/CreatePatient"
+@model GtPrax.WebApp.Pages.Waitlist.CreatePatientModel
+@{
+    ViewData["Title"] = Model.GetNode().Title;
+    ViewData["HasFooter"] = true;
+    Model.BuildHeaderMenu(new { waitlistId = Model.WaitlistId });
+}
+
+@await Html.PartialAsync("_Header")
+
+<section class="section">
+    <div class="container">
+
+        @Html.CreateBreadcrumb(new { waitlistId = Model.WaitlistId }, new { waitlistId = Model.WaitlistId })
+
+        @if (!ModelState.IsValid)
+        {
+            <div class="notification is-danger">
+                <button class="delete"></button>
+                <div class="validation-summary-errors" data-valmsg-summary="true">
+                    <ul>
+                    @foreach (var error in ModelState.SelectMany(x => x.Value!.Errors))
+                    {
+                        <li>@Html.Raw(error.ErrorMessage)</li>
+                    }
+                    </ul>
+                </div>
+            </div>
+        }
+
+        <h1 class="title is-3">Warteliste: @Model.WaitlistName</h1>
+
+        <div class="columns">
+            <div class="column is-half">
+
+                <form method="post">
+                    <div class="field">
+                        <label class="label" asp-for="Input.Name"></label>
+                        <div class="control">
+                            <input class="input" type="text" asp-for="Input.Name" autofocus />
+                        </div>
+                        <span asp-validation-for="Input.Name"></span>
+                    </div>
+                    <div class="field">
+                        <label class="label" asp-for="Input.Birthday"></label>
+                        <div class="control">
+                            <input class="input" type="date" asp-for="Input.Birthday" />
+                        </div>
+                        <span asp-validation-for="Input.Birthday"></span>
+                    </div>
+                    <div class="field">
+                        <label class="label" asp-for="Input.PhoneNumber"></label>
+                        <div class="control">
+                            <input class="input" type="tel" asp-for="Input.PhoneNumber" />
+                        </div>
+                        <span asp-validation-for="Input.PhoneNumber"></span>
+                    </div>
+                    <div class="field">
+                        <label class="label" asp-for="Input.Reason"></label>
+                        <div class="control">
+                            <input class="input" type="text" asp-for="Input.Reason" />
+                        </div>
+                        <span asp-validation-for="Input.Reason"></span>
+                    </div>
+                    <div class="field">
+                        <label class="label" asp-for="Input.Doctor"></label>
+                        <div class="control">
+                            <input class="input" type="text" asp-for="Input.Doctor" />
+                        </div>
+                        <span asp-validation-for="Input.Doctor"></span>
+                    </div>
+                    <div class="field">
+                        <label class="label" asp-for="Input.TherapyTimes"></label>
+                    </div>
+
+                    <div class="field is-horizontal">
+                        <div class="field-label">
+                            <label class="label">Montag</label>
+                        </div>
+                        <div class="field-body">
+                            <div class="field">
+                              <div class="control mt-1">
+                                <label class="checkbox"><input type="checkbox" asp-for="Input.TherapyTimes.Monday[0]"/> Vormittag</label>
+                              </div>
+                            </div>
+                            <div class="field">
+                              <div class="control mt-1">
+                                <label class="checkbox"><input type="checkbox" asp-for="Input.TherapyTimes.Monday[1]"/> Nachmittag</label>
+                              </div>
+                            </div>
+                            <div class="field">
+                              <div class="control mt-1">
+                                <label class="checkbox"><input type="checkbox" asp-for="Input.TherapyTimes.Monday[2]"/> Hausbesuch</label>
+                              </div>
+                            </div>
+                            <div class="field">
+                                <div class="control">
+                                    <input class="input" type="time" asp-for="Input.TherapyTimes.MondayTime"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field is-horizontal">
+                        <div class="field-label">
+                            <label class="label">Dienstag</label>
+                        </div>
+                        <div class="field-body">
+                            <div class="field">
+                              <div class="control mt-1">
+                                <label class="checkbox"><input type="checkbox" asp-for="Input.TherapyTimes.Tuesday[0]"/> Vormittag</label>
+                              </div>
+                            </div>
+                            <div class="field">
+                              <div class="control mt-1">
+                                <label class="checkbox"><input type="checkbox" asp-for="Input.TherapyTimes.Tuesday[1]"/> Nachmittag</label>
+                              </div>
+                            </div>
+                            <div class="field">
+                              <div class="control mt-1">
+                                <label class="checkbox"><input type="checkbox" asp-for="Input.TherapyTimes.Tuesday[2]"/> Hausbesuch</label>
+                              </div>
+                            </div>
+                            <div class="field">
+                                <div class="control">
+                                    <input class="input" type="time" asp-for="Input.TherapyTimes.TuesdayTime"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field is-horizontal">
+                        <div class="field-label">
+                            <label class="label">Mittwoch</label>
+                        </div>
+                        <div class="field-body">
+                            <div class="field">
+                              <div class="control mt-1">
+                                <label class="checkbox"><input type="checkbox" asp-for="Input.TherapyTimes.Wednesday[0]"/> Vormittag</label>
+                              </div>
+                            </div>
+                            <div class="field">
+                              <div class="control mt-1">
+                                <label class="checkbox"><input type="checkbox" asp-for="Input.TherapyTimes.Wednesday[1]"/> Nachmittag</label>
+                              </div>
+                            </div>
+                            <div class="field">
+                              <div class="control mt-1">
+                                <label class="checkbox"><input type="checkbox" asp-for="Input.TherapyTimes.Wednesday[2]"/> Hausbesuch</label>
+                              </div>
+                            </div>
+                            <div class="field">
+                                <div class="control">
+                                    <input class="input" type="time" asp-for="Input.TherapyTimes.WednesdayTime"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field is-horizontal">
+                        <div class="field-label">
+                            <label class="label">Donnerstag</label>
+                        </div>
+                        <div class="field-body">
+                            <div class="field">
+                              <div class="control mt-1">
+                                <label class="checkbox"><input type="checkbox" asp-for="Input.TherapyTimes.Thursday[0]"/> Vormittag</label>
+                              </div>
+                            </div>
+                            <div class="field">
+                              <div class="control mt-1">
+                                <label class="checkbox"><input type="checkbox" asp-for="Input.TherapyTimes.Thursday[1]"/> Nachmittag</label>
+                              </div>
+                            </div>
+                            <div class="field">
+                              <div class="control mt-1">
+                                <label class="checkbox"><input type="checkbox" asp-for="Input.TherapyTimes.Thursday[2]"/> Hausbesuch</label>
+                              </div>
+                            </div>
+                            <div class="field">
+                                <div class="control">
+                                    <input class="input" type="time" asp-for="Input.TherapyTimes.ThursdayTime"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field is-horizontal">
+                        <div class="field-label">
+                            <label class="label">Freitag</label>
+                        </div>
+                        <div class="field-body">
+                            <div class="field">
+                              <div class="control mt-1">
+                                <label class="checkbox"><input type="checkbox" asp-for="Input.TherapyTimes.Friday[0]"/> Vormittag</label>
+                              </div>
+                            </div>
+                            <div class="field">
+                              <div class="control mt-1">
+                                <label class="checkbox"><input type="checkbox" asp-for="Input.TherapyTimes.Friday[1]"/> Nachmittag</label>
+                              </div>
+                            </div>
+                            <div class="field">
+                              <div class="control mt-1">
+                                <label class="checkbox"><input type="checkbox" asp-for="Input.TherapyTimes.Friday[2]"/> Hausbesuch</label>
+                              </div>
+                            </div>
+                            <div class="field">
+                                <div class="control">
+                                    <input class="input" type="time" asp-for="Input.TherapyTimes.FridayTime"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">Markierungen</label>
+                    </div>
+                    <div class="field is-grouped">
+                        <div class="control mt-1">
+                            <label class="checkbox"><input type="checkbox" asp-for="Input.IsPriority"/> @Html.DisplayNameFor(m => m.Input.IsPriority)</label>
+                        </div>
+                        <div class="control mt-1">
+                            <label class="checkbox"><input type="checkbox" asp-for="Input.IsJumper"/> @Html.DisplayNameFor(m => m.Input.IsJumper)</label>
+                        </div>
+                        <div class="control mt-1">
+                            <label class="checkbox"><input type="checkbox" asp-for="Input.IsNeurofeedback"/> @Html.DisplayNameFor(m => m.Input.IsNeurofeedback)</label>
+                        </div>
+                        <div class="control mt-1">
+                            <label class="checkbox"><input type="checkbox" asp-for="Input.IsSchool" /> @Html.DisplayNameFor(m => m.Input.IsSchool)</label>
+                        </div>
+                        <div class="control mt-1">
+                            <label class="checkbox"><input type="checkbox" asp-for="Input.IsDaycare" /> @Html.DisplayNameFor(m => m.Input.IsDaycare)</label>
+                        </div>
+                        <div class="control mt-1">
+                            <label class="checkbox"><input type="checkbox" asp-for="Input.IsGroup" /> @Html.DisplayNameFor(m => m.Input.IsGroup)</label>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label class="label" asp-for="Input.Remark"></label>
+                        <div class="control">
+                            <textarea class="textarea" rows="7" asp-for="Input.Remark"></textarea>
+                        </div>
+                        <span asp-validation-for="Input.Remark"></span>
+                    </div>
+
+                    <button class="button is-primary" type="submit">Anlegen</button>
+                </form>
+
+
+            </div>
+        </div>
+
+    </div>
+</section>
+
+@await Html.PartialAsync("_Footer")

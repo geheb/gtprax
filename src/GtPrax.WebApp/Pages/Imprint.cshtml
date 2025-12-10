@@ -1,0 +1,19 @@
+﻿@page
+@model PrivacyModel
+@inject IOptions<PageContentSettings> pageContent
+@{
+    ViewData["Title"] = "Impressum";
+    ViewData["HasFooter"] = true;
+
+}
+
+@await Html.PartialAsync("_Header")
+
+<section class="section has-footer">
+    <div class="container">
+        @await Html.ReadTextContent(pageContent.Value.ImprintFile)  
+    </div>
+</section>
+
+@await Html.PartialAsync("_Footer")
+

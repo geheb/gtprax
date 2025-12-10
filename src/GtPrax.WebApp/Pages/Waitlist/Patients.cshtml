@@ -1,0 +1,164 @@
+@page "/Waitlist/{waitlistId:guid}/Patients"
+@model GtPrax.WebApp.Pages.Waitlist.PatientsModel
+@{
+    ViewData["Title"] = Model.GetNode().Title;
+    ViewData["HasFooter"] = true;
+    Model.BuildHeaderMenu(new { waitlistId = Model.WaitlistId });
+    var dc = new GermanDateTimeConverter();
+    var createUrl = Url.PageLink("CreatePatient", null, new { waitlistId = Model.WaitlistId });
+}
+
+@await Html.PartialAsync("_Header")
+
+<section class="section">
+    <div class="container">
+
+        <div class="columns is-gapless is-mobile">
+            <div class="column is-flex is-align-items-center">@Html.CreateBreadcrumb(new { waitlistId = Model.WaitlistId })</div>
+            <div class="column is-narrow">
+                <div class="dropdown is-hoverable is-right">
+                    <div class="dropdown-trigger">
+                        <button class="button" aria-haspopup="true" aria-controls="user-action">
+                            <span class="icon is-small">
+                                <i class="fas fa-ellipsis-h"></i>
+                            </span>
+                        </button>
+                    </div>
+                    <div class="dropdown-menu" id="user-action" role="menu">
+                        <div class="dropdown-content">
+                            <div class="dropdown-item">
+                                <div>Gesamt: @Model.Items.Length / @Model.Total</div>
+                            </div>
+                            <hr class="dropdown-divider" />
+                            <a href="@createUrl" class="dropdown-item">
+                                Patient anlegen
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h1 class="title is-3">Warteliste: @Model.WaitlistName</h1>
+
+        @if (!ModelState.IsValid)
+        {
+            <div class="notification is-danger">
+                <button class="delete"></button>
+                <div asp-validation-summary="All"></div>
+            </div>
+        }
+
+        <div class="columns is-variable is-1">
+            <div class="column is-narrow">
+                <div id="filterByType" class="select">
+                    <select asp-items="Model.SelectItems"></select>
+                </div>
+            </div>
+        </div>
+
+        <form method="post">
+            <div class="field">
+                <div class="control">
+                    <input class="input" type="text" asp-for="SearchKey" placeholder="Suche nach Name / Geburtsdatum / Telefonnummer" autofocus />
+                </div>
+                <span asp-validation-for="SearchKey"></span>
+            </div>
+        </form>
+
+        <div class="list">
+            @foreach (var i in Model.Items)
+            {
+                <div class="list-item list-item-clickable" data-url="@(Url.PageLink("EditPatient", null, new { waitlistId = @Model.WaitlistId, id = i.Id }))">
+                    <div class="list-item-image">
+                        <i class="fa-solid fa-hospital-user fa-2x has-text-info"></i>
+                    </div>
+                    <div class="list-item-content">
+                        <div class="list-item-title">@i.Name</div>
+                        <div class="list-item-description">
+                            @if (i.Updated != null)
+                            {
+                                <span class="tag is-rounded">@(i.Created.HasValue ? dc.ToDateTime(i.Created.Value) : string.Empty) / 
+                                    @dc.ToDateTime(i.Updated.Value) &commat; @i.User</span>
+                            }
+                            else
+                            {
+                                <span class="tag is-rounded">@(i.Created.HasValue ? dc.ToDateTime(i.Created.Value) : string.Empty) &commat; @i.User</span>
+                            }
+                            @if (i.Birthday != null)
+                            {
+                                <span class="tag is-rounded is-success">@i.Birthday</span>
+                            }
+                            @if (!string.IsNullOrEmpty(i.PhoneNumber))
+                            {
+                                <span class="tag is-rounded is-info">@i.PhoneNumber</span>
+                            }
+                            @if (!string.IsNullOrEmpty(i.Reason))
+                            {
+                                <span class="tag is-rounded is-warning">@i.Reason</span>
+                            }
+                            @if (i.Tags?.IsPriority ?? false)
+                            {
+                                <span class="tag is-rounded is-danger"><i class="fa-solid fa-star"></i></span>
+                            }
+                            @if (i.Tags?.IsJumper ?? false)
+                            {
+                                <span class="tag is-rounded is-black"><i class="fa-solid fa-horse"></i></span>
+                            }
+                            @if (i.Tags?.IsNeurofeedback ?? false)
+                            {
+                                <span class="tag is-rounded is-black"><i class="fa-solid fa-brain"></i></span>
+                            }
+                            @if (i.Tags?.IsSchool ?? false)
+                            {
+                                <span class="tag is-rounded is-black"><i class="fa-solid fa-school"></i></span>
+                            }
+                            @if (i.Tags?.IsDaycare ?? false)
+                            {
+                                <span class="tag is-rounded is-black"><i class="fa-solid fa-baby"></i></span>
+                            }
+                            @if (i.Tags?.IsGroup ?? false)
+                            {
+                                <span class="tag is-rounded is-black"><i class="fa-solid fa-people-group"></i></span>
+                            }
+                            @if (i.HasTherapyTimesHomeVisit)
+                            {
+                                <span class="tag is-rounded is-black"><i class="fa-solid fa-house"></i></span>
+                            }
+                        </div>
+                    </div>
+                    <div class="list-item-controls">
+                        <div class="buttons is-right is-hidden-mobile">
+                            <a class="button" href="@(Url.PageLink("EditPatient", null, new { waitlistId = @Model.WaitlistId, id = i.Id }))">
+                                <span class="icon is-small"><i class="fa-solid fa-magnifying-glass"></i></span>
+                                <span>Anzeigen</span>
+                            </a>
+                        </div>
+                     </div>
+                </div>
+            }
+        </div>
+
+    </div>
+</section>
+
+<a href="@createUrl" class="button is-floating is-success">
+    <i class="fa-solid fa-circle-plus"></i>
+</a>
+
+@await Html.PartialAsync("_Footer")
+
+@section Scripts 
+{
+<script type="text/javascript">
+$(function () {
+
+    $('#filterByType').change(function() {
+        const filter = $(this).find(':selected').val();
+        const url = new URL(window.location.href);
+        url.searchParams.set('filter', filter);
+        window.location.replace(url.href);
+    });
+});
+</script>
+}

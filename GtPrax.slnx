@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/Global/">
+    <File Path=".editorconfig" />
+    <File Path=".gitignore" />
+    <File Path="add-migration.ps1" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="src/GtPrax.Application/GtPrax.Application.csproj" />
+  <Project Path="src/GtPrax.Infrastructure/GtPrax.Infrastructure.csproj" />
+  <Project Path="src/GtPrax.WebApp/GtPrax.WebApp.csproj" />
+</Solution>
