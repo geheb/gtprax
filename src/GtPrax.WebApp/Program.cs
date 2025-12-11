@@ -132,6 +132,7 @@ void ConfigurePipeline(WebApplication app)
         app.UseExceptionHandler("/Error");
     }
 
+    app.UseMiddleware<BotBlockerMiddleware>();
     app.UseMiddleware<CspMiddleware>();
 
     app.UseStatusCodePagesWithReExecute("/Error/{0}");
