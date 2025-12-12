@@ -35,6 +35,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<AccountNotificationWorker>();
         services.AddHostedService<HostedWorker>();
 
+        services.AddSingleton<IpReputationChecker>();
         services.AddSingleton<INodeGenerator, NodeGenerator>();
         services.AddSingleton<IEmailValidator, EmailValidator>();
         services.AddSingleton<EmailSender>();
