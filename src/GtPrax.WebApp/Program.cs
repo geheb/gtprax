@@ -111,6 +111,15 @@ void ConfigurePipeline(WebApplication app)
 {
     app.UseForwardedHeaders();
 
+    app.UseSerilogRequestLogging(o =>
+    {
+        o.MessageTemplate = "{RemoteIpAddress} @ {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms";
+        o.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
+        {
+            diagnosticContext.Set("RemoteIpAddress", httpContext.Connection.RemoteIpAddress ?? System.Net.IPAddress.None);
+        };
+    });
+
     app.UseRequestLocalization("de-DE");
 
     // Configure the HTTP request pipeline.
