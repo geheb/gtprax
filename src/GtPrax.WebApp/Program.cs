@@ -98,6 +98,8 @@ void ConfigureApp(WebApplicationBuilder builder)
     services.Configure<ForwardedHeadersOptions>(options =>
     {
         options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+        options.KnownIPNetworks.Clear();
+        options.KnownProxies.Clear();
     });
 
     services.Configure<AppSettings>(config.GetSection("App"));
@@ -107,18 +109,7 @@ void ConfigureApp(WebApplicationBuilder builder)
 
 void ConfigurePipeline(WebApplication app)
 {
-    app.UseSerilogRequestLogging(o =>
-    {
-        // Customize the message template
-        o.MessageTemplate = "{RemoteIpAddress} @ {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms";
-
-        // Attach additional properties to the request completion event
-        o.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
-        {
-            diagnosticContext.Set("RequestHost", httpContext.Request.Host.Value ?? string.Empty);
-            diagnosticContext.Set("RemoteIpAddress", httpContext.Connection.RemoteIpAddress ?? System.Net.IPAddress.Any);
-        };
-    });
+    app.UseForwardedHeaders();
 
     app.UseRequestLocalization("de-DE");
 
@@ -138,16 +129,12 @@ void ConfigurePipeline(WebApplication app)
     app.UseStatusCodePagesWithReExecute("/Error/{0}");
 
     app.UseStaticFiles();
-
     app.UseRouting();
 
     app.UseAuthentication();
     app.UseAuthorization();
-    app.UseForwardedHeaders();
-
     app.MapRazorPages();
     app.MapControllers();
-
     app.UseNodeGenerator();
 }
 

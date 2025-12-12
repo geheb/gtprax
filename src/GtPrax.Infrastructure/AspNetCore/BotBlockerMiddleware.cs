@@ -1,5 +1,6 @@
 namespace GtPrax.Infrastructure.AspNetCore;
 
+using System.Net;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,15 +16,17 @@ public sealed class BotBlockerMiddleware
 
     public async Task Invoke(HttpContext context)
     {
-        var address = context.Connection.RemoteIpAddress?.ToString();
-        if (address is null)
+        var address = context.Connection.RemoteIpAddress;
+        if (address is null || address.Equals(IPAddress.Loopback) || address.Equals(IPAddress.IPv6Loopback))
         {
             await _next(context);
             return;
         }
 
+        var key = address.ToString();
+
         var memoryCache = context.RequestServices.GetRequiredService<IMemoryCache>();
-        if (memoryCache.TryGetValue(address, out int notFoundCounter) && notFoundCounter > 2)
+        if (memoryCache.TryGetValue(key, out int notFoundCounter) && notFoundCounter > 2)
         {
             context.Response.StatusCode = StatusCodes.Status418ImATeapot;
             await context.Response.WriteAsync("You are banned on this site!");
@@ -35,7 +38,7 @@ public sealed class BotBlockerMiddleware
         if (context.Response.StatusCode == StatusCodes.Status404NotFound)
         {
             var expirationMinutes = new Random().Next(60, 180);
-            memoryCache.Set(address, ++notFoundCounter, DateTimeOffset.UtcNow.AddMinutes(expirationMinutes));
+            memoryCache.Set(key, ++notFoundCounter, DateTimeOffset.UtcNow.AddMinutes(expirationMinutes));
         }
     }
 }
