@@ -17,7 +17,7 @@ public static class ServiceCollectionExtensions
 {
     public static void RegisterCore(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddMySqlContext<AppDbContext>(configuration);
+        services.AddSqliteContext(configuration);
 
         services.AddIdentity<IdentityUserGuid, IdentityRoleGuid>(options =>
         {

@@ -1,25 +1,23 @@
 # GtPrax
 
-Die Web-App hilft bei der Praxis-Organisation.
+The web app helps with organization in your practice.
 
 ## Frontend
 
-* https://github.com/jquery/jquery
-* https://github.com/jquery-validation/jquery-validation
-* https://github.com/aspnet/jquery-validation-unobtrusive
-* https://github.com/jgthms/bulma
-* https://github.com/bluefantail/bulma-list
-* https://github.com/FortAwesome/Font-Awesome
-
+ * Razor Pages in ASP.NET Core
+ * Bulma Framework
+ * jQuery 
+ * Font Awesome
+ 
 ## Backend
 
-* https://github.com/dotnet/aspnetcore
-* https://github.com/scriban/scriban
-* https://github.com/MichaCo/DnsClient.NET
-* https://github.com/serilog/serilog-aspnetcore
-* https://github.com/PomeloFoundation/Pomelo.EntityFrameworkCore.MySql
+* .NET Core 10.0
+  * ASP.NET Core
+* Template Engine Scriban
+* Logging via Serilog
+* SQLite Persistence 
 
-# Bildnachweise
+# Used Images
 
 * https://pixabay.com/de/photos/zusammenarbeit-brainstorming-3213924/
 * https://pixabay.com/de/photos/anfang-menschen-silicon-valley-593341/

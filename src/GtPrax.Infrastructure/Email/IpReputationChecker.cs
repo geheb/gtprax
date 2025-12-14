@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 
 internal sealed class IpReputationChecker
 {
+    private static readonly string[] Servers = ["zen.spamhaus.org", "bl.blocklist.de"];
     private readonly LookupClient _lookupClient;
     private readonly Microsoft.Extensions.Logging.ILogger _logger;
     private readonly IMemoryCache _memoryCache;
@@ -30,6 +31,12 @@ internal sealed class IpReputationChecker
 
     public async Task<bool> IsListed(IPAddress address)
     {
+        if (IPAddress.IsLoopback(address) ||
+            (address.AddressFamily is not AddressFamily.InterNetwork and not AddressFamily.InterNetworkV6))
+        {
+            return false;
+        }
+
         string ipAddressReversed;
         if (address.AddressFamily == AddressFamily.InterNetworkV6)
         {
@@ -41,27 +48,32 @@ internal sealed class IpReputationChecker
             ipAddressReversed = string.Join(".", address.GetAddressBytes().Reverse());
         }
 
-        var key = "spamhaus-" + address;
+        var key = "blacklist-" + address;
         if (_memoryCache.TryGetValue(key, out bool isListed))
         {
             return isListed;
         }
 
-        var querydns = ipAddressReversed + ".zen.spamhaus.org";
-        var entry = await _lookupClient.GetHostEntryAsync(querydns);
-
-        if (entry is null ||
-            entry.AddressList.Length == 0 ||
-            !entry.AddressList.Any(e => e.ToString().StartsWith("127.0.0", StringComparison.OrdinalIgnoreCase)))
+        foreach (var server in Servers)
         {
-            _memoryCache.Set(key, false, DateTimeOffset.UtcNow.AddHours(1));
-            return false;
+            var querydns = ipAddressReversed + "." + server;
+            var entry = await _lookupClient.GetHostEntryAsync(querydns);
+
+            if (entry is null ||
+                entry.AddressList.Length == 0 ||
+                !entry.AddressList.Any(e => e.ToString().StartsWith("127.0.0", StringComparison.OrdinalIgnoreCase)))
+            {
+                continue;
+            }
+
+            _logger.LogInformation("Address {Address} is listed at {Server}", address, server);
+
+            _memoryCache.Set(key, true, DateTimeOffset.UtcNow.AddHours(1));
+            return true;
         }
 
-        _logger.LogInformation("Address {Address} is listed at spamhaus", address);
-
-        _memoryCache.Set(key, true, DateTimeOffset.UtcNow.AddHours(1));
-        return true;
+        _memoryCache.Set(key, false, DateTimeOffset.UtcNow.AddHours(1));
+        return false;
     }
 
     public async Task<bool> IsListedMx(string domain, CancellationToken cancellationToken)
@@ -97,17 +109,6 @@ internal sealed class IpReputationChecker
 
             foreach (var addr in entry.AddressList)
             {
-                if (IPAddress.IsLoopback(addr))
-                {
-                    continue;
-                }
-
-                if (addr.AddressFamily is not AddressFamily.InterNetwork
-                    and not AddressFamily.InterNetworkV6)
-                {
-                    continue;
-                }
-
                 if (await IsListed(addr))
                 {
                     _memoryCache.Set(key, true, DateTimeOffset.UtcNow.AddHours(1));

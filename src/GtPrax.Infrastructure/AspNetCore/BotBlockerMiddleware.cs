@@ -27,10 +27,10 @@ public sealed class BotBlockerMiddleware
         var key = "bot-" + address;
 
         var memoryCache = context.RequestServices.GetRequiredService<IMemoryCache>();
-        if (memoryCache.TryGetValue(key, out int notFoundCounter) && notFoundCounter > 2)
+        if (memoryCache.TryGetValue(key, out int notFoundCounter) && notFoundCounter >= 7)
         {
             context.Response.StatusCode = StatusCodes.Status418ImATeapot;
-            await context.Response.WriteAsync("You are banned on this site!", context.RequestAborted);
+            await context.Response.WriteAsync("(”’\\(*o*)/”’) You are banned on this site!", context.RequestAborted);
             return;
         }
 
@@ -38,11 +38,16 @@ public sealed class BotBlockerMiddleware
 
         if (context.Response.StatusCode == StatusCodes.Status404NotFound)
         {
+            var expirationMinutes = new Random().Next(60, 180);
+
             var reputationChecker = context.RequestServices.GetRequiredService<IpReputationChecker>();
             if (await reputationChecker.IsListed(address))
             {
-                var expirationMinutes = new Random().Next(60, 180);
-                memoryCache.Set(key, ++notFoundCounter, DateTimeOffset.UtcNow.AddMinutes(expirationMinutes));
+                memoryCache.Set(key, int.MaxValue, DateTimeOffset.UtcNow.AddMinutes(expirationMinutes));
+            }
+            else
+            {
+                memoryCache.Set(key, ++notFoundCounter, DateTimeOffset.UtcNow.AddHours(1));
             }
         }
     }

@@ -19,13 +19,16 @@
             {
               "Name": "File",
               "Args": {
-                "path": "logs/log-.txt",
+                "path": ".logs/log-.txt",
                 "rollingInterval": "Day",
                 "rollOnFileSizeLimit": true
               }
             }
           ]
         }
+      },
+      {
+        "Name": "Console"
       }
     ],
     "Enrich": [ "FromLogContext" ]

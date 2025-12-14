@@ -8,6 +8,7 @@
     <File Path="README.md" />
   </Folder>
   <Project Path="src/GtPrax.Application/GtPrax.Application.csproj" />
+  <Project Path="src/GtPrax.Aspire/GtPrax.Aspire.csproj" />
   <Project Path="src/GtPrax.Infrastructure/GtPrax.Infrastructure.csproj" />
   <Project Path="src/GtPrax.WebApp/GtPrax.WebApp.csproj" />
 </Solution>

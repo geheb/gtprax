@@ -3,7 +3,6 @@ using System;
 using GtPrax.Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
@@ -12,39 +11,36 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GtPrax.Infrastructure.Database.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251210211652_Initial")]
+    [Migration("20251213182610_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.11")
-                .HasAnnotation("Relational:MaxIdentifierLength", 64);
-
-            MySqlModelBuilderExtensions.HasCharSet(modelBuilder, "utf8mb4", DelegationModes.ApplyToDatabases);
-            MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
+            modelBuilder.HasAnnotation("ProductVersion", "10.0.1");
 
             modelBuilder.Entity("GtPrax.Infrastructure.Database.Entities.AccountNotification", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("binary(16)");
+                    b.Property<string>("Id")
+                        .HasMaxLength(32)
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("CallbackUrl")
-                        .HasColumnType("longtext");
+                        .HasColumnType("TEXT");
 
-                    b.Property<DateTimeOffset>("CreatedOn")
-                        .HasColumnType("datetime(6)");
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("TEXT");
 
-                    b.Property<DateTimeOffset?>("SentOn")
-                        .HasColumnType("datetime(6)");
+                    b.Property<DateTime?>("SentOn")
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("Type")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
-                    b.Property<byte[]>("UserId")
-                        .HasColumnType("binary(16)");
+                    b.Property<string>("UserId")
+                        .HasMaxLength(32)
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -56,20 +52,18 @@ namespace GtPrax.Infrastructure.Database.Migrations
             modelBuilder.Entity("GtPrax.Infrastructure.Database.Entities.IdentityRoleClaimGuid", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("longtext");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("longtext");
+                        .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("RoleId")
+                    b.Property<string>("RoleId")
                         .IsRequired()
-                        .HasColumnType("binary(16)");
+                        .HasMaxLength(32)
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -80,21 +74,21 @@ namespace GtPrax.Infrastructure.Database.Migrations
 
             modelBuilder.Entity("GtPrax.Infrastructure.Database.Entities.IdentityRoleGuid", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("binary(16)");
+                    b.Property<string>("Id")
+                        .HasMaxLength(32)
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("longtext");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
                         .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("NormalizedName")
                         .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -107,21 +101,21 @@ namespace GtPrax.Infrastructure.Database.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new byte[] { 191, 247, 188, 251, 191, 140, 15, 68, 147, 156, 246, 118, 49, 16, 154, 160 },
+                            Id = "fbbcf7bf8cbf440f939cf67631109aa0",
                             ConcurrencyStamp = "CFAD6F62-EEAA-4ECD-B847-0762C704EC45",
                             Name = "admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = new byte[] { 118, 69, 182, 31, 144, 63, 233, 76, 140, 58, 207, 161, 63, 88, 113, 103 },
+                            Id = "1fb645763f904ce98c3acfa13f587167",
                             ConcurrencyStamp = "6EE38FDC-5CE5-42FD-A5A5-168573DB2F86",
                             Name = "manager",
                             NormalizedName = "MANAGER"
                         },
                         new
                         {
-                            Id = new byte[] { 165, 13, 169, 3, 240, 171, 233, 69, 155, 128, 205, 172, 121, 11, 113, 5 },
+                            Id = "03a90da5abf045e99b80cdac790b7105",
                             ConcurrencyStamp = "956824FE-2F13-4919-B2D2-0E60BECFCA12",
                             Name = "staff",
                             NormalizedName = "STAFF"
@@ -132,19 +126,18 @@ namespace GtPrax.Infrastructure.Database.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("longtext");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("longtext");
+                        .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("UserId")
+                    b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("binary(16)");
+                        .HasMaxLength(32)
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -155,66 +148,66 @@ namespace GtPrax.Infrastructure.Database.Migrations
 
             modelBuilder.Entity("GtPrax.Infrastructure.Database.Entities.IdentityUserGuid", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("binary(16)");
+                    b.Property<string>("Id")
+                        .HasMaxLength(32)
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("longtext");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("INTEGER");
 
-                    b.Property<DateTimeOffset?>("LastLogin")
-                        .HasColumnType("datetime(6)");
+                    b.Property<DateTime?>("LastLogin")
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("INTEGER");
 
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetime(6)");
+                    b.Property<DateTime?>("LockoutEnd")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
                         .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("PasswordHash")
-                        .HasColumnType("longtext");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("PhoneNumber")
-                        .HasColumnType("longtext");
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("INTEGER");
 
-                    b.Property<DateTimeOffset?>("RemovedOn")
-                        .HasColumnType("datetime(6)");
+                    b.Property<DateTime?>("RemovedOn")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("SecurityStamp")
-                        .HasColumnType("longtext");
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -231,17 +224,18 @@ namespace GtPrax.Infrastructure.Database.Migrations
             modelBuilder.Entity("GtPrax.Infrastructure.Database.Entities.IdentityUserLoginGuid", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("ProviderKey")
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("ProviderDisplayName")
-                        .HasColumnType("longtext");
+                        .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("UserId")
+                    b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("binary(16)");
+                        .HasMaxLength(32)
+                        .HasColumnType("TEXT");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
@@ -252,11 +246,13 @@ namespace GtPrax.Infrastructure.Database.Migrations
 
             modelBuilder.Entity("GtPrax.Infrastructure.Database.Entities.IdentityUserRoleGuid", b =>
                 {
-                    b.Property<byte[]>("UserId")
-                        .HasColumnType("binary(16)");
+                    b.Property<string>("UserId")
+                        .HasMaxLength(32)
+                        .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("RoleId")
-                        .HasColumnType("binary(16)");
+                    b.Property<string>("RoleId")
+                        .HasMaxLength(32)
+                        .HasColumnType("TEXT");
 
                     b.HasKey("UserId", "RoleId");
 
@@ -267,17 +263,18 @@ namespace GtPrax.Infrastructure.Database.Migrations
 
             modelBuilder.Entity("GtPrax.Infrastructure.Database.Entities.IdentityUserTokenGuid", b =>
                 {
-                    b.Property<byte[]>("UserId")
-                        .HasColumnType("binary(16)");
+                    b.Property<string>("UserId")
+                        .HasMaxLength(32)
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Value")
-                        .HasColumnType("longtext");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
@@ -286,13 +283,14 @@ namespace GtPrax.Infrastructure.Database.Migrations
 
             modelBuilder.Entity("GtPrax.Infrastructure.Database.Entities.Waitlist", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("binary(16)");
+                    b.Property<string>("Id")
+                        .HasMaxLength(32)
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -301,50 +299,53 @@ namespace GtPrax.Infrastructure.Database.Migrations
 
             modelBuilder.Entity("GtPrax.Infrastructure.Database.Entities.WaitlistPatient", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("binary(16)");
+                    b.Property<string>("Id")
+                        .HasMaxLength(32)
+                        .HasColumnType("TEXT");
 
                     b.Property<DateOnly?>("Birthday")
-                        .HasColumnType("date");
+                        .HasColumnType("TEXT");
 
-                    b.Property<DateTimeOffset>("Created")
-                        .HasColumnType("datetime(6)");
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Doctor")
                         .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("PhoneNumber")
                         .HasMaxLength(16)
-                        .HasColumnType("varchar(16)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Reason")
                         .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Remark")
                         .HasMaxLength(1024)
-                        .HasColumnType("varchar(1024)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Tags")
-                        .HasColumnType("json");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("TherapyTimes")
-                        .HasColumnType("json");
+                        .HasColumnType("TEXT");
 
-                    b.Property<DateTimeOffset?>("Updated")
-                        .HasColumnType("datetime(6)");
+                    b.Property<DateTime?>("Updated")
+                        .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("UserId")
-                        .HasColumnType("binary(16)");
+                    b.Property<string>("UserId")
+                        .HasMaxLength(32)
+                        .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("WaitlistId")
-                        .HasColumnType("binary(16)");
+                    b.Property<string>("WaitlistId")
+                        .HasMaxLength(32)
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 

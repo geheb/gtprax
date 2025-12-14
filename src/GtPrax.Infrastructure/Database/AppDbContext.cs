@@ -3,12 +3,26 @@ namespace GtPrax.Infrastructure.Database;
 using GtPrax.Infrastructure.Database.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 internal sealed class AppDbContext :
     IdentityDbContext<IdentityUserGuid, IdentityRoleGuid, Guid, IdentityUserClaimGuid, IdentityUserRoleGuid, IdentityUserLoginGuid, IdentityRoleClaimGuid, IdentityUserTokenGuid>
 {
-    private const string SqlTypeBinary16 = "binary(16)";
+    private sealed class ShortGuidConverter : ValueConverter<Guid, string>
+    {
+        public ShortGuidConverter() :
+            base(v => v.ToString("N"), v => new Guid(v))
+        {
+        }
+    }
+
+    private sealed class DateTimeOffsetToUtcConverter : ValueConverter<DateTimeOffset, DateTime>
+    {
+        public DateTimeOffsetToUtcConverter() :
+            base(v => v.UtcDateTime, v => new DateTimeOffset(v, TimeSpan.Zero))
+        {
+        }
+    }
 
     public Guid GeneratePk() => Guid.CreateVersion7();
 
@@ -21,11 +35,21 @@ internal sealed class AppDbContext :
     {
     }
 
+    protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+    {
+        configurationBuilder
+            .Properties<Guid>()
+            .HaveConversion<ShortGuidConverter>()
+            .HaveMaxLength(32);
+
+        configurationBuilder
+            .Properties<DateTimeOffset>()
+            .HaveConversion<DateTimeOffsetToUtcConverter>();
+    }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
-
-        builder.HasCharSet(CharSet.Utf8Mb4, DelegationModes.ApplyToDatabases);
 
         BuildUser(builder);
         BuildSuperAdmin(builder);
@@ -38,24 +62,20 @@ internal sealed class AppDbContext :
         modelBuilder.Entity<Waitlist>(eb =>
         {
             eb.ToTable("waitlists");
-            eb.Property(e => e.Id).HasColumnType(SqlTypeBinary16).ValueGeneratedNever();
+            eb.Property(e => e.Id).ValueGeneratedNever();
             eb.Property(e => e.Name).HasMaxLength(256).IsRequired();
         });
 
         modelBuilder.Entity<WaitlistPatient>(eb =>
         {
             eb.ToTable("waitlist_patients");
-            eb.Property(e => e.Id).HasColumnType(SqlTypeBinary16).ValueGeneratedNever();
+            eb.Property(e => e.Id).ValueGeneratedNever();
             eb.Property(e => e.Name).HasMaxLength(256).IsRequired();
-            eb.Property(e => e.UserId).HasColumnType(SqlTypeBinary16);
-            eb.Property(e => e.WaitlistId).HasColumnType(SqlTypeBinary16);
             eb.Property(e => e.Created).IsRequired();
             eb.Property(e => e.PhoneNumber).HasMaxLength(16);
             eb.Property(e => e.Reason).HasMaxLength(256);
             eb.Property(e => e.Doctor).HasMaxLength(256);
-            eb.Property(e => e.TherapyTimes).HasColumnType("json");
             eb.Property(e => e.Remark).HasMaxLength(1024);
-            eb.Property(e => e.Tags).HasColumnType("json");
 
             eb.HasIndex(e => e.Created);
             eb.HasIndex(e => e.Name);
@@ -79,8 +99,7 @@ internal sealed class AppDbContext :
         modelBuilder.Entity<AccountNotification>(eb =>
         {
             eb.ToTable("account_notifications");
-            eb.Property(e => e.Id).HasColumnType(SqlTypeBinary16).ValueGeneratedNever();
-            eb.Property(e => e.UserId).HasColumnType(SqlTypeBinary16);
+            eb.Property(e => e.Id).ValueGeneratedNever();
             eb.Property(e => e.Type).IsRequired();
 
             eb.HasOne(e => e.User)
@@ -99,7 +118,7 @@ internal sealed class AppDbContext :
     {
         modelBuilder.Entity<IdentityUserGuid>(eb =>
         {
-            eb.Property(e => e.Id).HasColumnType(SqlTypeBinary16);
+            eb.Property(e => e.Id).ValueGeneratedNever();
             eb.Property(e => e.Name).HasMaxLength(256);
 
             eb.HasMany(e => e.UserRoles)
@@ -112,7 +131,7 @@ internal sealed class AppDbContext :
 
         modelBuilder.Entity<IdentityRoleGuid>(eb =>
         {
-            eb.Property(e => e.Id).HasColumnType(SqlTypeBinary16);
+            eb.Property(e => e.Id).ValueGeneratedNever();
 
             eb.HasMany(e => e.UserRoles)
                 .WithOne(e => e.Role)
@@ -124,32 +143,34 @@ internal sealed class AppDbContext :
 
         modelBuilder.Entity<IdentityUserRoleGuid>(eb =>
         {
-            eb.Property(e => e.UserId).HasColumnType(SqlTypeBinary16);
-            eb.Property(e => e.RoleId).HasColumnType(SqlTypeBinary16);
+            eb.Property(e => e.UserId).ValueGeneratedNever();
+            eb.Property(e => e.RoleId).ValueGeneratedNever();
             eb.ToTable("user_roles");
         });
 
         modelBuilder.Entity<IdentityUserLoginGuid>(eb =>
         {
-            eb.Property(e => e.UserId).HasColumnType(SqlTypeBinary16);
+            eb.Property(e => e.UserId).ValueGeneratedNever();
             eb.ToTable("user_logins");
         });
 
         modelBuilder.Entity<IdentityUserTokenGuid>(eb =>
         {
-            eb.Property(e => e.UserId).HasColumnType(SqlTypeBinary16);
+            eb.Property(e => e.UserId).ValueGeneratedNever();
             eb.ToTable("user_tokens");
         });
 
         modelBuilder.Entity<IdentityUserClaimGuid>(eb =>
         {
-            eb.Property(e => e.UserId).HasColumnType(SqlTypeBinary16);
+            eb.Property(e => e.Id).ValueGeneratedOnAdd();
+            eb.Property(e => e.UserId).ValueGeneratedNever();
             eb.ToTable("user_claims");
         });
 
         modelBuilder.Entity<IdentityRoleClaimGuid>(eb =>
         {
-            eb.Property(e => e.RoleId).HasColumnType(SqlTypeBinary16);
+            eb.Property(e => e.Id).ValueGeneratedNever();
+            eb.Property(e => e.RoleId).ValueGeneratedNever();
             eb.ToTable("role_claims");
         });
     }

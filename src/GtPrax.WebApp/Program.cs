@@ -19,6 +19,7 @@ void ConfigureApp(WebApplicationBuilder builder)
     var config = builder.Configuration;
     var services = builder.Services;
 
+    services.AddHealthChecks();
     services.AddSerilog();
     services.AddMemoryCache();
     services.AddHttpContextAccessor();
@@ -145,6 +146,8 @@ void ConfigurePipeline(WebApplication app)
     app.MapRazorPages();
     app.MapControllers();
     app.UseNodeGenerator();
+
+    app.MapHealthChecks("/healthz");
 }
 
 try
