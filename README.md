@@ -1,4 +1,4 @@
-# GtPrax
+# GT Prax
 
 The web app helps with organization in your practice.
 
