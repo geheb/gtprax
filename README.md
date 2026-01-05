@@ -4,7 +4,6 @@ The web app helps with organization in your practice.
 
 ## Frontend
 
- * Razor Pages in ASP.NET Core
  * Bulma Framework
  * jQuery 
  * Font Awesome
@@ -12,10 +11,10 @@ The web app helps with organization in your practice.
 ## Backend
 
 * .NET Core 10.0
-  * ASP.NET Core
+* ASP.NET Core Razor Pages
 * Template Engine Scriban
 * Logging via Serilog
-* SQLite Persistence 
+* SQLite Entity Framework Core 
 
 # Used Images
 
