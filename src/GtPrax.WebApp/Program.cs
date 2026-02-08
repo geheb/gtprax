@@ -3,6 +3,7 @@ using GtPrax.Infrastructure;
 using GtPrax.Infrastructure.AspNetCore;
 using GtPrax.Infrastructure.Email;
 using GtPrax.Infrastructure.Extensions;
+using GtPrax.Infrastructure.Security;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
@@ -133,7 +134,6 @@ void ConfigurePipeline(WebApplication app)
         app.UseExceptionHandler("/Error");
     }
 
-    app.UseMiddleware<BotBlockerMiddleware>();
     app.UseMiddleware<CspMiddleware>();
 
     app.UseStatusCodePagesWithReExecute("/Error/{0}");
@@ -142,7 +142,9 @@ void ConfigurePipeline(WebApplication app)
     app.UseRouting();
 
     app.UseAuthentication();
+    app.UseMiddleware<BlockerMiddleware>();
     app.UseAuthorization();
+
     app.MapRazorPages();
     app.MapControllers();
     app.UseNodeGenerator();

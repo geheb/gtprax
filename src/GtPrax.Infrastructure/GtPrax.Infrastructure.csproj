@@ -12,6 +12,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
     <PackageReference Include="Scriban" />
+    <PackageReference Include="System.IO.Hashing" />
   </ItemGroup>
 
 	<ItemGroup>

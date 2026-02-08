@@ -8,6 +8,7 @@ using GtPrax.Infrastructure.Database.Entities;
 using GtPrax.Infrastructure.Email;
 using GtPrax.Infrastructure.Identity;
 using GtPrax.Infrastructure.Repositories;
+using GtPrax.Infrastructure.Security;
 using GtPrax.Infrastructure.Worker;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -36,6 +37,7 @@ public static class ServiceCollectionExtensions
         services.AddHostedService<HostedWorker>();
 
         services.AddSingleton<IpReputationChecker>();
+        services.AddSingleton<BlacklistCache>();
         services.AddSingleton<INodeGenerator, NodeGenerator>();
         services.AddSingleton<IEmailValidator, EmailValidator>();
         services.AddSingleton<EmailSender>();

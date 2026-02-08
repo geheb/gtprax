@@ -2,6 +2,7 @@ namespace GtPrax.Infrastructure.Email;
 
 using System.Globalization;
 using GtPrax.Application.Services;
+using GtPrax.Infrastructure.Security;
 
 internal sealed class EmailValidator : IEmailValidator
 {
