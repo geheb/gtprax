@@ -1,12 +1,13 @@
 namespace GtPrax.Infrastructure.Repositories;
 
-using System.Text.RegularExpressions;
 using GtPrax.Application.Converter;
 using GtPrax.Application.Models;
 using GtPrax.Application.Repositories;
 using GtPrax.Infrastructure.Database;
 using GtPrax.Infrastructure.Database.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
+using System.Text.RegularExpressions;
 
 internal sealed class WaitlistRepository : IWaitlistRepository
 {
@@ -97,7 +98,7 @@ internal sealed class WaitlistRepository : IWaitlistRepository
             {
                 var splitDate = match.Groups[0].Value.Split('.');
                 var tempDate = splitDate[0].PadLeft(2, '0') + '.' + splitDate[1].PadLeft(2, '0') + '.' + splitDate[2];
-                if (DateOnly.TryParseExact(tempDate, "dd.MM.yyyy", out var date))
+                if (DateOnly.TryParseExact(tempDate, "dd.MM.yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var date))
                 {
                     searchKey = searchKey.Remove(match.Index, match.Length);
                     query = query.Where(e => e.Birthday == date);
@@ -124,8 +125,8 @@ internal sealed class WaitlistRepository : IWaitlistRepository
         {
             foreach (var q in searchKey.Split(' '))
             {
-                var name = "%" + q + "%";
-                query = query.Where(e => EF.Functions.Like(e.Name!, name));
+                // see also SqliteConnectionInterceptor
+                query = query.Where(e => Regex.IsMatch(e.Name!, q));
             }
         }
 
