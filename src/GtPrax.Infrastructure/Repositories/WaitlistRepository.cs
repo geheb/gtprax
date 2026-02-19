@@ -125,8 +125,7 @@ internal sealed class WaitlistRepository : IWaitlistRepository
         {
             foreach (var q in searchKey.Split(' '))
             {
-                // see also SqliteConnectionInterceptor
-                query = query.Where(e => Regex.IsMatch(e.Name!, q));
+                query = query.Where(e => SqliteCustomFunctions.Contains(e.Name, q));
             }
         }
 

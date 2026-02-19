@@ -38,7 +38,7 @@ internal sealed class AppDbContext :
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         base.OnConfiguring(optionsBuilder);
-        optionsBuilder.AddInterceptors(new SqliteConnectionInterceptor());
+        optionsBuilder.RegisterCustomFunctions();
     }
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
@@ -56,6 +56,8 @@ internal sealed class AppDbContext :
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+
+        builder.RegisterCustomFunctions();
 
         BuildUser(builder);
         BuildSuperAdmin(builder);

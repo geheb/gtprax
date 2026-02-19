@@ -51,7 +51,7 @@ internal sealed class HostedWorker : BackgroundService
         await dbContext.Database.ExecuteSqlRawAsync("VACUUM;", cancellationToken);
         await dbContext.Database.ExecuteSqlRawAsync("REINDEX;");
 
-        _logger.LogInformation("Optimze database ...");
+        _logger.LogInformation("Optimize database ...");
         await dbContext.Database.ExecuteSqlRawAsync("PRAGMA journal_mode = WAL;");
         await dbContext.Database.ExecuteSqlRawAsync("PRAGMA synchronous = NORMAL;");
         await dbContext.Database.ExecuteSqlRawAsync("PRAGMA cache_size = 10000;");
