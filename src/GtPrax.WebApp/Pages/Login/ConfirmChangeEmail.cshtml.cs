@@ -1,12 +1,14 @@
 namespace GtPrax.WebApp.Pages.Login;
 
+using GtPrax.Application.Converter;
 using GtPrax.Application.Repositories;
 using GtPrax.WebApp.I18n;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using GtPrax.Application.Converter;
+using Microsoft.AspNetCore.RateLimiting;
 
 [AllowAnonymous]
+[EnableRateLimiting(Infrastructure.Security.RateLimitPolicies.Login)]
 public sealed class ConfirmChangeEmailModel : PageModel
 {
     private readonly IUserRepository _users;

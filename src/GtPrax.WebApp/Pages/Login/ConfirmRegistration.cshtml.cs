@@ -1,6 +1,5 @@
 namespace GtPrax.WebApp.Pages.Login;
 
-using System.ComponentModel.DataAnnotations;
 using GtPrax.Application.Converter;
 using GtPrax.Application.Repositories;
 using GtPrax.Infrastructure.AspNetCore;
@@ -8,8 +7,11 @@ using GtPrax.WebApp.I18n;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.RateLimiting;
+using System.ComponentModel.DataAnnotations;
 
 [AllowAnonymous]
+[EnableRateLimiting(Infrastructure.Security.RateLimitPolicies.Login)]
 public sealed class ConfirmRegistrationModel : PageModel
 {
     private readonly IUserRepository _users;

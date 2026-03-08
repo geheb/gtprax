@@ -5,9 +5,11 @@ using GtPrax.Infrastructure.Email;
 using GtPrax.Infrastructure.Extensions;
 using GtPrax.Infrastructure.Security;
 using Microsoft.AspNetCore.Antiforgery;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Serilog;
+using System.Threading.RateLimiting;
 
 void ConfigureApp(WebApplicationBuilder builder)
 {
@@ -76,10 +78,10 @@ void ConfigureApp(WebApplicationBuilder builder)
         options.ValidationInterval = TimeSpan.FromMinutes(15);
     });
 
-    services.ConfigureApplicationCookie(options =>
+    services.Configure<CookieAuthenticationOptions>(IdentityConstants.ApplicationScheme, options =>
     {
-        // Cookie settings
         options.Cookie.HttpOnly = true;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
         options.Cookie.SameSite = SameSiteMode.Strict;
         options.Cookie.Name = "__GtPrax-WebApp";
         options.ExpireTimeSpan = TimeSpan.FromHours(1);
@@ -90,8 +92,27 @@ void ConfigureApp(WebApplicationBuilder builder)
         options.SlidingExpiration = true;
     });
 
+    services.Configure<CookieAuthenticationOptions>(IdentityConstants.TwoFactorRememberMeScheme, options =>
+    {
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+        options.Cookie.SameSite = SameSiteMode.Strict;
+        options.Cookie.Name = "__GtPrax-2faTrustToken";
+        options.SlidingExpiration = true;
+        options.ExpireTimeSpan = TimeSpan.FromDays(30);
+    });
+
+    services.Configure<CookieAuthenticationOptions>(IdentityConstants.TwoFactorUserIdScheme, options =>
+    {
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+        options.Cookie.SameSite = SameSiteMode.Strict;
+        options.Cookie.Name = "__GtPrax-2faIdToken";
+    });
+
     services.Configure<AntiforgeryOptions>(options =>
     {
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
         options.Cookie.Name = "__GtPrax-XCsrfToken";
         options.HeaderName = "X-CSRF-TOKEN";
         options.FormFieldName = "__XCsrfToken";
@@ -107,6 +128,31 @@ void ConfigureApp(WebApplicationBuilder builder)
     services.Configure<AppSettings>(config.GetSection("App"));
     services.Configure<SmtpSettings>(config.GetSection("Smtp"));
     services.Configure<PageContentSettings>(config.GetSection("PageContent"));
+
+    services.AddRateLimiter(options =>
+    {
+        options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+        options.AddPolicy(RateLimitPolicies.Login, context =>
+            RateLimitPartition.GetFixedWindowLimiter(
+                context.Connection.RemoteIpAddress + context.Request.Headers.UserAgent,
+                _ => new FixedWindowRateLimiterOptions
+                {
+                    PermitLimit = 5,
+                    Window = TimeSpan.FromMinutes(1),
+                    QueueLimit = 0
+                }));
+
+        options.AddPolicy(RateLimitPolicies.Password, context =>
+            RateLimitPartition.GetFixedWindowLimiter(
+                context.Connection.RemoteIpAddress + context.Request.Headers.UserAgent,
+                _ => new FixedWindowRateLimiterOptions
+                {
+                    PermitLimit = 3,
+                    Window = TimeSpan.FromMinutes(1),
+                    QueueLimit = 0
+                }));
+    });
 }
 
 void ConfigurePipeline(WebApplication app)
@@ -144,6 +190,7 @@ void ConfigurePipeline(WebApplication app)
     app.UseAuthentication();
     app.UseMiddleware<BlockerMiddleware>();
     app.UseAuthorization();
+    app.UseRateLimiter();
 
     app.MapRazorPages();
     app.MapControllers();

@@ -24,6 +24,7 @@ public sealed class ErrorModel : PageModel
             400 => "Die Anfrage kann nicht bearbeitet werden, da ein Fehler beim Client vorliegt.",
             403 => $"Der Zugriff auf die angeforderte Seite '{returnUrl}' wurde verweigert.",
             404 => "Die angeforderte Seite wurde nicht gefunden.",
+            429 => "Du hast zu viele Anfragen gesendet. Bitte versuche es später erneut.",
             _ => "Es ist ein interner Server-Fehler aufgetreten."
         };
     }
