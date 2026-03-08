@@ -58,7 +58,7 @@ public sealed class BlockerMiddleware
         context.Response.Headers["Connection"] = "close";
         await context.Response.WriteAsync("You are banned on this site!", context.RequestAborted);
 
-        var shouldAbortConnection = new Random().Next() % 2 == 0;
+        var shouldAbortConnection = Random.Shared.Next() % 2 == 0;
         if (shouldAbortConnection)
         {
             var connection = context.Features.Get<IConnectionLifetimeFeature>();

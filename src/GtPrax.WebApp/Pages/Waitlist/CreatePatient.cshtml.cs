@@ -1,6 +1,7 @@
 namespace GtPrax.WebApp.Pages.Waitlist;
 
 using System.Globalization;
+using System.Text.Encodings.Web;
 using GtPrax.Application.Repositories;
 using GtPrax.Infrastructure.AspNetCore;
 using GtPrax.Infrastructure.Extensions;
@@ -48,7 +49,7 @@ public sealed class CreatePatientModel : PageModel
             var link = Url.PageLink("/Waitlist/EditPatient", null, new { waitlistId = other.WaitlistId, id = other.Id });
 
             ModelState.AddModelError(string.Empty, "Patient existiert bereits, siehe " +
-                $"<a href=\"{link}\" target=\"_blank\">{other.Name}</a>");
+                $"<a href=\"{link}\" target=\"_blank\">{HtmlEncoder.Default.Encode(other.Name!)}</a>");
 
             return Page();
         }

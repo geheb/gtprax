@@ -136,8 +136,7 @@ public static class HtmlHelperExtensions
                 "fa-face-grin-hearts",
                 "fa-face-grin-stars"
             };
-        var random = new Random();
-        return values[random.Next(values.Length)];
+        return values[Random.Shared.Next(values.Length)];
     }
 
     public static async Task<IHtmlContent> ReadTextContent(this IHtmlHelper helper, string? path)

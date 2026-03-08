@@ -46,7 +46,10 @@ public sealed class ConfirmRegistrationModel : PageModel
         var error = await _users.ConfirmRegistrationAndSetPassword(id, token, Password!);
         if (error != null)
         {
-            error.ToList().ForEach(e => ModelState.AddModelError(string.Empty, e));
+            foreach (var e in error)
+            {
+                ModelState.AddModelError(string.Empty, e);
+            }
             return Page();
         }
 

@@ -9,8 +9,12 @@ public class EmailConverter
     public string Anonymize(string email)
     {
         var emailSplit = email.Split('@');
-        var emailUser = emailSplit[0];
+        if (emailSplit.Length != 2)
+        {
+            throw new ArgumentException("Invalid email format.", nameof(email));
+        }
 
+        var emailUser = emailSplit[0];
         var emailDomain = _idn.GetUnicode(emailSplit[1]);
         return emailUser[0] + "***@" + emailDomain;
     }
@@ -18,6 +22,11 @@ public class EmailConverter
     public string Normalize(string email)
     {
         var emailSplit = email.Split('@');
+        if (emailSplit.Length != 2)
+        {
+            throw new ArgumentException("Invalid email format.", nameof(email));
+        }
+
         return emailSplit[0] + "@" + _idn.GetUnicode(emailSplit[1]);
     }
 }

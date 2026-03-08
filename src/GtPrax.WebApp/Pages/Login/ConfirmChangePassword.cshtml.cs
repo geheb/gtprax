@@ -85,7 +85,10 @@ public sealed class ConfirmChangePasswordModel : PageModel
 
         if (result.Error != null)
         {
-            result.Error.ToList().ForEach(e => ModelState.AddModelError(string.Empty, e));
+            foreach (var e in result.Error)
+            {
+                ModelState.AddModelError(string.Empty, e);
+            }
             return Page();
         }
 

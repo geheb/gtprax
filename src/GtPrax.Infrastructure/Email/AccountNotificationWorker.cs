@@ -14,6 +14,7 @@ using Microsoft.Extensions.Options;
 
 internal sealed class AccountNotificationWorker
 {
+    private const int BatchSize = 32;
     private readonly AppDbContext _dbContext;
     private readonly AppSettings _appSettings;
     private readonly ILogger _logger;
@@ -47,7 +48,8 @@ internal sealed class AccountNotificationWorker
         var entities = await _dbContext.AccountNotifications
             .Include(e => e.User)
             .Where(e => e.SentOn == null)
-            .Take(32)
+            .OrderBy(e => e.CreatedOn)
+            .Take(BatchSize)
             .ToArrayAsync(cancellationToken);
 
         if (entities.Length == 0)
@@ -97,7 +99,7 @@ internal sealed class AccountNotificationWorker
         var template = (AccountEmailTemplate)entity.Type;
         if (entity.User == null)
         {
-            throw new InvalidOperationException("user cant't be null");
+            throw new InvalidOperationException("user can't be null");
         }
 
         var model = new

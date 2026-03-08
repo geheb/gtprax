@@ -2,7 +2,7 @@ namespace GtPrax.WebApp.Models;
 
 using GtPrax.Application.Models;
 
-public class TherapyTimesInput
+public sealed class TherapyTimesInput
 {
     public bool[] Monday { get; set; } = new bool[3];
     public string? MondayTime { get; set; }

@@ -19,23 +19,12 @@ public static class PropertyExtensions
 
         var targetValue = property.GetValue(target);
 
-        if (ReferenceEquals(targetValue, value))
+        if (Equals(targetValue, value))
         {
             return false;
         }
 
-        if (targetValue is not null && !targetValue.Equals(value))
-        {
-            property.SetValue(target, value, null);
-            return true;
-        }
-
-        if (value is not null && !value.Equals(targetValue))
-        {
-            property.SetValue(target, value, null);
-            return true;
-        }
-
-        return false;
+        property.SetValue(target, value, null);
+        return true;
     }
 }

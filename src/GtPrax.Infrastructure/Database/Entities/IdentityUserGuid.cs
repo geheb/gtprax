@@ -22,11 +22,10 @@ internal sealed class IdentityUserGuid : IdentityUser<Guid>
             Id = Id,
             Name = Name,
             Email = ec.Normalize(Email!),
-            EmailConfirmed = EmailConfirmed,
+            IsEmailConfirmed = EmailConfirmed,
             LastLogin = LastLogin.HasValue ? dc.ToLocal(LastLogin.Value) : null,
             Roles = roles,
             CanDelete = roles != null && !roles.Any(r => r == Roles.Admin),
-            IsEmailConfirmed = EmailConfirmed,
             IsLocked = LockoutEnabled && LockoutEnd.HasValue && LockoutEnd.Value > DateTimeOffset.UtcNow,
         };
     }

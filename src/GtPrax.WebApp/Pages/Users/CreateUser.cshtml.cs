@@ -45,7 +45,10 @@ public sealed class CreateUserModel : PageModel
         var errors = await _users.Create(user, cancellationToken);
         if (errors != null)
         {
-            errors.ToList().ForEach(e => ModelState.AddModelError(string.Empty, e));
+            foreach (var e in errors)
+            {
+                ModelState.AddModelError(string.Empty, e);
+            }
             return Page();
         }
 

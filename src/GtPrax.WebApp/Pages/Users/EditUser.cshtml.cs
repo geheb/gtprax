@@ -76,7 +76,10 @@ public sealed class EditUserModel : PageModel
         var errors = await _users.Update(user, Input.Password, cancellationToken);
         if (errors != null)
         {
-            errors.ToList().ForEach(e => ModelState.AddModelError(string.Empty, e));
+            foreach (var e in errors)
+            {
+                ModelState.AddModelError(string.Empty, e);
+            }
             return Page();
         }
 

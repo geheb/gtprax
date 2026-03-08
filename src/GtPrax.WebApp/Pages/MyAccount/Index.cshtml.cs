@@ -60,7 +60,10 @@ public sealed class IndexModel : PageModel
         var errors = await _users.Update(User.GetId(), Name!);
         if (errors != null)
         {
-            errors.ToList().ForEach(e => ModelState.AddModelError(string.Empty, e));
+            foreach (var e in errors)
+            {
+                ModelState.AddModelError(string.Empty, e);
+            }
             return Page();
         }
 

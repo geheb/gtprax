@@ -20,7 +20,7 @@ public sealed class OperationCancelledExceptionFilter : ExceptionFilterAttribute
             var path = context.HttpContext.Request.Path;
             _logger.LogInformation("Request for path {Path} was cancelled", path);
             context.ExceptionHandled = true;
-            context.Result = new BadRequestResult();
+            context.Result = new StatusCodeResult(499);
         }
     }
 }

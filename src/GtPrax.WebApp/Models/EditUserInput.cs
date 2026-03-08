@@ -6,6 +6,10 @@ using GtPrax.Infrastructure.AspNetCore;
 
 public sealed class EditUserInput
 {
+    private const int AdminIndex = 0;
+    private const int ManagerIndex = 1;
+    private const int StaffIndex = 2;
+
     [Display(Name = "Name")]
     [RequiredField, TextLengthField]
     public string? Name { get; set; }
@@ -30,17 +34,17 @@ public sealed class EditUserInput
         {
             if (dto.Roles.Any(r => r == Application.Models.Roles.Admin))
             {
-                Roles[0] = true;
+                Roles[AdminIndex] = true;
             }
 
             if (dto.Roles.Any(r => r == Application.Models.Roles.Manager))
             {
-                Roles[1] = true;
+                Roles[ManagerIndex] = true;
             }
 
             if (dto.Roles.Any(r => r == Application.Models.Roles.Staff))
             {
-                Roles[2] = true;
+                Roles[StaffIndex] = true;
             }
         }
     }
@@ -51,17 +55,17 @@ public sealed class EditUserInput
         dto.Email = Email;
 
         var roles = new List<string>();
-        if (Roles[0])
+        if (Roles[AdminIndex])
         {
             roles.Add(Application.Models.Roles.Admin);
         }
 
-        if (Roles[1])
+        if (Roles[ManagerIndex])
         {
             roles.Add(Application.Models.Roles.Manager);
         }
 
-        if (Roles[2])
+        if (Roles[StaffIndex])
         {
             roles.Add(Application.Models.Roles.Staff);
         }
