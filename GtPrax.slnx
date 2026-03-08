@@ -10,6 +10,7 @@
   <Folder Name="/tests/">
     <Project Path="tests/GtPrax.Application.Tests/GtPrax.Application.Tests.csproj" />
     <Project Path="tests/GtPrax.Infrastructure.Tests/GtPrax.Infrastructure.Tests.csproj" />
+    <Project Path="tests/GtPrax.WebApp.Tests/GtPrax.WebApp.Tests.csproj" />
   </Folder>
   <Project Path="src/GtPrax.Application/GtPrax.Application.csproj" />
   <Project Path="src/GtPrax.Aspire/GtPrax.Aspire.csproj" />

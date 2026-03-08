@@ -106,4 +106,110 @@ public sealed class ValidationAttributeTests
             Assert.Equal(10, PasswordLengthFieldAttribute.MinLen);
         }
     }
+
+    public sealed class RequiredFieldAttributeTests
+    {
+        private readonly RequiredFieldAttribute _sut = new();
+
+        [Fact]
+        public void IsValid_WithValue_ShouldReturnTrue()
+        {
+            Assert.True(_sut.IsValid("hello"));
+        }
+
+        [Fact]
+        public void IsValid_Null_ShouldReturnFalse()
+        {
+            Assert.False(_sut.IsValid(null));
+        }
+
+        [Fact]
+        public void IsValid_EmptyString_ShouldReturnFalse()
+        {
+            Assert.False(_sut.IsValid(""));
+        }
+    }
+
+    public sealed class TextLengthFieldAttributeTests
+    {
+        [Fact]
+        public void IsValid_DefaultMax_ValidLength_ShouldReturnTrue()
+        {
+            var sut = new TextLengthFieldAttribute();
+            Assert.True(sut.IsValid("ab"));
+        }
+
+        [Fact]
+        public void IsValid_DefaultMax_TooShort_ShouldReturnFalse()
+        {
+            var sut = new TextLengthFieldAttribute();
+            Assert.False(sut.IsValid("a"));
+        }
+
+        [Fact]
+        public void IsValid_DefaultMax_TooLong_ShouldReturnFalse()
+        {
+            var sut = new TextLengthFieldAttribute();
+            Assert.False(sut.IsValid(new string('x', 257)));
+        }
+
+        [Fact]
+        public void IsValid_CustomMax_AtMax_ShouldReturnTrue()
+        {
+            var sut = new TextLengthFieldAttribute(10);
+            Assert.True(sut.IsValid("1234567890"));
+        }
+
+        [Fact]
+        public void IsValid_CustomMax_OverMax_ShouldReturnFalse()
+        {
+            var sut = new TextLengthFieldAttribute(10);
+            Assert.False(sut.IsValid("12345678901"));
+        }
+
+        [Fact]
+        public void IsValid_Null_ShouldReturnTrue()
+        {
+            var sut = new TextLengthFieldAttribute();
+            Assert.True(sut.IsValid(null));
+        }
+    }
+
+    public sealed class RangeFieldAttributeTests
+    {
+        [Fact]
+        public void IsValid_IntInRange_ShouldReturnTrue()
+        {
+            var sut = new RangeFieldAttribute(1, 10);
+            Assert.True(sut.IsValid(5));
+        }
+
+        [Fact]
+        public void IsValid_IntBelowRange_ShouldReturnFalse()
+        {
+            var sut = new RangeFieldAttribute(1, 10);
+            Assert.False(sut.IsValid(0));
+        }
+
+        [Fact]
+        public void IsValid_IntAboveRange_ShouldReturnFalse()
+        {
+            var sut = new RangeFieldAttribute(1, 10);
+            Assert.False(sut.IsValid(11));
+        }
+
+        [Fact]
+        public void IsValid_DoubleInRange_ShouldReturnTrue()
+        {
+            var sut = new RangeFieldAttribute(0.5, 9.5);
+            Assert.True(sut.IsValid(5.0));
+        }
+
+        [Fact]
+        public void IsValid_DoubleBelowRange_ShouldReturnFalse()
+        {
+            var sut = new RangeFieldAttribute(0.5, 9.5);
+            Assert.False(sut.IsValid(0.1));
+        }
+    }
 }
