@@ -7,6 +7,10 @@
     <File Path="Directory.Packages.props" />
     <File Path="README.md" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/GtPrax.Application.Tests/GtPrax.Application.Tests.csproj" />
+    <Project Path="tests/GtPrax.Infrastructure.Tests/GtPrax.Infrastructure.Tests.csproj" />
+  </Folder>
   <Project Path="src/GtPrax.Application/GtPrax.Application.csproj" />
   <Project Path="src/GtPrax.Aspire/GtPrax.Aspire.csproj" />
   <Project Path="src/GtPrax.Infrastructure/GtPrax.Infrastructure.csproj" />

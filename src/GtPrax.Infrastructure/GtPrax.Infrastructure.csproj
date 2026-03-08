@@ -1,6 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <InternalsVisibleTo Include="GtPrax.Infrastructure.Tests" />
+	<InternalsVisibleTo Include="DynamicProxyGenAssembly2"/>
+  </ItemGroup>
+
+  <ItemGroup>
     <EmbeddedResource Include="Email\ConfirmChangeEmail.html" />
     <EmbeddedResource Include="Email\ConfirmRegistration.html" />
     <EmbeddedResource Include="Email\ConfirmPasswordForgotten.html" />

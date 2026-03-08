@@ -34,9 +34,9 @@ internal sealed class EmailValidator : IEmailValidator
         "online.de"
     ];
 
-    private readonly IpReputationChecker _reputationChecker;
+    private readonly IIpReputationChecker _reputationChecker;
 
-    public EmailValidator(IpReputationChecker reputationChecker)
+    public EmailValidator(IIpReputationChecker reputationChecker)
     {
         _reputationChecker = reputationChecker;
     }

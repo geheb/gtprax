@@ -44,7 +44,8 @@ public sealed class BlockerMiddleware
             }
             else
             {
-                var checker = context.RequestServices.GetRequiredService<IpReputationChecker>();
+                var checker = context.RequestServices.GetRequiredService<IIpReputationChecker>();
+
                 var isListed = await checker.IsListed(address);
                 blacklist.Update(address, userAgent, isListed);
             }
