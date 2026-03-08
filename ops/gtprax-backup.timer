@@ -1,0 +1,10 @@
+[Unit]
+Description=Timer unit for gtprax-backup.service
+
+[Timer]
+Unit=gtprax-backup.service
+OnCalendar=*-*-* 6:00:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target

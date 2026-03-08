@@ -1,0 +1,6 @@
+[Unit]
+Description=GT Prax Backup-Script
+
+[Service]
+Type=oneshot
+ExecStart=/opt/gtprax-backup/gtprax-backup.sh
