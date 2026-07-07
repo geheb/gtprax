@@ -47,22 +47,17 @@ internal sealed class HostedWorker : BackgroundService
         await using var scope = _serviceScopeFactory.CreateAsyncScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-        _logger.LogInformation("Run database maintenance ...");
-        await dbContext.Database.ExecuteSqlRawAsync("VACUUM;", cancellationToken);
-        await dbContext.Database.ExecuteSqlRawAsync("REINDEX;");
-
-        _logger.LogInformation("Optimize database ...");
-        await dbContext.Database.ExecuteSqlRawAsync("PRAGMA journal_mode = WAL;");
-        await dbContext.Database.ExecuteSqlRawAsync("PRAGMA synchronous = NORMAL;");
-        await dbContext.Database.ExecuteSqlRawAsync("PRAGMA cache_size = 10000;");
-        await dbContext.Database.ExecuteSqlRawAsync("PRAGMA temp_store = MEMORY;");
-
         var migrations = await dbContext.Database.GetPendingMigrationsAsync(cancellationToken);
         if (migrations.Any())
         {
             _logger.LogInformation("apply pending migrations '{Migrations}'", string.Join(",", migrations));
             await dbContext.Database.MigrateAsync(cancellationToken);
         }
+
+        _logger.LogInformation("Run database maintenance ...");
+        await dbContext.Database.ExecuteSqlRawAsync("REINDEX;", cancellationToken);
+        await dbContext.Database.ExecuteSqlRawAsync("VACUUM;", cancellationToken);
+        await dbContext.Database.ExecuteSqlRawAsync("ANALYZE;", cancellationToken);
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
