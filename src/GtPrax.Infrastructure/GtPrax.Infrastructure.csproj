@@ -2,7 +2,7 @@
 
   <ItemGroup>
     <InternalsVisibleTo Include="GtPrax.Infrastructure.Tests" />
-	<InternalsVisibleTo Include="DynamicProxyGenAssembly2"/>
+	<InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -17,6 +17,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
     <PackageReference Include="Scriban" />
+    <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3" />
     <PackageReference Include="System.IO.Hashing" />
   </ItemGroup>
 

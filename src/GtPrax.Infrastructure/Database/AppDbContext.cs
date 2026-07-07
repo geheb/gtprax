@@ -3,11 +3,14 @@ namespace GtPrax.Infrastructure.Database;
 using GtPrax.Infrastructure.Database.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 internal sealed class AppDbContext :
     IdentityDbContext<IdentityUserGuid, IdentityRoleGuid, Guid, IdentityUserClaimGuid, IdentityUserRoleGuid, IdentityUserLoginGuid, IdentityRoleClaimGuid, IdentityUserTokenGuid>
 {
+    private static readonly IDbConnectionInterceptor _connectionInterceptor = new SQLiteInterceptor();
+
     private sealed class ShortGuidConverter : ValueConverter<Guid, string>
     {
         public ShortGuidConverter() :
@@ -39,6 +42,7 @@ internal sealed class AppDbContext :
     {
         base.OnConfiguring(optionsBuilder);
         optionsBuilder.RegisterCustomFunctions();
+        optionsBuilder.AddInterceptors(_connectionInterceptor);
     }
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
